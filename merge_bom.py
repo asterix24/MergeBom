@@ -61,13 +61,16 @@ for i in sys.argv[1:]:
         if key in table_dict:
             table_dict[key][QUANTITY] += int(j[QUANTITY - CSV_NUM])
             table_dict[key][REF] += ", " + j[REF - CSV_NUM]
-            table_dict[key][index] = j[QUANTITY - CSV_NUM]
 
             if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
                 table_dict[key][COMMENT] += ", " + j[COMMENT - CSV_NUM]
+                table_dict[key][index] += int(j[QUANTITY - CSV_NUM])
+            else:
+                table_dict[key][index] = j[QUANTITY - CSV_NUM]
         else:
             table_dict[key] = pre_col + j
             table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
+            table_dict[key][index] = int(j[QUANTITY - CSV_NUM])
 
             if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
                 table_dict[key][COMMENT] = j[COMMENT - CSV_NUM]
