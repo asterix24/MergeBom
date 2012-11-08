@@ -23,9 +23,9 @@ import os
 
 QUANTITY=0
 REF=1
-KEY=2
-KEY2=3
-KEY3=4
+COMMENT=2
+FOOTPRINT=3
+DESCRIPTION=4
 
 if len(sys.argv) < 3:
     print sys.argv[0], " <csv file name1> <csv file name2> .."
@@ -35,7 +35,7 @@ table = []
 CSV_NUM = len(sys.argv[1:])
 QUANTITY = CSV_NUM + QUANTITY
 REF = CSV_NUM + REF
-KEY = CSV_NUM + KEY
+COMMENT = CSV_NUM + COMMENT
 
 header = []
 table_dict = {}
@@ -52,22 +52,31 @@ for i in sys.argv[1:]:
             header = sys.argv[1:] + header
             continue
 
-        key = j[KEY - CSV_NUM] + j[KEY2] + j[KEY3]
-        print key
+        if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
+            key = j[FOOTPRINT] + j[DESCRIPTION]
+            print "Except: > ",key
+        else:
+            key = j[COMMENT - CSV_NUM] + j[FOOTPRINT] + j[DESCRIPTION]
+
         if key in table_dict:
             table_dict[key][QUANTITY] += int(j[QUANTITY - CSV_NUM])
             table_dict[key][REF] += ", " + j[REF - CSV_NUM]
             table_dict[key][index] = j[QUANTITY - CSV_NUM]
+
+            if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
+                table_dict[key][COMMENT] += ", " + j[COMMENT - CSV_NUM]
         else:
             table_dict[key] = pre_col + j
             table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
-            table_dict[key][index] = j[QUANTITY - CSV_NUM]
+
+            if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
+                table_dict[key][COMMENT] = j[COMMENT - CSV_NUM]
 
     index += 1
 
 
 with open('merged_bom.csv', 'wb') as csvfile:
-    data = csv.writer(csvfile, delimiter=',', quotechar='\"')
+    data = csv.writer(csvfile, delimiter=';', quotechar='\"')
     data.writerow(header)
     for i in sorted(table_dict.values(), key=lambda ref: ref[REF]):
         data.writerow(i)
