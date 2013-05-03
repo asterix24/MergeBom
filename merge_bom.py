@@ -27,7 +27,7 @@ COMMENT=2
 FOOTPRINT=3
 DESCRIPTION=4
 
-if len(sys.argv) < 3:
+if len(sys.argv) < 2:
     print sys.argv[0], " <csv file name1> <csv file name2> .."
     exit (1)
 
@@ -78,10 +78,20 @@ for i in sys.argv[1:]:
     index += 1
 
 
+l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
+count = 0
+ll = []
+for j in l:
+    if j[COMMENT].strip() == 'NP':
+        ll.append(j)
+    else:
+        ll.insert(count, j)
+        count += 1
+
 with open('merged_bom.csv', 'wb') as csvfile:
     data = csv.writer(csvfile, delimiter=';', quotechar='\"')
     data.writerow(header)
-    for i in sorted(table_dict.values(), key=lambda ref: ref[REF]):
+    for i in ll:
         data.writerow(i)
 
 total = 0
