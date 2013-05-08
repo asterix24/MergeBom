@@ -18,8 +18,8 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import sys
-import os
+import sys, os
+import re
 
 QUANTITY=0
 REF=1
@@ -79,20 +79,55 @@ for i in sys.argv[1:]:
 
 
 l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
-count = 0
-ll = []
-for j in l:
-    if j[COMMENT].strip() == 'NP':
-        ll.append(j)
+d = {}
+for g in l:
+    c = re.search('^[a-zA-Z_]{1,3}', g[REF])
+    key = c.group().upper()
+    if d.has_key(key):
+        d[key].append(g)
     else:
-        ll.insert(count, j)
-        count += 1
+        d[key] = [g]
+
+    print 'Group Key:',c.group(), g[REF]
+
+for k in d.keys():
+    d[k] = sorted(d[k], key=lambda ref: ref[REF + 1])
+
+SEPARATOR_NUM = len(l[0]) - 1
+ORDER_PATTERN = ['J', 'S','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+ORDER_PATTERN_NAMES = {
+    'J':['* J Connectors *'],
+    'S':['* S Mechanical parts and buttons *'],
+    'R':['* R Resistors *'],
+    'C':['* C Capacitors *'],
+    'D':['* D Diodes *'],
+    'DZ':['* DZ Zener, Transil *'],
+    'L': ['* L Inductors, chokes *'],
+    'Q': ['* Q Transistors *'],
+    'TR':['* TR Transformers *'],
+    'Y': ['* Y Cristal, quarz, oscillators*'],
+    'U': ['* U IC *']
+}
+for i in ORDER_PATTERN_NAMES.keys():
+    ORDER_PATTERN_NAMES[i] = (([''] * REF) + ORDER_PATTERN_NAMES[i] + ([''] * (SEPARATOR_NUM - REF)))
+    print ORDER_PATTERN_NAMES[i]
+
+
+for j in d.keys():
+    if j not in ORDER_PATTERN:
+        print 'Missing order pattern key:'
+        print 'In BOM:', d.keys()
+        print 'In mergebom:', ORDER_PATTERN
+        sys.exit(0)
 
 with open('merged_bom.csv', 'wb') as csvfile:
     data = csv.writer(csvfile, delimiter=';', quotechar='\"')
     data.writerow(header)
-    for i in ll:
-        data.writerow(i)
+    for p in ORDER_PATTERN:
+        if d.has_key(p):
+            data.writerow(ORDER_PATTERN_NAMES[p])
+            for i in d[p]:
+                data.writerow(i)
 
 total = 0
 for i in table_dict.keys():
