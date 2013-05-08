@@ -35,7 +35,8 @@ table = []
 CSV_NUM = len(sys.argv[1:])
 QUANTITY = CSV_NUM + QUANTITY
 REF = CSV_NUM + REF
-COMMENT = CSV_NUM + COMMENT
+COMMENT_PLUS = CSV_NUM + COMMENT
+DESCRIPTION_PLUS= CSV_NUM + DESCRIPTION
 
 header = []
 table_dict = {}
@@ -52,18 +53,18 @@ for i in sys.argv[1:]:
             header = sys.argv[1:] + header
             continue
 
-        if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
+        if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
             key = j[FOOTPRINT] + j[DESCRIPTION]
             print "Except: > ",key
         else:
-            key = j[COMMENT - CSV_NUM] + j[FOOTPRINT] + j[DESCRIPTION]
+            key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
 
         if key in table_dict:
             table_dict[key][QUANTITY] += int(j[QUANTITY - CSV_NUM])
             table_dict[key][REF] += ", " + j[REF - CSV_NUM]
 
-            if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
-                table_dict[key][COMMENT] += ", " + j[COMMENT - CSV_NUM]
+            if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
+                table_dict[key][COMMENT_PLUS] += ", " + j[COMMENT]
                 table_dict[key][index] += int(j[QUANTITY - CSV_NUM])
             else:
                 table_dict[key][index] = j[QUANTITY - CSV_NUM]
@@ -72,26 +73,32 @@ for i in sys.argv[1:]:
             table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
             table_dict[key][index] = int(j[QUANTITY - CSV_NUM])
 
-            if (j[REF - CSV_NUM][0].lower() == 'j') or (j[DESCRIPTION].lower() == 'test point'):
-                table_dict[key][COMMENT] = j[COMMENT - CSV_NUM]
+            if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
+                table_dict[key][COMMENT_PLUS] = j[COMMENT]
 
     index += 1
 
 
-l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
+
 d = {}
+l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
 for g in l:
     c = re.search('^[a-zA-Z_]{1,3}', g[REF])
     key = c.group().upper()
+
+    # Buttons and spacer
+    if key in ['BT', 'SCR', 'SPA' ]:
+        key = 'S'
+    # Tranformer
+    if key in ['T' ]:
+        key = 'TR'
+
     if d.has_key(key):
         d[key].append(g)
     else:
         d[key] = [g]
 
     print 'Group Key:',c.group(), g[REF]
-
-for k in d.keys():
-    d[k] = sorted(d[k], key=lambda ref: ref[REF + 1])
 
 SEPARATOR_NUM = len(l[0]) - 1
 ORDER_PATTERN = ['J', 'S','R','C','D','DZ','L', 'Q','TR','Y', 'U']
@@ -108,11 +115,19 @@ ORDER_PATTERN_NAMES = {
     'Y': ['* Y Cristal, quarz, oscillators*'],
     'U': ['* U IC *']
 }
+#Add separator from each group of components.
 for i in ORDER_PATTERN_NAMES.keys():
     ORDER_PATTERN_NAMES[i] = (([''] * REF) + ORDER_PATTERN_NAMES[i] + ([''] * (SEPARATOR_NUM - REF)))
     print ORDER_PATTERN_NAMES[i]
 
 
+for k in d.keys():
+    if k in ['D', 'J', 'S', 'U']:
+        d[k] = sorted(d[k], key=lambda ref: ref[DESCRIPTION_PLUS])
+    else:
+        d[k] = sorted(d[k], key=lambda ref: ref[COMMENT_PLUS])
+
+#Check missing group code.
 for j in d.keys():
     if j not in ORDER_PATTERN:
         print 'Missing order pattern key:'
