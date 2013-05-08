@@ -101,7 +101,7 @@ ORDER_PATTERN_NAMES = {
     'R':['* R Resistors *'],
     'C':['* C Capacitors *'],
     'D':['* D Diodes *'],
-    'DZ':['* DZ Zener, Transil *'],
+    'DZ':['* DZ Zener, Schottky, Transil *'],
     'L': ['* L Inductors, chokes *'],
     'Q': ['* Q Transistors *'],
     'TR':['* TR Transformers *'],
