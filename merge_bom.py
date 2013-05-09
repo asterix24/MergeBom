@@ -92,6 +92,9 @@ for g in l:
     # Tranformer
     if key in ['T' ]:
         key = 'TR'
+    # Resistors, array, etc.
+    if key in ['RN']:
+        key = 'R'
 
     if d.has_key(key):
         d[key].append(g)
