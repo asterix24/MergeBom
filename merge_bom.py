@@ -87,7 +87,7 @@ for g in l:
     key = c.group().upper()
 
     # Buttons and spacer
-    if key in ['BT', 'SCR', 'SPA' ]:
+    if key in ['BT', 'SCR', 'SPA', 'BAT']:
         key = 'S'
     # Tranformer
     if key in ['T' ]:
