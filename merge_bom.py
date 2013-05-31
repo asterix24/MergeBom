@@ -31,6 +31,16 @@ if len(sys.argv) < 2:
     print sys.argv[0], " <csv file name1> <csv file name2> .."
     exit (1)
 
+in_delimiter = ','
+if '-isc' in sys.argv:
+    sys.argv.remove('-isc')
+    in_delimiter = ';'
+
+out_delimiter = ','
+if '-osc' in sys.argv:
+    sys.argv.remove('-osc')
+    out_delimiter = ','
+
 table = []
 CSV_NUM = len(sys.argv[1:])
 QUANTITY = CSV_NUM + QUANTITY
@@ -42,10 +52,12 @@ header = []
 table_dict = {}
 pre_col = [0] * CSV_NUM
 index = 0
+key = ''
 
 for i in sys.argv[1:]:
-    csv_table = csv.reader(open(i, 'rb'), delimiter=',', quotechar='\"')
+    csv_table = csv.reader(open(i, 'rb'), delimiter=in_delimiter)
     for j in csv_table:
+        #Check bom format
         if (j == []):
             continue
         if (j[0] == 'Quantity'):
@@ -53,11 +65,24 @@ for i in sys.argv[1:]:
             header = sys.argv[1:] + header
             continue
 
-        if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
-            key = j[FOOTPRINT] + j[DESCRIPTION]
-            print "Except: > ",key
-        else:
-            key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
+        try:
+            if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
+                key = j[FOOTPRINT] + j[DESCRIPTION]
+                print "Except: > ",key
+            else:
+                key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
+        except IndexError:
+            print "INDEX ERROR"
+            print j
+            print "..........."
+            continue
+
+        if key == '':
+            print "NULL KEY ERROR"
+            print j
+            print "..........."
+            continue
+
 
         if key in table_dict:
             table_dict[key][QUANTITY] += int(j[QUANTITY - CSV_NUM])
@@ -69,15 +94,20 @@ for i in sys.argv[1:]:
             else:
                 table_dict[key][index] = j[QUANTITY - CSV_NUM]
         else:
-            table_dict[key] = pre_col + j
-            table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
-            table_dict[key][index] = int(j[QUANTITY - CSV_NUM])
+            try:
+                table_dict[key] = pre_col + j
+                table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
+                table_dict[key][index] = int(j[QUANTITY - CSV_NUM])
+            except ValueError:
+                print "FIRST COL NOT INT ERROR"
+                print j
+                print "..........."
+                continue
 
             if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
                 table_dict[key][COMMENT_PLUS] = j[COMMENT]
 
     index += 1
-
 
 
 d = {}
@@ -87,7 +117,7 @@ for g in l:
     key = c.group().upper()
 
     # Buttons and spacer
-    if key in ['BT', 'SCR', 'SPA', 'BAT']:
+    if key in ['BT', 'SCR', 'SPA', 'BAT','SW']:
         key = 'S'
     # Tranformer
     if key in ['T' ]:
@@ -95,6 +125,12 @@ for g in l:
     # Resistors, array, etc.
     if key in ['RN']:
         key = 'R'
+    # Discarted ref
+    if key in ['TP']:
+        print "WARNING WE SKIP THIS KEY"
+        print 'key [%s]' % key
+        print '.........'
+        continue
 
     if d.has_key(key):
         d[key].append(g)
@@ -104,10 +140,11 @@ for g in l:
     print 'Group Key:',c.group(), g[REF]
 
 SEPARATOR_NUM = len(l[0]) - 1
-ORDER_PATTERN = ['J', 'S','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
 ORDER_PATTERN_NAMES = {
     'J':['* J Connectors *'],
     'S':['* S Mechanical parts and buttons *'],
+    'F':['* F Fuses *'],
     'R':['* R Resistors *'],
     'C':['* C Capacitors *'],
     'D':['* D Diodes *'],
@@ -139,7 +176,7 @@ for j in d.keys():
         sys.exit(0)
 
 with open('merged_bom.csv', 'wb') as csvfile:
-    data = csv.writer(csvfile, delimiter=';', quotechar='\"')
+    data = csv.writer(csvfile, delimiter=out_delimiter)
     data.writerow(header)
     for p in ORDER_PATTERN:
         if d.has_key(p):
