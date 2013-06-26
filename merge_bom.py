@@ -123,7 +123,7 @@ for g in l:
     if key in ['T' ]:
         key = 'TR'
     # Resistors, array, etc.
-    if key in ['RN']:
+    if key in ['RN', 'R_G']:
         key = 'R'
     # Discarted ref
     if key in ['TP']:
