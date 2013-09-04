@@ -21,6 +21,14 @@ import csv
 import sys, os
 import re
 
+def fillRowCenter(row, s):
+    r = row[:(len(row)/2) - (len(s)/2)] + s + row[(len(row)/2) + (len(s)/2):]
+    if len(r) < len(row):
+        r = r + row[-1] * (len(row) - len(r))
+    if len(r) > len(row):
+        r = r[:-1 * (len(r) - len(row))]
+    return r
+
 QUANTITY=0
 REF=1
 COMMENT=2
@@ -47,6 +55,7 @@ QUANTITY = CSV_NUM + QUANTITY
 REF = CSV_NUM + REF
 COMMENT_PLUS = CSV_NUM + COMMENT
 DESCRIPTION_PLUS= CSV_NUM + DESCRIPTION
+FOOTPRINT_PLUS= CSV_NUM + FOOTPRINT
 
 header = []
 table_dict = {}
@@ -117,8 +126,11 @@ for g in l:
     key = c.group().upper()
 
     # Buttons and spacer
-    if key in ['BT', 'SCR', 'SPA', 'BAT','SW']:
+    if key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
         key = 'S'
+    # Fuses
+    if key in ['G']:
+        key = 'F'
     # Tranformer
     if key in ['T' ]:
         key = 'TR'
@@ -170,7 +182,7 @@ for k in d.keys():
 #Check missing group code.
 for j in d.keys():
     if j not in ORDER_PATTERN:
-        print 'Missing order pattern key:'
+        print 'Missing order pattern key: \"%s\"' % j
         print 'In BOM:', d.keys()
         print 'In mergebom:', ORDER_PATTERN
         sys.exit(0)
@@ -184,9 +196,52 @@ with open('merged_bom.csv', 'wb') as csvfile:
             for i in d[p]:
                 data.writerow(i)
 
-total = 0
-for i in table_dict.keys():
-    total += table_dict[i][QUANTITY]
-    print "Component %s n.%s" % (i, table_dict[i][QUANTITY])
+print
+print
+print "=" * 10, "MERGE STATISTICS", "=" *10
+print
+print
 
-print "Total components %s\n" % total
+total = 0
+recap = {}
+for p in ORDER_PATTERN:
+    if d.has_key(p):
+
+        """
+        implementare le funzioni per l'ordinamento dei
+        valori delle resistenze e delle capacita'
+        if p == 'R':
+            print d[p]
+            def __sortDict(d):
+               d = d.get(order_by_field, None)
+               if order_by_field in cfg.DB_DATA_FIELD:
+                   if d is None:
+                       return datetime.date(2000,1,1)
+                   return d
+               return sorted(data, key=__sortDict, reverse=ordering)
+        """
+
+
+        s = ORDER_PATTERN_NAMES[p][2]
+        s = s.replace('*','')
+        print
+        print fillRowCenter("*" * 80, s)
+        recap[s] = 0
+        for i in d[p]:
+            if i[QUANTITY] != '':
+                total += i[QUANTITY]
+                recap[s] += i[QUANTITY]
+                print "n.%3d %20s %30s" % (i[QUANTITY], i[COMMENT_PLUS], i[FOOTPRINT_PLUS])
+
+print
+print
+print "~" * 10, "Total", "~" *10
+for r in recap.keys():
+    print "%4d: %s" % (recap[r], r)
+
+print "-" * 24
+print "%4d Total components" % total
+print "~" * 24
+print
+print
+
