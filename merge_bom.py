@@ -222,7 +222,7 @@ with open('merged_bom.csv', 'wb') as csvfile:
 
 print
 print
-print "=" * 10, "MERGE STATISTICS", "=" *10
+print fillRowCenter("=" * 80, " Final Report ")
 print
 print
 
@@ -235,14 +235,23 @@ for p in ORDER_PATTERN:
         implementare le funzioni per l'ordinamento dei
         valori delle resistenze e delle capacita'
         if p == 'R':
-            print d[p]
-            def __sortDict(d):
-               d = d.get(order_by_field, None)
-               if order_by_field in cfg.DB_DATA_FIELD:
-                   if d is None:
-                       return datetime.date(2000,1,1)
-                   return d
-               return sorted(data, key=__sortDict, reverse=ordering)
+            def __sortDict(x):
+                res = x[3]
+                try:
+                    v, _ = res.split(' ')
+                except ValueError:
+                    v = res
+
+                vres = 0
+                v = v.upper()
+                if 'K' in v:
+                    for i in v:
+                        k
+
+                print v, vres
+                return x[3]
+
+            d[p] = sorted(d[p], key=__sortDict)
         """
 
 
@@ -256,7 +265,6 @@ for p in ORDER_PATTERN:
                 total += i[QUANTITY]
                 recap[s] += i[QUANTITY]
                 print fillTableRow(" " * 80, "n.%d" % i[QUANTITY], i[COMMENT_PLUS], i[FOOTPRINT_PLUS])
-                #print "n.%3d %20s %30s" % (
 
 
 print
