@@ -29,6 +29,30 @@ def fillRowCenter(row, s):
         r = r[:-1 * (len(r) - len(row))]
     return r
 
+def fillTableRow(row, col1, col2, col3):
+    col1 = "%s" % col1
+    col2 = "%s" % col2
+    col3 = "%s" % col3
+
+    if len(col1) > 10:
+        col1 = col1[:10]
+    s = col1 + row[10 - len(col1):]
+
+    WCOL2=40
+    if len(col2) > WCOL2:
+        col2 = col2[:WCOL2]
+        print "trim col2"
+    s = s[:(WCOL2-len(col2))] + col2 + s[WCOL2:]
+
+    if len(col3) > (len(row) - WCOL2):
+        col3 = col3[:len(row) - WCOL2]
+        print "trim col3"
+
+    s = s[: len(row) - len(col3)] + col3
+
+    return s
+
+
 QUANTITY=0
 REF=1
 COMMENT=2
@@ -231,7 +255,9 @@ for p in ORDER_PATTERN:
             if i[QUANTITY] != '':
                 total += i[QUANTITY]
                 recap[s] += i[QUANTITY]
-                print "n.%3d %20s %30s" % (i[QUANTITY], i[COMMENT_PLUS], i[FOOTPRINT_PLUS])
+                print fillTableRow(" " * 80, "n.%d" % i[QUANTITY], i[COMMENT_PLUS], i[FOOTPRINT_PLUS])
+                #print "n.%3d %20s %30s" % (
+
 
 print
 print
