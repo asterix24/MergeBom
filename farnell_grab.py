@@ -93,24 +93,23 @@ HELP_MSG = """Usage %s type value package"""
 import urllib2
 import sys
 import res_table
-import package_table
-import precision_table
+import cap_table
 
-RES_URL_COD = "http://it.farnell.com/jsp/search/browse.jsp?N=215515+{PRECISION}+{PACKAGE}+718+502+{VALUE}&Ns=P_PRICE_FARNELL_IT%7C0&locale=it_IT_ENGLISH"
+URL = "http://it.farnell.com/jsp/search/browse.jsp?N={PLACEHOLDER}&Ns=P_PRICE_FARNELL_IT%7C0&locale=it_IT_ENGLISH"
 
 
 if __name__ == "__main__":
-    URL = ""
     limit = 4
-    value = '1k'
-    package = '0603'
-    precision = '5'
+    value = ''
+    package = ''
+    precision = ''
+    attr = []
 
     if 'help' in sys.argv or '-h' in sys.argv:
         print HELP_MSG % (sys.argv[0])
         sys.exit(1)
 
-    if len(sys.argv) < 2 or (not (sys.argv[1] in ['res'])):
+    if len(sys.argv) < 2 or (not (sys.argv[1] in ['res','cap'])):
         print HELP_MSG % (sys.argv[0])
         sys.exit(1)
 
@@ -119,31 +118,57 @@ if __name__ == "__main__":
             a = a.strip()
             limit = int(a.split('=')[1])
             print "limit:", limit
-        if 'p' in a:
-            a = a.strip()
-            precision = str(a.split('=')[1])
+        else:
+            attr.append(str(a.strip()))
 
-    value = str(sys.argv[2].strip())
-    package = str(sys.argv[3].strip())
 
-    if 'res' in sys.argv:
-        URL = RES_URL_COD
+    cmd = attr[0] if len(attr) > 1 else ''
+    value = attr[1] if len(attr) > 2 else ''
+    package = attr[2] if len(attr) > 3 else ''
+
+    query_str = "718+502"
+
+    if cmd == 'res':
+        query_str = "+215515"
+        precision = attr[3] if len(attr) > 4 else ''
+
         for i in res_table.RES_TABLE:
             if i[1] == value:
                 print "value:", i
-                value = i[0]
-        for i in package_table.PACKAGE_TABLE:
+                query_str += "+"+i[0]+"+"
+        for i in res_table.PACKAGE_TABLE:
             if i[1] == package:
                 print "package:", i
-                package = i[0]
-        for i in precision_table.PRECISION_TABLE:
+                query_str += "+"+i[0]+"+"
+        for i in res_table.PRECISION_TABLE:
             if i[1] == precision:
                 print "precision:", i
-                precision = i[0]
+                query_str += "+"+i[0]+"+"
 
-    URL = URL.replace('{VALUE}', value)
-    URL = URL.replace('{PACKAGE}', package)
-    URL = URL.replace('{PRECISION}', str(precision))
+    if cmd == 'cap':
+        query_str += '+215745'
+        volt = attr[3] if len(attr) > 4 else ''
+        diel = attr[4] if len(attr) >= 5 else ''
+
+        for i in cap_table.VALUE_TABLE:
+            if i[1] == value:
+                print "value:", i
+                query_str += "+"+i[0]+"+"
+        for i in cap_table.PACKAGE_TABLE:
+            if i[1] == package:
+                print "package:", i
+                query_str += "+"+i[0]+"+"
+        for i in cap_table.VOLTAGE_TABLE:
+            if i[1] == volt:
+                print "volt:", i
+                query_str += "+"+i[0]+"+"
+
+        for i in cap_table.DIELETRIC_TABLE:
+            if i[1] == diel:
+                print "dieletric:", i
+                query_str += "+"+i[0]+"+"
+
+    URL = URL.replace("{PLACEHOLDER}", query_str)
     print URL
 
     data_in = urllib2.urlopen(URL)
