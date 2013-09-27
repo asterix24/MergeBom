@@ -109,9 +109,46 @@ if __name__ == "__main__":
         print HELP_MSG % (sys.argv[0])
         sys.exit(1)
 
+
+    if 'list' in sys.argv:
+        if len(sys.argv) < 4:
+            print "%s list [res,cap] [case,volt,value,precision,dieletric]" % sys.argv[0]
+            sys.exit(1)
+        if 'cap' in sys.argv:
+            if 'case' in sys.argv:
+                for i in cap_table.PACKAGE_TABLE:
+                    print i[1]
+                sys.exit(1)
+            if 'volt' in sys.argv:
+                for i in cap_table.VOLTAGE_TABLE:
+                    print i[1]
+                sys.exit(1)
+            if 'value' in sys.argv:
+                for i in cap_table.VALUE_TABLE:
+                    print i[1]
+                sys.exit(1)
+            if 'diel' in sys.argv:
+                for i in cap_table.DIELETRIC_TABLE:
+                    print i[1]
+                sys.exit(1)
+        if 'res' in sys.argv:
+            if 'case' in sys.argv:
+                for i in res_table.PACKAGE_TABLE:
+                    print i[1]
+                sys.exit(1)
+            if 'prec' in sys.argv:
+                for i in res_table.PRECISION_TABLE:
+                    print i[1]
+                sys.exit(1)
+            if 'value' in sys.argv:
+                for i in res_table.RES_TABLE:
+                    print i[1]
+                sys.exit(1)
+
     if len(sys.argv) < 2 or (not (sys.argv[1] in ['res','cap'])):
         print HELP_MSG % (sys.argv[0])
         sys.exit(1)
+
 
     for a in sys.argv[1:]:
         if 'limit' in a:
