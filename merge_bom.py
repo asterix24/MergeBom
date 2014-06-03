@@ -73,8 +73,20 @@ if '-osc' in sys.argv:
     sys.argv.remove('-osc')
     out_delimiter = ','
 
+
+bom_file_list = []
+out_filename = 'merged_bom.csv'
+for i,j in enumerate(sys.argv):
+    print i,j
+    print sys.argv[i]
+    if j == '-f':
+        out_filename=sys.argv[i+1] + ".csv"
+        break
+    bom_file_list.append(j)
+
+
 table = []
-CSV_NUM = len(sys.argv[1:])
+CSV_NUM = len(bom_file_list[1:])
 QUANTITY = CSV_NUM + QUANTITY
 REF = CSV_NUM + REF
 COMMENT_PLUS = CSV_NUM + COMMENT
@@ -87,7 +99,7 @@ pre_col = [0] * CSV_NUM
 index = 0
 key = ''
 
-for i in sys.argv[1:]:
+for i in bom_file_list[1:]:
     csv_table = csv.reader(open(i, 'rb'), delimiter=in_delimiter)
     for j in csv_table:
         #Check bom format
@@ -95,7 +107,7 @@ for i in sys.argv[1:]:
             continue
         if (j[0] == 'Quantity'):
             header = j
-            header = sys.argv[1:] + header
+            header = bom_file_list[1:] + header
             continue
 
         try:
@@ -211,7 +223,7 @@ for j in d.keys():
         print 'In mergebom:', ORDER_PATTERN
         sys.exit(0)
 
-with open('merged_bom.csv', 'wb') as csvfile:
+with open(out_filename, 'wb') as csvfile:
     data = csv.writer(csvfile, delimiter=out_delimiter)
     data.writerow(header)
     for p in ORDER_PATTERN:
