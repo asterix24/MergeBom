@@ -52,6 +52,10 @@ def fillTableRow(row, col1, col2, col3):
 
     return s
 
+orcad_bom = """
+Quantity\\tReference\\tPart\\tValue\\tcase\\tvoltage\\t1st\\t2st\\t2nd
+{Quantity}\\t{Reference}\\t{Part}\\t{Value}\\t{case}\\t{voltage}\\t{1st}\\t{2st}\\t{2nd}
+"""
 
 QUANTITY=0
 REF=1
@@ -61,6 +65,18 @@ DESCRIPTION=4
 
 if len(sys.argv) < 2:
     print sys.argv[0], " <csv file name1> <csv file name2> .."
+    print u"""
+Per importare bom di orcad:
+
+    - usa la stringa corretta
+    - clicca su "Open in Excel"
+    - salva come csv con comma
+    - per importare usa '-isc'
+    - e '-osc' per importare dirrettamente con google
+
+La stinga e':
+    %s
+    """ % orcad_bom
     exit (1)
 
 in_delimiter = ','
@@ -157,7 +173,11 @@ for i in bom_file_list[1:]:
 
 d = {}
 l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
+
 for g in l:
+    if re.findall("\S,[\S]+", g[REF]):
+        g[REF] = g[REF].replace(",", ", ")
+        print "........", g[REF].replace(",", ", ")
     c = re.search('^[a-zA-Z_]{1,3}', g[REF])
     key = c.group().upper()
 
@@ -173,6 +193,9 @@ for g in l:
     # Resistors, array, etc.
     if key in ['RN', 'R_G']:
         key = 'R'
+    # Connectors
+    if key in ['X' ]:
+        key = 'J'
     # Discarted ref
     if key in ['TP']:
         print "WARNING WE SKIP THIS KEY"
