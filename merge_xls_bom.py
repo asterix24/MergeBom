@@ -21,6 +21,10 @@ import csv
 import sys, os
 import re
 
+import xlrd
+import xlwt
+import datetime
+
 def fillRowCenter(row, s):
     r = row[:(len(row)/2) - (len(s)/2)] + s + row[(len(row)/2) + (len(s)/2):]
     if len(r) < len(row):
@@ -52,134 +56,76 @@ def fillTableRow(row, col1, col2, col3):
 
     return s
 
-orcad_bom = """
-Quantity\\tReference\\tPart\\tValue\\tcase\\tvoltage\\t1st\\t2st\\t2nd
-{Quantity}\\t{Reference}\\t{Part}\\t{Value}\\t{case}\\t{voltage}\\t{1st}\\t{2st}\\t{2nd}
-"""
-
-QUANTITY=0
-REF=1
-COMMENT=2
-FOOTPRINT=3
-DESCRIPTION=4
-
-def foo():
-    if len(sys.argv) < 2:
-        print sys.argv[0], " <csv file name1> <csv file name2> .."
-        print u"""
-    Per importare bom di orcad:
-
-        - usa la stringa corretta
-        - clicca su "Open in Excel"
-        - salva come csv con comma
-        - per importare usa '-isc'
-        - e '-osc' per importare dirrettamente con google
-
-    La stinga e':
-        %s
-        """ % orcad_bom
-        exit (1)
-
-    in_delimiter = ','
-    if '-isc' in sys.argv:
-        sys.argv.remove('-isc')
-        in_delimiter = ';'
-
-    out_delimiter = ','
-    if '-osc' in sys.argv:
-        sys.argv.remove('-osc')
-        out_delimiter = ';'
 
 
-    bom_file_list = []
-    out_filename = 'merged_bom.csv'
-    for i,j in enumerate(sys.argv):
-        print i,j
-        print sys.argv[i]
-        if j == '-f':
-            out_filename=sys.argv[i+1] + ".csv"
-            break
-        bom_file_list.append(j)
+valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description']
+connectors_designators = ['J', 'X', 'P', 'SIM']
+TOT_COUNT = 0
 
-
-    table = []
-    CSV_NUM = len(bom_file_list[1:])
-    QUANTITY = CSV_NUM + QUANTITY
-    REF = CSV_NUM + REF
-    COMMENT_PLUS = CSV_NUM + COMMENT
-    DESCRIPTION_PLUS= CSV_NUM + DESCRIPTION
-    FOOTPRINT_PLUS= CSV_NUM + FOOTPRINT
-
-    header = []
+def parse_data(bom_file_list):
+    FILES=len(bom_file_list)
     table_dict = {}
-    pre_col = [0] * CSV_NUM
-    index = 0
-    key = ''
 
-    for i in bom_file_list[1:]:
-        csv_table = csv.reader(open(i, 'rb'), delimiter=in_delimiter)
-        for j in csv_table:
-            #Check bom format
-            if (j == []):
-                continue
-            if (j[0] == 'Quantity'):
-                header = j
-                header = bom_file_list[1:] + header
-                continue
+    for index_file,i in enumerate(bom_file_list):
+        wb, data = read_xls(i)
 
-            try:
-                if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
-                    key = j[FOOTPRINT] + j[DESCRIPTION]
-                    print "Except: > ",key
-                else:
-                    key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
-            except IndexError:
-                print "INDEX ERROR"
-                print j
-                print "..........."
-                continue
+        header = filter(lambda x: x[0].lower() in valid_keys, data)
+        header = header[0] if len(header) else []
 
-            if key == '':
-                print "NULL KEY ERROR"
-                print j
-                print "..........."
-                continue
+        d = {}
+        for n,i in enumerate(header):
+            d[i.lower()] = n
+
+        QUANTITY=d['quantity']
+        DESIGNATOR=d['designator']
+        COMMENT=d['comment']
+        FOOTPRINT=d['footprint']
+        DESCRIPTION=d['description']
 
 
-            if key in table_dict:
-                table_dict[key][QUANTITY] += int(j[QUANTITY - CSV_NUM])
-                table_dict[key][REF] += ", " + j[REF - CSV_NUM]
+        data = filter(lambda x: x[0].lower() not in valid_keys, data)
+        for j in data:
+            if filter(lambda x: x, j):
+                key = ""
+                for i in connectors_designators:
+                    if i in j[DESIGNATOR].strip().upper():
+                        key = j[FOOTPRINT] + j[DESCRIPTION]
+                        print "!! Key Merged: > ",key
+                    else:
+                        key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
 
-                if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
-                    table_dict[key][COMMENT_PLUS] += ", " + j[COMMENT]
-                    table_dict[key][index] += int(j[QUANTITY - CSV_NUM])
-                else:
-                    table_dict[key][index] = j[QUANTITY - CSV_NUM]
-            else:
-                try:
-                    table_dict[key] = pre_col + j
-                    table_dict[key][QUANTITY] = int(table_dict[key][QUANTITY])
-                    table_dict[key][index] = int(j[QUANTITY - CSV_NUM])
-                except ValueError:
-                    print "FIRST COL NOT INT ERROR"
+                if key == '':
+                    print "~" * 80
+                    print "NULL KEY ERROR"
                     print j
-                    print "..........."
+                    print "~" * 80
                     continue
 
-                if (j[REF - CSV_NUM][0].lower() == 'j') or ('LED' in j[DESCRIPTION].upper()) or ('TACTILE' in j[DESCRIPTION].upper()):
-                    table_dict[key][COMMENT_PLUS] = j[COMMENT]
+                raw_row = [''] * (FILES + TOT_COUNT + 5)
 
-        index += 1
+                if table_dict.has_key(key):
+                    raw_row[TOT_COUNT] = int(j[QUANTITY]) + table_dict[key][TOT_COUNT]
+                else:
+                    raw_row[TOT_COUNT] = int(j[QUANTITY])
 
+                raw_row[index_file + 2] = int(j[QUANTITY])
+                raw_row[index_file + 2 + DESIGNATOR] = j[QUANTITY]
+                raw_row[index_file + 2 + COMMENT] = j[COMMENT]
+                raw_row[index_file + 2 + FOOTPRINT] = j[FOOTPRINT]
+                raw_row[index_file + 2 + DESCRIPTION] = j[DESCRIPTION]
 
+                table_dict[key] = raw_row
+
+    return table_dict
+
+def foo():
     d = {}
-    l = sorted(table_dict.values(), key=lambda ref: ref[REF][:2])
-
+    l = sorted(table_dict.values(), key=lambda ref: ref[DESCRIPTION][:2])
     for g in l:
-        if re.findall("\S,[\S]+", g[REF]):
-            g[REF] = g[REF].replace(",", ", ")
-            print "........", g[REF].replace(",", ", ")
-        c = re.search('^[a-zA-Z_]{1,3}', g[REF])
+        if re.findall("\S,[\S]+", g[DESCRIPTION]):
+            g[DESCRIPTION] = g[DESCRIPTION].replace(",", ", ")
+            print "........", g[DESCRIPTION].replace(",", ", ")
+        c = re.search('^[a-zA-Z_]{1,3}', g[DESCRIPTION])
         key = c.group().upper()
 
         # Buttons and spacer
@@ -209,7 +155,7 @@ def foo():
         else:
             d[key] = [g]
 
-        print 'Group Key:',c.group(), g[REF]
+        print 'Group Key:',c.group(), g[DESCRIPTION]
 
     SEPARATOR_NUM = len(l[0]) - 1
     ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
@@ -229,7 +175,7 @@ def foo():
     }
     #Add separator from each group of components.
     for i in ORDER_PATTERN_NAMES.keys():
-        ORDER_PATTERN_NAMES[i] = (([''] * REF) + ORDER_PATTERN_NAMES[i] + ([''] * (SEPARATOR_NUM - REF)))
+        ORDER_PATTERN_NAMES[i] = (([''] * DESCRIPTION) + ORDER_PATTERN_NAMES[i] + ([''] * (SEPARATOR_NUM - DESCRIPTION)))
         print ORDER_PATTERN_NAMES[i]
 
 
@@ -291,56 +237,62 @@ def foo():
     print
 
 
+HEADER_ROW = 0
+CELL_WIDTH = 4000
+
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
+
+def xldate_as_datetime(book, xldate):
+    xldate_as_datetime = datetime.datetime(*xlrd.xldate_as_tuple(xldate, book.datemode))
+    logger.info('datetime: %s' % xldate_as_datetime)
+    return xldate_as_datetime
+
+def write_xls(items, handler, sheetname="Elenco"):
+    book = xlwt.Workbook(encoding='utf-8')
+    sheet = book.add_sheet(sheetname)
+
+    for colum, item in enumerate(items):
+        sheet.write(HEADER_ROW, colum, str(item))
+        sheet.col(colum).width = CELL_WIDTH
+
+    book.save(handler)
+   
+def read_xls(handler):
+    wb = xlrd.open_workbook(handler)
+    data = []
+
+    for s in wb.sheets():
+        logger.debug('Sheet:',s.name, s.ncols, s.nrows)
+        for row in range(s.nrows):
+            values = []
+            for col in range(s.ncols):
+                curr = s.cell(row,col)
+                value = ""
+                try:
+                    value = str(int(curr.value))
+                except (TypeError, ValueError):
+                    value = unicode(curr.value)
+
+                values.append(value)
+            data.append(values)
+
+        return wb, data
+
+
 
 if __name__ == "__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
-    parser.add_option("-d", "--dirname", dest="dir_name", default='tests', help="Tests directory")
-    parser.add_option("-b", "--board", dest="board", default='',
-            help="Show all test only for specified board name [slsc, slsc-ht, sp, hwlded]")
-    parser.add_option("-a", "--all", action="store_true", dest="verbose", default=False,
-            help="Display all info.")
-
     (options, args) = parser.parse_args()
 
-    if options.verbose:
-        print options
-
     if len(sys.argv) < 2:
-        print sys.argv[0], " <csv file name1> <csv file name2> .."
-        print u"""
-    Per importare bom di orcad:
-
-        - usa la stringa corretta
-        - clicca su "Open in Excel"
-        - salva come csv con comma
-        - per importare usa '-isc'
-        - e '-osc' per importare dirrettamente con google
-
-    La stinga e':
-        %s
-        """ % orcad_bom
+        print sys.argv[0], " <xls file name1> <xls file name2> .."
         exit (1)
 
-    in_delimiter = ','
-    if '-isc' in sys.argv:
-        sys.argv.remove('-isc')
-        in_delimiter = ';'
+    out_filename = 'merged_bom.xls'
+    print args
+    print parse_data(args)
 
-    out_delimiter = ','
-    if '-osc' in sys.argv:
-        sys.argv.remove('-osc')
-        out_delimiter = ';'
-
-
-    bom_file_list = []
-    out_filename = 'merged_bom.csv'
-    for i,j in enumerate(sys.argv):
-        print i,j
-        print sys.argv[i]
-        if j == '-f':
-            out_filename=sys.argv[i+1] + ".csv"
-            break
-
-        bom_file_list.append(j)
