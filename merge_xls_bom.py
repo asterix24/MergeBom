@@ -74,6 +74,7 @@ def parse_data(bom_file_list):
     STAT_FIELDS = len([CATEGORY, TOT_COUNT])
 
     table_dict = {}
+    header = []
 
     for index_file,i in enumerate(bom_file_list):
         wb, data = read_xls(i)
@@ -169,6 +170,9 @@ def parse_data(bom_file_list):
 
                     table_dict[key] = raw_row
 
+            file_list = map(os.path.basename, bom_file_list)
+            table_dict['header'] = ["Type", "Tot.Qty"] + file_list + header
+
     return table_dict
 
 
@@ -259,18 +263,18 @@ def xldate_as_datetime(book, xldate):
     logger.info('datetime: %s' % xldate_as_datetime)
     return xldate_as_datetime
 
-def write_xls(items, handler, sheetname="BOM"):
+def write_xls(header, items, handler, sheetname="BOM"):
 
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
     worksheet = workbook.add_worksheet()
 
-    row = 0
-    col = 0
+    for n, i in enumerate(header):
+        worksheet.write(0, n, i)
     # Iterate over the data and write it out row by row.
     for r, rows in enumerate(items):
         for c, col in enumerate(rows):
-            worksheet.write(r, c, col)
+            worksheet.write(r + 1, c, col)
 
     workbook.close()
 
@@ -313,5 +317,7 @@ if __name__ == "__main__":
     for i in data.values():
         print len(i),i
 
-    write_xls(data.values(), "/tmp/tmp.xlsx")
+    header = data['header']
+    del data['header']
+    write_xls(header, data.values(), "/tmp/tmp.xlsx")
 
