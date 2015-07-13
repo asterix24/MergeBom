@@ -181,31 +181,44 @@ def parse_data(bom_file_list):
 
 ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
 ORDER_PATTERN_NAMES = {
-    'J':['* J Connectors *'],
-    'S':['* S Mechanical parts and buttons *'],
-    'F':['* F Fuses *'],
-    'R':['* R Resistors *'],
-    'C':['* C Capacitors *'],
-    'D':['* D Diodes *'],
-    'DZ':['* DZ Zener, Schottky, Transil *'],
-    'L': ['* L Inductors, chokes *'],
-    'Q': ['* Q Transistors *'],
-    'TR':['* TR Transformers *'],
-    'Y': ['* Y Cristal, quarz, oscillators*'],
-    'U': ['* U IC *']
+    'J':  'J Connectors:',
+    'S':  'S Mechanical parts and buttons:',
+    'F':  'F Fuses:',
+    'R':  'R Resistors:',
+    'C':  'C Capacitors:',
+    'D':  'D Diodes:',
+    'DZ': 'DZ Zener, Schottky, Transil:',
+    'L':  'L Inductors, chokes:',
+    'Q':  'Q Transistors:',
+    'TR': 'TR Transformers:',
+    'Y':  'Y Cristal, quarz, oscillator:',
+    'U':  'U IC:',
 }
 
 
-def write_xls(header, items, handler, sheetname="BOM"):
+def write_xls(header, items, file_list, handler, sheetname="BOM"):
+    STR_ROW = 1
+    HDR_ROW = 0
+    STR_COL = 0
 
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
     worksheet = workbook.add_worksheet()
 
+    def_fmt = workbook.add_format()
+    def_fmt.set_text_wrap()
+
     tot_fmt = workbook.add_format({
         'bold': True,
         'align': 'center',
         'bg_color': 'lime'})
+
+    info_fmt = workbook.add_format({
+        'bold': True,
+        'font_size':11,
+        'align': 'left',})
+
+    hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
 
     hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
 
@@ -216,27 +229,66 @@ def write_xls(header, items, handler, sheetname="BOM"):
         'valign': 'vcenter',
         'fg_color': 'yellow'})
 
-    for n, i in enumerate(header):
-        worksheet.write(0, n, i, hdr_fmt)
+    # Time info
+    dt = datetime.datetime.now()
+    info = [
+        'Bill of Materials',
+        '',
+        'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+        '',
+        '',
+        'Project:',
+        'Revision:',
+        '',
+        'BOM files:',
+    ]
+    for i in file_list:
+        info.append("- %s" % i)
 
+    row = STR_ROW
+    for i in info:
+        worksheet.merge_range('A%s:O%s' % (row, row), i, info_fmt)
+        row += 1
+
+    # Header info
+    for n, i in enumerate(header):
+        worksheet.write(row, n, i, hdr_fmt)
+    row += 1
 
     l = []
-    row = 1
+    row = HDR_ROW + row
+    stats = {}
     for key in ORDER_PATTERN:
         m = filter(lambda x: x[0] == key, items)
         m = map(lambda x: x[1:], m)
+
         if m:
             row += 1
-            worksheet.merge_range('A%s:G%s' % (row, row), ORDER_PATTERN_NAMES[key][0], merge_fmt)
+            worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
         for rows in m:
             for c, col in enumerate(rows):
                 if c == 0:
-                    worksheet.write(row, 0, col, tot_fmt)
+                    worksheet.write(row, STR_COL, col, tot_fmt)
                 else:
-                    worksheet.write(row, c, col)
+                    worksheet.write(row, c, col, def_fmt)
+
+                if stats.has_key(key):
+                    stats[key] += 1
+                else:
+                    stats[key] = 1
+
             row += 1
 
     workbook.close()
+
+    tot = 0
+    for i in stats.values():
+        tot += i
+
+    stats['total'] = i
+    print stats
+
+    return stats
 
 def read_xls(handler):
     wb = xlrd.open_workbook(handler)
@@ -278,7 +330,7 @@ if __name__ == "__main__":
         file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
         file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
-    print "file list........", file_list
     header, data = parse_data(file_list)
-    write_xls(header, data, options.out_filename)
+    file_list = map(os.path.basename, file_list)
+    write_xls(header, data, file_list, options.out_filename)
 
