@@ -12,7 +12,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
-# Copyright 2012 Daniele Basile <asterix24@gmail.com>
+# Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -181,18 +181,18 @@ def parse_data(bom_file_list):
 
 ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
 ORDER_PATTERN_NAMES = {
-    'J':  'J Connectors:',
-    'S':  'S Mechanical parts and buttons:',
-    'F':  'F Fuses:',
-    'R':  'R Resistors:',
-    'C':  'C Capacitors:',
-    'D':  'D Diodes:',
-    'DZ': 'DZ Zener, Schottky, Transil:',
-    'L':  'L Inductors, chokes:',
-    'Q':  'Q Transistors:',
-    'TR': 'TR Transformers:',
-    'Y':  'Y Cristal, quarz, oscillator:',
-    'U':  'U IC:',
+    'J':  'J  Connectors',
+    'S':  'S  Mechanical parts and buttons',
+    'F':  'F  Fuses',
+    'R':  'R  Resistors',
+    'C':  'C  Capacitors',
+    'D':  'D  Diodes',
+    'DZ': 'DZ Zener, Schottky, Transil',
+    'L':  'L  Inductors, chokes',
+    'Q':  'Q  Transistors',
+    'TR': 'TR Transformers',
+    'Y':  'Y  Cristal, quarz, oscillator',
+    'U':  'U  IC',
 }
 
 
@@ -286,7 +286,6 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
         tot += i
 
     stats['total'] = i
-    print stats
 
     return stats
 
@@ -332,5 +331,17 @@ if __name__ == "__main__":
 
     header, data = parse_data(file_list)
     file_list = map(os.path.basename, file_list)
-    write_xls(header, data, file_list, options.out_filename)
+    stats = write_xls(header, data, file_list, options.out_filename)
+
+    print
+    print
+    print ":-" * 40
+    for i in ORDER_PATTERN:
+        if stats.has_key(i):
+            print "%5s %s" % (stats[i], ORDER_PATTERN_NAMES[i])
+
+    print "=" * 80
+    print "Total: %s" % (stats['total'])
+    print ":-" * 40
+    
 
