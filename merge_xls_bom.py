@@ -22,7 +22,7 @@ import sys, os
 import re
 
 import xlrd
-import xlwt
+import xlsxwriter
 import datetime
 
 def fillRowCenter(row, s):
@@ -60,10 +60,19 @@ def fillTableRow(row, col1, col2, col3):
 
 valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description']
 connectors_designators = ['J', 'X', 'P', 'SIM']
-TOT_COUNT = 0
 
 def parse_data(bom_file_list):
-    FILES=len(bom_file_list)
+    CATEGORY = 0
+    TOT_COUNT = 1
+    XLS_DSG = 0
+    XLS_COM = 1
+    XLS_FOT = 2
+    XLS_DSC = 3
+
+    FILES = len(bom_file_list)
+    FIELDS = len(valid_keys)
+    STAT_FIELDS = len([CATEGORY, TOT_COUNT])
+
     table_dict = {}
 
     for index_file,i in enumerate(bom_file_list):
@@ -85,6 +94,7 @@ def parse_data(bom_file_list):
 
         data = filter(lambda x: x[0].lower() not in valid_keys, data)
         for j in data:
+            FIX_LEN = abs((STAT_FIELDS + FILES + FIELDS) - len(j))
             if filter(lambda x: x, j):
                 key = ""
                 for i in connectors_designators:
@@ -101,62 +111,69 @@ def parse_data(bom_file_list):
                     print "~" * 80
                     continue
 
-                raw_row = [''] * (FILES + TOT_COUNT + 5)
+                # Calcolo il tipo di componente.
+
+                if re.findall("\S,[\S]+", j[DESIGNATOR]):
+                    j[DESIGNATOR] = j[DESIGNATOR].replace(",", ", ")
+
+                c = re.search('^[a-zA-Z_]{1,3}', j[DESIGNATOR])
+                group_key = ''
+                if c is not None:
+                    group_key = c.group().upper()
+                    # Buttons and spacer
+                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
+                        group_key = 'S'
+                    # Fuses
+                    if group_key in ['G']:
+                        group_key = 'F'
+                    # Tranformer
+                    if group_key in ['T' ]:
+                        group_key = 'TR'
+                    # Resistors, array, etc.
+                    if group_key in ['RN', 'R_G']:
+                        group_key = 'R'
+                    # Connectors
+                    if group_key in ['X', 'P', 'SIM']:
+                        group_key = 'J'
+                    # Discarted ref
+                    if group_key in ['TP']:
+                        print "WARNING WE SKIP THIS KEY"
+                        print 'key [%s]' % group_key
+                        print '.........'
+                        continue
+                else:
+                    print "GROUP key not FOUND!"
+                    print j
+                    sys.exit(1)
+
+                raw_row = [''] * (STAT_FIELDS + FILES + FIELDS + FIX_LEN)
+                raw_row[CATEGORY] = group_key
 
                 if table_dict.has_key(key):
-                    raw_row[TOT_COUNT] = int(j[QUANTITY]) + table_dict[key][TOT_COUNT]
+                    raw_row = table_dict[key]
+
+                    raw_row[TOT_COUNT] = int(j[QUANTITY]) + int(table_dict[key][TOT_COUNT])
+                    raw_row[STAT_FIELDS + index_file]      = int(j[QUANTITY])
+                    raw_row[STAT_FIELDS + FILES + XLS_DSG] = ", ".join([j[DESIGNATOR], table_dict[key][STAT_FIELDS + FILES + XLS_DSG]])
+                    raw_row[STAT_FIELDS + FILES + XLS_COM] = j[COMMENT]
+                    raw_row[STAT_FIELDS + FILES + XLS_FOT] = j[FOOTPRINT]
+                    raw_row[STAT_FIELDS + FILES + XLS_DSC] = j[DESCRIPTION]
+
                 else:
                     raw_row[TOT_COUNT] = int(j[QUANTITY])
+                    raw_row[STAT_FIELDS + index_file]      = int(j[QUANTITY])
+                    raw_row[STAT_FIELDS + FILES + XLS_DSG] = j[DESIGNATOR]
+                    raw_row[STAT_FIELDS + FILES + XLS_COM] = j[COMMENT]
+                    raw_row[STAT_FIELDS + FILES + XLS_FOT] = j[FOOTPRINT]
+                    raw_row[STAT_FIELDS + FILES + XLS_DSC] = j[DESCRIPTION]
 
-                raw_row[index_file + 2] = int(j[QUANTITY])
-                raw_row[index_file + 2 + DESIGNATOR] = j[QUANTITY]
-                raw_row[index_file + 2 + COMMENT] = j[COMMENT]
-                raw_row[index_file + 2 + FOOTPRINT] = j[FOOTPRINT]
-                raw_row[index_file + 2 + DESCRIPTION] = j[DESCRIPTION]
-
-                table_dict[key] = raw_row
+                    table_dict[key] = raw_row
 
     return table_dict
 
+
+
 def foo():
-    d = {}
-    l = sorted(table_dict.values(), key=lambda ref: ref[DESCRIPTION][:2])
-    for g in l:
-        if re.findall("\S,[\S]+", g[DESCRIPTION]):
-            g[DESCRIPTION] = g[DESCRIPTION].replace(",", ", ")
-            print "........", g[DESCRIPTION].replace(",", ", ")
-        c = re.search('^[a-zA-Z_]{1,3}', g[DESCRIPTION])
-        key = c.group().upper()
-
-        # Buttons and spacer
-        if key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
-            key = 'S'
-        # Fuses
-        if key in ['G']:
-            key = 'F'
-        # Tranformer
-        if key in ['T' ]:
-            key = 'TR'
-        # Resistors, array, etc.
-        if key in ['RN', 'R_G']:
-            key = 'R'
-        # Connectors
-        if key in ['X', 'P', 'SIM']:
-            key = 'J'
-        # Discarted ref
-        if key in ['TP']:
-            print "WARNING WE SKIP THIS KEY"
-            print 'key [%s]' % key
-            print '.........'
-            continue
-
-        if d.has_key(key):
-            d[key].append(g)
-        else:
-            d[key] = [g]
-
-        print 'Group Key:',c.group(), g[DESCRIPTION]
-
     SEPARATOR_NUM = len(l[0]) - 1
     ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
     ORDER_PATTERN_NAMES = {
@@ -193,14 +210,7 @@ def foo():
             print 'In mergebom:', ORDER_PATTERN
             sys.exit(0)
 
-    with open(out_filename, 'wb') as csvfile:
-        data = csv.writer(csvfile, delimiter=out_delimiter)
-        data.writerow(header)
-        for p in ORDER_PATTERN:
-            if d.has_key(p):
-                data.writerow(ORDER_PATTERN_NAMES[p])
-                for i in d[p]:
-                    data.writerow(i)
+def foo1():
 
     print
     print
@@ -249,16 +259,21 @@ def xldate_as_datetime(book, xldate):
     logger.info('datetime: %s' % xldate_as_datetime)
     return xldate_as_datetime
 
-def write_xls(items, handler, sheetname="Elenco"):
-    book = xlwt.Workbook(encoding='utf-8')
-    sheet = book.add_sheet(sheetname)
+def write_xls(items, handler, sheetname="BOM"):
 
-    for colum, item in enumerate(items):
-        sheet.write(HEADER_ROW, colum, str(item))
-        sheet.col(colum).width = CELL_WIDTH
+    # Create a workbook and add a worksheet.
+    workbook = xlsxwriter.Workbook(handler)
+    worksheet = workbook.add_worksheet()
 
-    book.save(handler)
-   
+    row = 0
+    col = 0
+    # Iterate over the data and write it out row by row.
+    for r, rows in enumerate(items):
+        for c, col in enumerate(rows):
+            worksheet.write(r, c, col)
+
+    workbook.close()
+
 def read_xls(handler):
     wb = xlrd.open_workbook(handler)
     data = []
@@ -294,5 +309,9 @@ if __name__ == "__main__":
 
     out_filename = 'merged_bom.xls'
     print args
-    print parse_data(args)
+    data = parse_data(args)
+    for i in data.values():
+        print len(i),i
+
+    write_xls(data.values(), "/tmp/tmp.xlsx")
 
