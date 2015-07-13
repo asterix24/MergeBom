@@ -171,97 +171,30 @@ def parse_data(bom_file_list):
                     table_dict[key] = raw_row
 
             file_list = map(os.path.basename, bom_file_list)
-            table_dict['header'] = ["Type", "Tot.Qty"] + file_list + header
+            table_dict['header'] = ["Tot.Qty"] + file_list + header
 
-    return table_dict
-
-
-
-def foo():
-    SEPARATOR_NUM = len(l[0]) - 1
-    ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
-    ORDER_PATTERN_NAMES = {
-        'J':['* J Connectors *'],
-        'S':['* S Mechanical parts and buttons *'],
-        'F':['* F Fuses *'],
-        'R':['* R Resistors *'],
-        'C':['* C Capacitors *'],
-        'D':['* D Diodes *'],
-        'DZ':['* DZ Zener, Schottky, Transil *'],
-        'L': ['* L Inductors, chokes *'],
-        'Q': ['* Q Transistors *'],
-        'TR':['* TR Transformers *'],
-        'Y': ['* Y Cristal, quarz, oscillators*'],
-        'U': ['* U IC *']
-    }
-    #Add separator from each group of components.
-    for i in ORDER_PATTERN_NAMES.keys():
-        ORDER_PATTERN_NAMES[i] = (([''] * DESCRIPTION) + ORDER_PATTERN_NAMES[i] + ([''] * (SEPARATOR_NUM - DESCRIPTION)))
-        print ORDER_PATTERN_NAMES[i]
+    header = table_dict['header']
+    del table_dict['header']
+    return header, table_dict.values()
 
 
-    for k in d.keys():
-        if k in ['D', 'J', 'S', 'U']:
-            d[k] = sorted(d[k], key=lambda ref: ref[DESCRIPTION_PLUS])
-        else:
-            d[k] = sorted(d[k], key=lambda ref: ref[COMMENT_PLUS])
 
-    #Check missing group code.
-    for j in d.keys():
-        if j not in ORDER_PATTERN:
-            print 'Missing order pattern key: \"%s\"' % j
-            print 'In BOM:', d.keys()
-            print 'In mergebom:', ORDER_PATTERN
-            sys.exit(0)
+ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+ORDER_PATTERN_NAMES = {
+    'J':['* J Connectors *'],
+    'S':['* S Mechanical parts and buttons *'],
+    'F':['* F Fuses *'],
+    'R':['* R Resistors *'],
+    'C':['* C Capacitors *'],
+    'D':['* D Diodes *'],
+    'DZ':['* DZ Zener, Schottky, Transil *'],
+    'L': ['* L Inductors, chokes *'],
+    'Q': ['* Q Transistors *'],
+    'TR':['* TR Transformers *'],
+    'Y': ['* Y Cristal, quarz, oscillators*'],
+    'U': ['* U IC *']
+}
 
-def foo1():
-
-    print
-    print
-    print fillRowCenter("=" * 80, " Final Report ")
-    print
-    print
-
-    total = 0
-    recap = {}
-    for p in ORDER_PATTERN:
-        if d.has_key(p):
-            s = ORDER_PATTERN_NAMES[p][2]
-            s = s.replace('*','')
-            print
-            print fillRowCenter("*" * 80, s)
-            recap[s] = 0
-            for i in d[p]:
-                if i[QUANTITY] != '':
-                    total += i[QUANTITY]
-                    recap[s] += i[QUANTITY]
-                    print fillTableRow(" " * 80, "n.%d" % i[QUANTITY], i[COMMENT_PLUS], i[FOOTPRINT_PLUS])
-
-
-    print
-    print
-    print "~" * 10, "Total", "~" *10
-    for r in recap.keys():
-        print "%4d: %s" % (recap[r], r)
-
-    print "-" * 24
-    print "%4d Total components" % total
-    print "~" * 24
-    print
-    print
-
-
-HEADER_ROW = 0
-CELL_WIDTH = 4000
-
-import logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
-
-def xldate_as_datetime(book, xldate):
-    xldate_as_datetime = datetime.datetime(*xlrd.xldate_as_tuple(xldate, book.datemode))
-    logger.info('datetime: %s' % xldate_as_datetime)
-    return xldate_as_datetime
 
 def write_xls(header, items, handler, sheetname="BOM"):
 
@@ -269,12 +202,39 @@ def write_xls(header, items, handler, sheetname="BOM"):
     workbook = xlsxwriter.Workbook(handler)
     worksheet = workbook.add_worksheet()
 
+    tot_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'center',
+        'bg_color': 'lime'})
+
+    hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
+
+    merge_fmt = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': 'yellow'})
+
     for n, i in enumerate(header):
-        worksheet.write(0, n, i)
-    # Iterate over the data and write it out row by row.
-    for r, rows in enumerate(items):
-        for c, col in enumerate(rows):
-            worksheet.write(r + 1, c, col)
+        worksheet.write(0, n, i, hdr_fmt)
+
+
+    l = []
+    row = 1
+    for key in ORDER_PATTERN:
+        m = filter(lambda x: x[0] == key, items)
+        m = map(lambda x: x[1:], m)
+        if m:
+            row += 1
+            worksheet.merge_range('A%s:G%s' % (row, row), ORDER_PATTERN_NAMES[key][0], merge_fmt)
+        for rows in m:
+            for c, col in enumerate(rows):
+                if c == 0:
+                    worksheet.write(row, 0, col, tot_fmt)
+                else:
+                    worksheet.write(row, c, col)
+            row += 1
 
     workbook.close()
 
@@ -283,7 +243,6 @@ def read_xls(handler):
     data = []
 
     for s in wb.sheets():
-        logger.debug('Sheet:',s.name, s.ncols, s.nrows)
         for row in range(s.nrows):
             values = []
             for col in range(s.ncols):
@@ -299,25 +258,27 @@ def read_xls(handler):
 
         return wb, data
 
-
+import glob
 
 if __name__ == "__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
+    parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
+    parser.add_option("-d", "--dirname", dest="dir_name", default='.', help="BOM directory's")
     (options, args) = parser.parse_args()
+    print args
 
     if len(sys.argv) < 2:
         print sys.argv[0], " <xls file name1> <xls file name2> .."
         exit (1)
 
-    out_filename = 'merged_bom.xls'
-    print args
-    data = parse_data(args)
-    for i in data.values():
-        print len(i),i
+    file_list = args
+    if options.dir_name and not args:
+        file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
+        file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
-    header = data['header']
-    del data['header']
-    write_xls(header, data.values(), "/tmp/tmp.xlsx")
+    print "file list........", file_list
+    header, data = parse_data(file_list)
+    write_xls(header, data, options.out_filename)
 
