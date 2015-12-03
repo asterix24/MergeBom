@@ -32,11 +32,24 @@ class TestMergeBom(unittest.TestCase):
 
     def test_merge(self):
         print "merge"
-        file_list = ["test/bom.xls"]
-        header, data = parse_data(file_list)
-        file_list = map(os.path.basename, file_list)
-        stats = write_xls(header, data, file_list, "/tmp/uno.xls")
-        print stats
+        file_list = [
+            "test/bom_uno.xls",
+            "test/bom_due.xls",
+            "test/bom_tre.xls",
+            "test/bom_quattro.xls",
+            "test/test.xlsx"
+        ]
+
+
+        d = import_data(file_list)
+        d = group_items(d)
+        d = grouped_count(d)
+        #header, data = parse_data(file_list)
+        #file_list = map(os.path.basename, file_list)
+        #stats = write_xls(header, data, file_list, "/tmp/uno.xls")
+        for i in d.keys():
+            for j in d[i]:
+                print j
 
 if __name__ == "__main__":
     #if len(sys.argv) < 2:

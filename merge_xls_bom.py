@@ -56,136 +56,73 @@ def fillTableRow(row, col1, col2, col3):
 
     return s
 
+FILENAME    = 0
+QUANTITY    = 1
+DESIGNATOR  = 2
+DESCRIPTION = 3
+COMMENT     = 4
+FOOTPRINT   = 5
+FILES = {}
 
+valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description', u'libref']
 
-valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description']
-connectors_designators = ['J', 'X', 'P', 'SIM']
-
-def parse_data(bom_file_list):
-    CATEGORY = 0
-    TOT_COUNT = 1
-    XLS_DSG = 0
-    XLS_COM = 1
-    XLS_FOT = 2
-    XLS_DSC = 3
-
-    FILES = len(bom_file_list)
-    FIELDS = len(valid_keys)
-    STAT_FIELDS = len([CATEGORY, TOT_COUNT])
-
+def import_data(bom_file_list):
     table_dict = {}
-    header = []
+    header = {}
 
-    for index_file,i in enumerate(bom_file_list):
-        wb, data = read_xls(i)
+    for index_file, file_name in enumerate(bom_file_list):
+        wb, data = read_xls(file_name)
+        FILES[os.path.basename(file_name)] = index_file
 
-        header = filter(lambda x: x[0].lower() in valid_keys, data)
-        header = header[0] if len(header) else []
+        # Get all header keys
+        for row in data:
+            for n, item in enumerate(row):
+                if item.lower() in valid_keys:
+                    header[item.lower()] = n
 
-        d = {}
-        for n,i in enumerate(header):
-            d[i.lower()] = n
-
-        QUANTITY=d['quantity']
-        DESIGNATOR=d['designator']
-        COMMENT=d['comment']
-        FOOTPRINT=d['footprint']
-        DESCRIPTION=d['description']
-
-
-        data = filter(lambda x: x[0].lower() not in valid_keys, data)
-        for j in data:
-            FIX_LEN = abs((STAT_FIELDS + FILES + FIELDS) - len(j))
-            if filter(lambda x: x, j):
-                key = ""
-                for i in connectors_designators:
-                    if i in j[DESIGNATOR].strip().upper():
-                        key = j[FOOTPRINT] + j[DESCRIPTION]
-                        print "!! Key Merged: > ",key
-                    else:
-                        key = j[COMMENT] + j[FOOTPRINT] + j[DESCRIPTION]
-
-                if key == '':
-                    print "~" * 80
-                    print "NULL KEY ERROR"
-                    print j
-                    print "~" * 80
-                    continue
-
-                # Calcolo il tipo di componente.
-
-                if re.findall("\S,[\S]+", j[DESIGNATOR]):
-                    j[DESIGNATOR] = j[DESIGNATOR].replace(",", ", ")
-
-                c = re.search('^[a-zA-Z_]{1,3}', j[DESIGNATOR])
-                group_key = ''
-                if c is not None:
-                    group_key = c.group().upper()
-                    # Buttons and spacer
-                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
-                        group_key = 'S'
-                    # Fuses
-                    if group_key in ['G']:
-                        group_key = 'F'
-                    # Tranformer
-                    if group_key in ['T' ]:
-                        group_key = 'TR'
-                    # Resistors, array, etc.
-                    if group_key in ['RN', 'R_G']:
-                        group_key = 'R'
-                    # Connectors
-                    if group_key in ['X', 'P', 'SIM']:
-                        group_key = 'J'
-                    # Discarted ref
-                    if group_key in ['TP']:
-                        print "WARNING WE SKIP THIS KEY"
-                        print 'key [%s]' % group_key
-                        print '.........'
-                        continue
-                else:
-                    print "GROUP key not FOUND!"
-                    print j
-                    sys.exit(1)
-
-                raw_row = [''] * (STAT_FIELDS + FILES + FIELDS + FIX_LEN)
-                raw_row[CATEGORY] = group_key
-
-                if table_dict.has_key(key):
-                    raw_row = table_dict[key]
-
-                    raw_row[TOT_COUNT] = int(j[QUANTITY]) + int(table_dict[key][TOT_COUNT])
-                    raw_row[STAT_FIELDS + index_file]      = int(j[QUANTITY])
-                    raw_row[STAT_FIELDS + FILES + XLS_DSG] = ", ".join([j[DESIGNATOR], table_dict[key][STAT_FIELDS + FILES + XLS_DSG]])
-                    raw_row[STAT_FIELDS + FILES + XLS_COM] = j[COMMENT]
-                    raw_row[STAT_FIELDS + FILES + XLS_FOT] = j[FOOTPRINT]
-                    raw_row[STAT_FIELDS + FILES + XLS_DSC] = j[DESCRIPTION]
-
-                else:
-                    raw_row[TOT_COUNT] = int(j[QUANTITY])
-                    raw_row[STAT_FIELDS + index_file]      = int(j[QUANTITY])
-                    raw_row[STAT_FIELDS + FILES + XLS_DSG] = j[DESIGNATOR]
-                    raw_row[STAT_FIELDS + FILES + XLS_COM] = j[COMMENT]
-                    raw_row[STAT_FIELDS + FILES + XLS_FOT] = j[FOOTPRINT]
-                    raw_row[STAT_FIELDS + FILES + XLS_DSC] = j[DESCRIPTION]
-
-                    table_dict[key] = raw_row
-
-            file_list = map(os.path.basename, bom_file_list)
-            table_dict['header'] = ["Tot.Qty"] + file_list + header
-
-    header = table_dict['header']
-    del table_dict['header']
-    return header, table_dict.values()
+        quantity    = header['quantity']
+        designator  = header['designator']
+        comment     = header['comment']
+        footprint   = header['footprint']
+        description = header['description']
 
 
+        for row in data:
+            # skip header
+            if row[designator].lower() == 'designator':
+                continue
 
-ORDER_PATTERN = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+            if filter(lambda x: x, row):
+                # Fix designator field, we want all designator separated by
+                # comma followed by space. In this way excel could resize row
+                # cell correctly
+                if re.findall("\S,[\S]+", row[designator]):
+                    row[designator] = row[designator].replace(",", ", ")
+
+                # Explode designator field to have one component for line
+                d = row[designator].split(',')
+                for reference in d:
+                    r = reference.strip()
+                    if r:
+                        table_dict[r] = [os.path.basename(file_name), 1, reference, row[description],
+                            row[comment], row[footprint]]
+
+    return table_dict
+
+CAP = 'C'
+
+ORDER_PATTERN = [
+    'J', 'S', 'F','R',
+    CAP,
+    'D','DZ','L', 'Q','TR','Y', 'U'
+]
+
 ORDER_PATTERN_NAMES = {
     'J':  'J  Connectors',
     'S':  'S  Mechanical parts and buttons',
     'F':  'F  Fuses',
     'R':  'R  Resistors',
-    'C':  'C  Capacitors',
+     CAP :  'C  Capacitors',
     'D':  'D  Diodes',
     'DZ': 'DZ Zener, Schottky, Transil',
     'L':  'L  Inductors, chokes',
@@ -194,6 +131,79 @@ ORDER_PATTERN_NAMES = {
     'Y':  'Y  Cristal, quarz, oscillator',
     'U':  'U  IC',
 }
+
+valid_group_key = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+
+def group_items(table_dict):
+    grouped_items = {}
+    for designator in table_dict.keys():
+        # Grop found designator componets by its category
+        c = re.search('^[a-zA-Z_]{1,3}', designator)
+        group_key = ''
+        if c is not None:
+            group_key = c.group().upper()
+            # Buttons and spacer
+            if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
+                group_key = 'S'
+            # Fuses
+            if group_key in ['G']:
+                group_key = 'F'
+            # Tranformer
+            if group_key in ['T' ]:
+                group_key = 'TR'
+            # Resistors, array, etc.
+            if group_key in ['RN', 'R_G']:
+                group_key = 'R'
+            # Connectors
+            if group_key in ['X', 'P', 'SIM']:
+                group_key = 'J'
+            # Discarted ref
+            if group_key in ['TP']:
+                print "WARNING WE SKIP THIS KEY"
+                print 'key [%s]' % group_key
+                print "!" * 80
+                continue
+
+            if group_key not in valid_group_key:
+                print "GROUP key not FOUND!"
+                print c.group(), designator, table_dict[designator]
+                print "~" * 80
+                sys.exit(1)
+
+            if grouped_items.has_key(group_key):
+                grouped_items[group_key].append(table_dict[designator])
+            else:
+                grouped_items[group_key] = [table_dict[designator]]
+        else:
+            print "GROUP key not FOUND!"
+            print designator
+            print "~" * 80
+            sys.exit(1)
+
+    return grouped_items
+
+
+# ['bom_due.xls', 1, u'U3000', u'Lan transformer', u'LAN TRANFORMER WE 7490100111A', u'LAN_TR_1.27MM_SMD']
+# ['test.xlsx', 1, u'U2015', u'DC/DC switch converter', u'LM22671MR-ADJ', u'SOIC8_PAD']
+# ['test.xlsx', 1, u'U2002', u'Dual Low-Power Operational Amplifier', u'LM2902', u'SOIC14']
+# ['bom_uno.xls', 1, u'U7', u'Temperature sensor', u'LM75BIM', u'SOIC8']
+
+def grouped_count(grouped_items):
+    table = {}
+    for category in valid_group_key:
+        if grouped_items.has_key(category):
+            tmp = {}
+            for item in grouped_items[category]:
+                key = item[FILENAME] + item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+
+                if tmp.has_key(key):
+                    tmp[key][QUANTITY] += 1
+                else:
+                    tmp[key] = item
+
+            table[category] = tmp.values()
+
+    return table
 
 
 def write_xls(header, items, file_list, handler, sheetname="BOM"):
@@ -343,5 +353,4 @@ if __name__ == "__main__":
     print "=" * 80
     print "Total: %s" % (stats['total'])
     print ":-" * 40
-    
 
