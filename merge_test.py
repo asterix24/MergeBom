@@ -118,6 +118,27 @@ class TestMergeBom(unittest.TestCase):
                     print c, j[m]
                     self.assertEqual(c, j[m])
 
+    def test_diff(self):
+        file_list = [
+            "test/bomdiff1.xlsx",
+            "test/bomdiff2.xlsx",
+        ]
+
+        h, d = import_data(file_list)
+        d = group_items(d)
+        a, b = diff_table(d)
+
+        for i in a.keys():
+            print i
+            for j in a[i]:
+                print j
+
+        for i in b.keys():
+            print i
+            for j in b[i]:
+                print j
+
+
 if __name__ == "__main__":
     #if len(sys.argv) < 2:
     #    printfln("%s <ip addr>" % sys.argv[0])
@@ -125,6 +146,7 @@ if __name__ == "__main__":
 
     suite = unittest.TestSuite()
     #suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
+    #suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_diff"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

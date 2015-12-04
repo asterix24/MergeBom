@@ -164,7 +164,18 @@ def group_items(table_dict):
 
     return grouped_items
 
+def diff_table(grouped_items):
+    diff = {}
+    for category in valid_group_key:
+        if grouped_items.has_key(category):
+            table_a = {}
+            table_b = {}
+            a = None
+            for item in grouped_items[category]:
+                print item[FILENAME], item
+                key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
+    return table_a, table_b
 
 ORDER_PATTERN = [
     'J', 'S', 'F','R',
