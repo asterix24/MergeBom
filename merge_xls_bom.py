@@ -101,9 +101,9 @@ def import_data(bom_file_list):
                 # Explode designator field to have one component for line
                 d = row[designator].split(',')
                 for reference in d:
-                    r = reference.strip()
+                    r = reference.replace(' ', '')
                     if r:
-                        table_dict[r] = [os.path.basename(file_name), 1, reference, row[description],
+                        table_dict[r] = [os.path.basename(file_name), 1, r, row[description],
                             row[comment], row[footprint]]
 
     return table_dict
@@ -189,18 +189,31 @@ def group_items(table_dict):
 
 def grouped_count(grouped_items):
     table = {}
+
+    TABLE_TOTALQTY    = 0
+    TABLE_DESIGNATOR  = len(FILES) + 1
+    TABLE_COMMENT     = TABLE_DESIGNATOR + 1
+    TABLE_FOOTPRINT   = TABLE_COMMENT + 1
+    TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
+
     for category in valid_group_key:
         if grouped_items.has_key(category):
             tmp = {}
+            count = 0
             for item in grouped_items[category]:
                 key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
-                curr_file_index = FILES[item[FILENAME]] + 1
+                #print key
+                print "<<", item[DESIGNATOR]
+                count += 1
 
-                #print curr_file_index
+                # First colum is total Qty
+                curr_file_index = FILES[item[FILENAME]] + TABLE_TOTALQTY + 1
 
                 if tmp.has_key(key):
-                    tmp[key][0] += item[QUANTITY]
-                    row[curr_file_index] += item[QUANTITY]
+                    #print "UPD", tmp[key], curr_file_index, item[FILENAME]
+                    tmp[key][TABLE_TOTALQTY] += item[QUANTITY]
+                    tmp[key][curr_file_index] += item[QUANTITY]
+                    tmp[key][TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
                 else:
                     row = [item[QUANTITY]] + \
                           [0] * len(FILES) + \
@@ -211,6 +224,8 @@ def grouped_count(grouped_items):
 
                     row[curr_file_index] = item[QUANTITY]
                     tmp[key] = row
+                    #print "NEW", tmp[key], curr_file_index, item[FILENAME]
+            print count
 
             table[category] = tmp.values()
 

@@ -62,13 +62,24 @@ class TestMergeBom(unittest.TestCase):
             "test/bom2.xlsx",
         ]
 
+        check = [
+          [6, 2, 2, 2, u'C101, C201, C200, C1, C0, C100', u'33pF',  u'0603_[1608]', u'Ceramic 50V NP0/C0G'],
+          [2, 2, 0, 0, u'C6, C5', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
+          [3, 3, 0, 0, u'C3, C2, C4', u'1uF', u'1206_[3216]', u'Ceramic X5R 35V, 50V'],
+          [4, 0, 2, 2, u'C202, C103, C203, C102', u'100nF', u'0603_[1608]', u'Ceramic X7R 10V'],
+        ]
+
+
         d = import_data(file_list)
         d = group_items(d)
         d = grouped_count(d)
 
         for i in d.keys():
-            for j in d[i]:
-                print j
+            for n, j in enumerate(d[i]):
+                print j, check[n]
+                for m, c in enumerate(check[n]):
+                    print c, j[m]
+                    self.assertEqual(c, j[m])
 
 if __name__ == "__main__":
     #if len(sys.argv) < 2:
