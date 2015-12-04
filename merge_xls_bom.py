@@ -317,10 +317,9 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
     row = HDR_ROW + row + 2
     for key in ORDER_PATTERN:
         if items.has_key(key):
-            worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
             row += 1
+            worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
             for i in items[key]:
-                print i
                 for c, col in enumerate(i):
                     if c == 0:
                         worksheet.write(row, STR_COL, col, tot_fmt)
@@ -372,18 +371,20 @@ if __name__ == "__main__":
         file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
         file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
-    header, data = parse_data(file_list)
+    header, data = import_data(file_list)
+    data = group_items(data)
+    data = grouped_count(data)
     file_list = map(os.path.basename, file_list)
     stats = write_xls(header, data, file_list, options.out_filename)
 
-    print
-    print
-    print ":-" * 40
-    for i in ORDER_PATTERN:
-        if stats.has_key(i):
-            print "%5s %s" % (stats[i], ORDER_PATTERN_NAMES[i])
+    #print
+    #print
+    #print ":-" * 40
+    #for i in ORDER_PATTERN:
+    #    if stats.has_key(i):
+    #        print "%5s %s" % (stats[i], ORDER_PATTERN_NAMES[i])
 
-    print "=" * 80
-    print "Total: %s" % (stats['total'])
-    print ":-" * 40
+    #print "=" * 80
+    #print "Total: %s" % (stats['total'])
+    #print ":-" * 40
 
