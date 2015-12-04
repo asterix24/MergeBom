@@ -51,12 +51,31 @@ class TestMergeBom(unittest.TestCase):
             for j in d[i]:
                 print j
 
+    def test_header(self):
+        pass
+
+    def test_group(self):
+        print "merge"
+        file_list = [
+            "test/bom0.xlsx",
+            "test/bom1.xlsx",
+            "test/bom2.xlsx",
+        ]
+
+        d = import_data(file_list)
+        d = group_items(d)
+        d = grouped_count(d)
+
+        for i in d.keys():
+            for j in d[i]:
+                print j
+
 if __name__ == "__main__":
     #if len(sys.argv) < 2:
     #    printfln("%s <ip addr>" % sys.argv[0])
     #    sys.exit(1)
 
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_merge"))
+    suite.addTest(TestMergeBom("test_group"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

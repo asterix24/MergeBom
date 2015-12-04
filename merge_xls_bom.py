@@ -194,12 +194,24 @@ def grouped_count(grouped_items):
         if grouped_items.has_key(category):
             tmp = {}
             for item in grouped_items[category]:
-                key = item[FILENAME] + item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                curr_file_index = FILES[item[FILENAME]] + 1
+
+                #print curr_file_index
 
                 if tmp.has_key(key):
-                    tmp[key][QUANTITY] += 1
+                    tmp[key][0] += item[QUANTITY]
+                    row[curr_file_index] += item[QUANTITY]
                 else:
-                    tmp[key] = item
+                    row = [item[QUANTITY]] + \
+                          [0] * len(FILES) + \
+                          [ item[DESIGNATOR],
+                            item[COMMENT],
+                            item[FOOTPRINT],
+                            item[DESCRIPTION], curr_file_index]
+
+                    row[curr_file_index] = item[QUANTITY]
+                    tmp[key] = row
 
             table[category] = tmp.values()
 
