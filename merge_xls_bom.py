@@ -25,6 +25,11 @@ import xlrd
 import xlsxwriter
 import datetime
 
+from termcolor import colored
+
+def warning(s):
+    print colored(">> " + s,'yellow')
+
 def fillRowCenter(row, s):
     r = row[:(len(row)/2) - (len(s)/2)] + s + row[(len(row)/2) + (len(s)/2):]
     if len(r) < len(row):
@@ -215,12 +220,15 @@ def grouped_count(grouped_items):
             for item in grouped_items[category]:
                 if category  == 'J':
                     key = item[DESCRIPTION] + item[FOOTPRINT]
+                    warning("Merged key: %s (%s)" % (key, item[COMMENT]))
                     item[COMMENT] = "Connector"
-                    print item[COMMENT]
+                if category  == 'D' and "LED" in item[FOOTPRINT]:
+                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]))
                 else:
                     key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
-                #print key
+                print key
                 #print "<<", item[DESIGNATOR]
                 count += 1
 
