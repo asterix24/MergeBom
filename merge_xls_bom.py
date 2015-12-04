@@ -213,7 +213,13 @@ def grouped_count(grouped_items):
             tmp = {}
             count = 0
             for item in grouped_items[category]:
-                key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                if category  == 'J':
+                    key = item[DESCRIPTION] + item[FOOTPRINT]
+                    item[COMMENT] = "Connector"
+                    print item[COMMENT]
+                else:
+                    key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+
                 #print key
                 #print "<<", item[DESIGNATOR]
                 count += 1
