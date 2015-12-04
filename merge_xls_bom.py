@@ -29,6 +29,8 @@ from termcolor import colored
 
 def warning(s):
     print colored(">> " + s,'yellow')
+def error(s):
+    print colored("!! " + s,'red')
 
 def fillRowCenter(row, s):
     r = row[:(len(row)/2) - (len(s)/2)] + s + row[(len(row)/2) + (len(s)/2):]
@@ -116,7 +118,7 @@ def import_data(bom_file_list):
 
 CAP = 'C'
 
-valid_group_key = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
+valid_group_key = ['J', 'S', 'F','R', CAP,'D','DZ','L', 'Q','TR','Y', 'U']
 
 def group_items(table_dict):
     grouped_items = {}
@@ -143,15 +145,12 @@ def group_items(table_dict):
                 group_key = 'J'
             # Discarted ref
             if group_key in ['TP']:
-                print "WARNING WE SKIP THIS KEY"
-                print 'key [%s]' % group_key
-                print "!" * 80
+                warning("WARNING!! KEY SKIPPED [%s]" % group_key)
                 continue
 
             if group_key not in valid_group_key:
-                print "GROUP key not FOUND!"
-                print c.group(), designator, table_dict[designator]
-                print "~" * 80
+                error("GROUP key not FOUND!")
+                error("%s, %s, %s" % (c.group(), designator, table_dict[designator]))
                 sys.exit(1)
 
             if grouped_items.has_key(group_key):
@@ -159,9 +158,8 @@ def group_items(table_dict):
             else:
                 grouped_items[group_key] = [table_dict[designator]]
         else:
-            print "GROUP key not FOUND!"
-            print designator
-            print "~" * 80
+            error("GROUP key not FOUND!")
+            error(designator)
             sys.exit(1)
 
     return grouped_items
@@ -228,7 +226,7 @@ def grouped_count(grouped_items):
                 else:
                     key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
-                print key
+                #print key
                 #print "<<", item[DESIGNATOR]
                 count += 1
 
