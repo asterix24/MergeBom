@@ -68,6 +68,7 @@ valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'descriptio
 def import_data(bom_file_list):
     table_dict = {}
     header = {}
+    global FILES
 
     for index_file, file_name in enumerate(bom_file_list):
         wb, data = read_xls(file_name)
@@ -106,30 +107,9 @@ def import_data(bom_file_list):
                         table_dict[r] = [os.path.basename(file_name), 1, r, row[description],
                             row[comment], row[footprint]]
 
-    return table_dict
+    return header, table_dict
 
 CAP = 'C'
-
-ORDER_PATTERN = [
-    'J', 'S', 'F','R',
-    CAP,
-    'D','DZ','L', 'Q','TR','Y', 'U'
-]
-
-ORDER_PATTERN_NAMES = {
-    'J':  'J  Connectors',
-    'S':  'S  Mechanical parts and buttons',
-    'F':  'F  Fuses',
-    'R':  'R  Resistors',
-     CAP :  'C  Capacitors',
-    'D':  'D  Diodes',
-    'DZ': 'DZ Zener, Schottky, Transil',
-    'L':  'L  Inductors, chokes',
-    'Q':  'Q  Transistors',
-    'TR': 'TR Transformers',
-    'Y':  'Y  Cristal, quarz, oscillator',
-    'U':  'U  IC',
-}
 
 valid_group_key = ['J', 'S', 'F','R','C','D','DZ','L', 'Q','TR','Y', 'U']
 
@@ -182,13 +162,45 @@ def group_items(table_dict):
     return grouped_items
 
 
-# ['bom_due.xls', 1, u'U3000', u'Lan transformer', u'LAN TRANFORMER WE 7490100111A', u'LAN_TR_1.27MM_SMD']
-# ['test.xlsx', 1, u'U2015', u'DC/DC switch converter', u'LM22671MR-ADJ', u'SOIC8_PAD']
-# ['test.xlsx', 1, u'U2002', u'Dual Low-Power Operational Amplifier', u'LM2902', u'SOIC14']
-# ['bom_uno.xls', 1, u'U7', u'Temperature sensor', u'LM75BIM', u'SOIC8']
+
+ORDER_PATTERN = [
+    'J', 'S', 'F','R',
+    CAP,
+    'D','DZ','L', 'Q','TR','Y', 'U'
+]
+
+ORDER_PATTERN_NAMES = {
+    'J':  'J  Connectors',
+    'S':  'S  Mechanical parts and buttons',
+    'F':  'F  Fuses',
+    'R':  'R  Resistors',
+     CAP :  'C  Capacitors',
+    'D':  'D  Diodes',
+    'DZ': 'DZ Zener, Schottky, Transil',
+    'L':  'L  Inductors, chokes',
+    'Q':  'Q  Transistors',
+    'TR': 'TR Transformers',
+    'Y':  'Y  Cristal, quarz, oscillator',
+    'U':  'U  IC',
+}
+
 
 def grouped_count(grouped_items):
+    """
+    grouped items format
+    'U': ['bom_due.xls', 1, u'U3000', u'Lan transformer', u'LAN TRANFORMER WE 7490100111A', u'LAN_TR_1.27MM_SMD']
+    'U': ['test.xlsx', 1, u'U2015', u'DC/DC switch converter', u'LM22671MR-ADJ', u'SOIC8_PAD']
+    'U': ['test.xlsx', 1, u'U2002', u'Dual Low-Power Operational Amplifier', u'LM2902', u'SOIC14']
+    'U': ['bom_uno.xls', 1, u'U7', u'Temperature sensor', u'LM75BIM', u'SOIC8']
+    """
+
     table = {}
+    # Finally Table layout
+    global TABLE_TOTALQTY
+    global TABLE_DESIGNATOR
+    global TABLE_COMMENT
+    global TABLE_FOOTPRINT
+    global TABLE_DESCRIPTION
 
     TABLE_TOTALQTY    = 0
     TABLE_DESIGNATOR  = len(FILES) + 1
@@ -203,7 +215,7 @@ def grouped_count(grouped_items):
             for item in grouped_items[category]:
                 key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
                 #print key
-                print "<<", item[DESIGNATOR]
+                #print "<<", item[DESIGNATOR]
                 count += 1
 
                 # First colum is total Qty
@@ -217,10 +229,12 @@ def grouped_count(grouped_items):
                 else:
                     row = [item[QUANTITY]] + \
                           [0] * len(FILES) + \
-                          [ item[DESIGNATOR],
+                          [
+                            item[DESIGNATOR],
                             item[COMMENT],
                             item[FOOTPRINT],
-                            item[DESCRIPTION], curr_file_index]
+                            item[DESCRIPTION]
+                          ]
 
                     row[curr_file_index] = item[QUANTITY]
                     tmp[key] = row
@@ -257,9 +271,6 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
         'align': 'left',})
 
     hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
-
-    hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
-
     merge_fmt = workbook.add_format({
         'bold': 1,
         'border': 1,
@@ -288,44 +299,38 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
         worksheet.merge_range('A%s:O%s' % (row, row), i, info_fmt)
         row += 1
 
-    # Header info
-    for n, i in enumerate(header):
-        worksheet.write(row, n, i, hdr_fmt)
+    # Header info row
+    col = 0
+    worksheet.write(row, col, "T.Qty", hdr_fmt)
+    col += 1
+    for i in file_list:
+        worksheet.write(row, col, i, hdr_fmt)
+        col += 1
+
+    for i in [u'Designator', u'Comment', u'Footprint', u'Description']:
+        worksheet.write(row, col, i, hdr_fmt)
+        col += 1
     row += 1
 
     l = []
-    row = HDR_ROW + row
-    stats = {}
+    # Start to write components on xlsx
+    row = HDR_ROW + row + 2
     for key in ORDER_PATTERN:
-        m = filter(lambda x: x[0] == key, items)
-        m = map(lambda x: x[1:], m)
-
-        if m:
-            row += 1
+        if items.has_key(key):
             worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
-        for rows in m:
-            for c, col in enumerate(rows):
-                if c == 0:
-                    worksheet.write(row, STR_COL, col, tot_fmt)
-                else:
-                    worksheet.write(row, c, col, def_fmt)
-
-                if stats.has_key(key):
-                    stats[key] += 1
-                else:
-                    stats[key] = 1
-
             row += 1
+            for i in items[key]:
+                print i
+                for c, col in enumerate(i):
+                    if c == 0:
+                        worksheet.write(row, STR_COL, col, tot_fmt)
+                    else:
+                        worksheet.write(row, c, col, def_fmt)
+                row += 1
 
     workbook.close()
 
-    tot = 0
-    for i in stats.values():
-        tot += i
-
-    stats['total'] = i
-
-    return stats
+    return {}
 
 def read_xls(handler):
     wb = xlrd.open_workbook(handler)

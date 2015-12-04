@@ -70,9 +70,12 @@ class TestMergeBom(unittest.TestCase):
         ]
 
 
-        d = import_data(file_list)
+        h, d = import_data(file_list)
         d = group_items(d)
         d = grouped_count(d)
+
+        file_list = map(os.path.basename, file_list)
+        stats = write_xls(h, d, file_list, "/tmp/uno.xls")
 
         for i in d.keys():
             for n, j in enumerate(d[i]):
