@@ -38,8 +38,7 @@ def fillTableRow(row, col1, col2, col3):
     col2 = "%s" % col2
     col3 = "%s" % col3
 
-    if len(col1) > 10:
-        col1 = col1[:10]
+    col1 = col1[:min(len(col1), 10)]
     s = col1 + row[10 - len(col1):]
 
     WCOL2=40
@@ -227,17 +226,19 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
     workbook = xlsxwriter.Workbook(handler)
     worksheet = workbook.add_worksheet()
 
-    def_fmt = workbook.add_format()
+    def_fmt = workbook.add_format({'valign': 'vcenter'})
     def_fmt.set_text_wrap()
 
     tot_fmt = workbook.add_format({
         'bold': True,
         'align': 'center',
+        'valign': 'vcenter',
         'bg_color': 'lime'})
 
     info_fmt = workbook.add_format({
         'bold': True,
         'font_size':11,
+        'valign': 'vcenter',
         'align': 'left',})
 
     hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
