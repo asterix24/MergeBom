@@ -97,10 +97,10 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         check = [
-          [6, 2, 2, 2, u'C101, C201, C200, C1, C0, C100', u'33pF',  u'0603_[1608]', u'Ceramic 50V NP0/C0G'],
-          [2, 2, 0, 0, u'C6, C5', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
-          [3, 3, 0, 0, u'C3, C2, C4', u'1uF', u'1206_[3216]', u'Ceramic X5R 35V, 50V'],
-          [4, 0, 2, 2, u'C202, C103, C203, C102', u'100nF', u'0603_[1608]', u'Ceramic X7R 10V'],
+          [6, 2, 2, 2, u'C0, C1, C100, C101, C200, C201', u'33pF',  u'0603_[1608]', u'Ceramic 50V NP0/C0G'],
+          [4, 0, 2, 2, u'C102, C103, C202, C203', u'100nF', u'0603_[1608]', u'Ceramic X7R 10V'],
+          [3, 3, 0, 0, u'C2, C3, C4', u'1uF', u'1206_[3216]', u'Ceramic X5R 35V, 50V'],
+          [2, 2, 0, 0, u'C5, C6', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
         ]
 
 
@@ -113,9 +113,11 @@ class TestMergeBom(unittest.TestCase):
 
         for i in d.keys():
             for n, j in enumerate(d[i]):
-                print j, check[n]
+                print "T >", j
+                print "C <", check[n]
                 for m, c in enumerate(check[n]):
-                    print c, j[m]
+                    print "T >", c
+                    print "C <", j[m]
                     self.assertEqual(c, j[m])
 
     def test_diff(self):
@@ -160,7 +162,7 @@ class TestMergeBom(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    #suite.addTest(TestMergeBom("test_group"))
+    suite.addTest(TestMergeBom("test_group"))
     #suite.addTest(TestMergeBom("test_led"))
     #suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))

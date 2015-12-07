@@ -264,6 +264,7 @@ def grouped_count(grouped_items):
                     tmp[key][TABLE_TOTALQTY] += item[QUANTITY]
                     tmp[key][curr_file_index] += item[QUANTITY]
                     tmp[key][TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
+                    tmp[key][TABLE_DESIGNATOR] = order_designator(tmp[key][TABLE_DESIGNATOR])
                 else:
                     row = [item[QUANTITY]] + \
                           [0] * len(FILES) + \
