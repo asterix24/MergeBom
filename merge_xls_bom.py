@@ -237,6 +237,7 @@ def grouped_count(grouped_items):
     TABLE_FOOTPRINT   = TABLE_COMMENT + 1
     TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
 
+    print len(FILES)
     for category in valid_group_key:
         if grouped_items.has_key(category):
             tmp = {}

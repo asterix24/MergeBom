@@ -61,11 +61,11 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'J1', 'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD', u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm']
             ],
             'D': [
-                [3, 3, u'D4, D2, D3', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
-                [9, 9, u'D14, D10, D11, D12, D13, D8, D9, D6, D7', u'+3.3V', u'0603_[1608]_LED', u'Diode LED Green'],
+                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
+                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'+3.3V', u'0603_[1608]_LED', u'Diode LED Green'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
                 [1, 1, u'D15', u'+2.0V', u'0603_[1608]_LED', u'Diode LED Red'],
-                [2, 2, u'D5, D1', u'BAV99', u'SOT-23', u'Diode Dual'],
+                [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
             ],
             'DZ': [
                 [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
@@ -82,12 +82,10 @@ class TestMergeBom(unittest.TestCase):
 
         for category in d.keys():
             for n, i in enumerate(d[category]):
+                print "T >", i
+                print "C <", check[category][n]
                 self.assertEqual(i, check[category][n])
 
-            #for m, x in enumerate(d[i]):
-            #    for n, j in enumerate(x):
-            #        print j, check[m][n]
-            #self.assertEqual(j, check[m][n])
 
     def test_group(self):
         file_list = [
@@ -163,7 +161,7 @@ class TestMergeBom(unittest.TestCase):
 if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_group"))
-    #suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_led"))
     #suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
