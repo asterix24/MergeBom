@@ -62,6 +62,16 @@ def fillTableRow(row, col1, col2, col3):
 
     return s
 
+def order_designator(ref_str):
+    ref_str = ref_str.replace(" ", "")
+    l = ref_str.split(",")
+    try:
+        d = sorted(l, key=lambda x:int(re.search('[0-9]+', x).group()))
+    except NoneType:
+        error("Could not order Designators [%s]" % l)
+        sys.exit(1)
+    return ", ".join(d)
+
 
 # Exchange data layout after file import
 FILENAME    = 0
@@ -78,6 +88,40 @@ VALID_KEYS = [
     u'footprint',
     u'description',
 ]
+
+CON = 'J'
+CAP = 'C'
+
+VALID_GROUP_KEY = [
+    CON,
+    'S',
+    'F',
+    'R',
+    CAP,
+    'D',
+    'DZ',
+    'L',
+    'Q',
+    'TR',
+    'Y',
+    'U'
+]
+
+ORDER_PATTERN_NAMES = {
+    'J':  'J  Connectors',
+    'S':  'S  Mechanical parts and buttons',
+    'F':  'F  Fuses',
+    'R':  'R  Resistors',
+     CAP :  'C  Capacitors',
+    'D':  'D  Diodes',
+    'DZ': 'DZ Zener, Schottky, Transil',
+    'L':  'L  Inductors, chokes',
+    'Q':  'Q  Transistors',
+    'TR': 'TR Transformers',
+    'Y':  'Y  Cristal, quarz, oscillator',
+    'U':  'U  IC',
+}
+
 
 class MergeBom (object):
     def __init__(self, list_bom_files):
@@ -137,60 +181,123 @@ class MergeBom (object):
     def table_data(self):
         return self.table_list
 
+    def group(self):
+        self.grouped_items = {}
+        for table_dict in self.table_list:
+            for designator in table_dict.keys():
+                # Grop found designator componets by its category
+                c = re.search('^[a-zA-Z_]{1,3}', designator)
+                group_key = ''
+                if c is not None:
+                    group_key = c.group().upper()
+                    # Buttons and spacer
+                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
+                        group_key = 'S'
+                    # Fuses
+                    if group_key in ['G']:
+                        group_key = 'F'
+                    # Tranformer
+                    if group_key in ['T' ]:
+                        group_key = 'TR'
+                    # Resistors, array, etc.
+                    if group_key in ['RN', 'R_G']:
+                        group_key = 'R'
+                    # Connectors
+                    if group_key in ['X', 'P', 'SIM']:
+                        group_key = 'J'
+                    # Discarted ref
+                    if group_key in ['TP']:
+                        warning("WARNING!! KEY SKIPPED [%s]" % group_key)
+                        continue
 
-CON = 'J'
-CAP = 'C'
+                    if group_key not in VALID_GROUP_KEY:
+                        error("GROUP key not FOUND!")
+                        error("%s, %s, %s" % (c.group(), designator, table_dict[designator]))
+                        sys.exit(1)
 
-valid_group_key = [CON, 'S', 'F','R', CAP,'D','DZ','L', 'Q','TR','Y', 'U']
-
-def group_items(table_list):
-    grouped_items = {}
-    for table_dict in table_list:
-        for designator in table_dict.keys():
-            # Grop found designator componets by its category
-            c = re.search('^[a-zA-Z_]{1,3}', designator)
-            group_key = ''
-            if c is not None:
-                group_key = c.group().upper()
-                # Buttons and spacer
-                if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
-                    group_key = 'S'
-                # Fuses
-                if group_key in ['G']:
-                    group_key = 'F'
-                # Tranformer
-                if group_key in ['T' ]:
-                    group_key = 'TR'
-                # Resistors, array, etc.
-                if group_key in ['RN', 'R_G']:
-                    group_key = 'R'
-                # Connectors
-                if group_key in ['X', 'P', 'SIM']:
-                    group_key = 'J'
-                # Discarted ref
-                if group_key in ['TP']:
-                    warning("WARNING!! KEY SKIPPED [%s]" % group_key)
-                    continue
-
-                if group_key not in valid_group_key:
+                    if self.grouped_items.has_key(group_key):
+                        self.grouped_items[group_key].append(table_dict[designator])
+                    else:
+                        self.grouped_items[group_key] = [table_dict[designator]]
+                else:
                     error("GROUP key not FOUND!")
-                    error("%s, %s, %s" % (c.group(), designator, table_dict[designator]))
+                    error(designator)
                     sys.exit(1)
 
-                if grouped_items.has_key(group_key):
-                    grouped_items[group_key].append(table_dict[designator])
-                else:
-                    grouped_items[group_key] = [table_dict[designator]]
-            else:
-                error("GROUP key not FOUND!")
-                error(designator)
-                sys.exit(1)
+    def table_grouped(self):
+        return self.grouped_items
 
-    return grouped_items
+    def count(self):
+        """
+        grouped items format
+        'U': ['bom_due.xls', 1, u'U3000', u'Lan transformer', u'LAN TRANFORMER WE 7490100111A', u'LAN_TR_1.27MM_SMD']
+        'U': ['test.xlsx', 1, u'U2015', u'DC/DC switch converter', u'LM22671MR-ADJ', u'SOIC8_PAD']
+        'U': ['test.xlsx', 1, u'U2002', u'Dual Low-Power Operational Amplifier', u'LM2902', u'SOIC14']
+        'U': ['bom_uno.xls', 1, u'U7', u'Temperature sensor', u'LM75BIM', u'SOIC8']
+        """
+
+        self.table = {}
+
+        # Finally Table layout
+        TABLE_TOTALQTY    = 0
+        TABLE_DESIGNATOR  = len(self.files) + 1
+        TABLE_COMMENT     = TABLE_DESIGNATOR + 1
+        TABLE_FOOTPRINT   = TABLE_COMMENT + 1
+        TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
+
+        for category in VALID_GROUP_KEY:
+            if self.grouped_items.has_key(category):
+                tmp = {}
+                count = 0
+                for item in self.grouped_items[category]:
+                    if category  == 'J':
+                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]))
+                        item[COMMENT] = "Connector"
+                    if category  == 'D' and "LED" in item[FOOTPRINT]:
+                            key = item[DESCRIPTION] + item[FOOTPRINT]
+                            warning("Merged key: %s (%s)" % (key, item[COMMENT]))
+                    else:
+                        key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+
+                    #print key
+                    #print "<<", item[DESIGNATOR]
+                    count += 1
+
+                    # First colum is total Qty
+                    curr_file_index = self.files[item[FILENAME]] + TABLE_TOTALQTY + 1
+
+                    if tmp.has_key(key):
+                        #print "UPD", tmp[key], curr_file_index, item[FILENAME]
+                        tmp[key][TABLE_TOTALQTY] += item[QUANTITY]
+                        tmp[key][curr_file_index] += item[QUANTITY]
+                        tmp[key][TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
+                        tmp[key][TABLE_DESIGNATOR] = order_designator(tmp[key][TABLE_DESIGNATOR])
+                    else:
+                        row = [item[QUANTITY]] + \
+                              [0] * len(self.files) + \
+                              [
+                                item[DESIGNATOR],
+                                item[COMMENT],
+                                item[FOOTPRINT],
+                                item[DESCRIPTION]
+                              ]
+
+                        row[curr_file_index] = item[QUANTITY]
+                        tmp[key] = row
+                        #print "NEW", tmp[key], curr_file_index, item[FILENAME]
+                print count
+
+                self.table[category] = tmp.values()
+
+    def merge(self):
+        self.group()
+        self.count()
+        return self.table
 
 def diff_table(grouped_items):
     diff = {}
-    for category in valid_group_key:
+    for category in VALID_GROUP_KEY:
         if grouped_items.has_key(category):
             table_a = {}
             table_b = {}
@@ -200,110 +307,6 @@ def diff_table(grouped_items):
                 key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
     return table_a, table_b
-
-def order_designator(ref_str):
-    ref_str = ref_str.replace(" ", "")
-    l = ref_str.split(",")
-    try:
-        d = sorted(l, key=lambda x:int(re.search('[0-9]+', x).group()))
-    except NoneType:
-        error("Could not order Designators [%s]" % l)
-        sys.exit(1)
-    return ", ".join(d)
-
-ORDER_PATTERN = [
-    'J', 'S', 'F','R',
-    CAP,
-    'D','DZ','L', 'Q','TR','Y', 'U'
-]
-
-ORDER_PATTERN_NAMES = {
-    'J':  'J  Connectors',
-    'S':  'S  Mechanical parts and buttons',
-    'F':  'F  Fuses',
-    'R':  'R  Resistors',
-     CAP :  'C  Capacitors',
-    'D':  'D  Diodes',
-    'DZ': 'DZ Zener, Schottky, Transil',
-    'L':  'L  Inductors, chokes',
-    'Q':  'Q  Transistors',
-    'TR': 'TR Transformers',
-    'Y':  'Y  Cristal, quarz, oscillator',
-    'U':  'U  IC',
-}
-
-
-def grouped_count(grouped_items):
-    """
-    grouped items format
-    'U': ['bom_due.xls', 1, u'U3000', u'Lan transformer', u'LAN TRANFORMER WE 7490100111A', u'LAN_TR_1.27MM_SMD']
-    'U': ['test.xlsx', 1, u'U2015', u'DC/DC switch converter', u'LM22671MR-ADJ', u'SOIC8_PAD']
-    'U': ['test.xlsx', 1, u'U2002', u'Dual Low-Power Operational Amplifier', u'LM2902', u'SOIC14']
-    'U': ['bom_uno.xls', 1, u'U7', u'Temperature sensor', u'LM75BIM', u'SOIC8']
-    """
-
-    table = {}
-    # Finally Table layout
-    global TABLE_TOTALQTY
-    global TABLE_DESIGNATOR
-    global TABLE_COMMENT
-    global TABLE_FOOTPRINT
-    global TABLE_DESCRIPTION
-
-    TABLE_TOTALQTY    = 0
-    TABLE_DESIGNATOR  = len(FILES) + 1
-    TABLE_COMMENT     = TABLE_DESIGNATOR + 1
-    TABLE_FOOTPRINT   = TABLE_COMMENT + 1
-    TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
-
-    print len(FILES)
-    for category in valid_group_key:
-        if grouped_items.has_key(category):
-            tmp = {}
-            count = 0
-            for item in grouped_items[category]:
-                if category  == 'J':
-                    key = item[DESCRIPTION] + item[FOOTPRINT]
-                    warning("Merged key: %s (%s)" % (key, item[COMMENT]))
-                    item[COMMENT] = "Connector"
-                if category  == 'D' and "LED" in item[FOOTPRINT]:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
-                        warning("Merged key: %s (%s)" % (key, item[COMMENT]))
-                else:
-                    key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
-
-                #print key
-                #print "<<", item[DESIGNATOR]
-                count += 1
-
-                # First colum is total Qty
-                curr_file_index = FILES[item[FILENAME]] + TABLE_TOTALQTY + 1
-
-                if tmp.has_key(key):
-                    #print "UPD", tmp[key], curr_file_index, item[FILENAME]
-                    tmp[key][TABLE_TOTALQTY] += item[QUANTITY]
-                    tmp[key][curr_file_index] += item[QUANTITY]
-                    tmp[key][TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                    tmp[key][TABLE_DESIGNATOR] = order_designator(tmp[key][TABLE_DESIGNATOR])
-                else:
-                    row = [item[QUANTITY]] + \
-                          [0] * len(FILES) + \
-                          [
-                            item[DESIGNATOR],
-                            item[COMMENT],
-                            item[FOOTPRINT],
-                            item[DESCRIPTION]
-                          ]
-
-                    row[curr_file_index] = item[QUANTITY]
-                    tmp[key] = row
-                    #print "NEW", tmp[key], curr_file_index, item[FILENAME]
-            print count
-
-            table[category] = tmp.values()
-
-    return table
-
 
 def write_xls(header, items, file_list, handler, sheetname="BOM"):
     STR_ROW = 1
@@ -374,7 +377,7 @@ def write_xls(header, items, file_list, handler, sheetname="BOM"):
     l = []
     # Start to write components on xlsx
     row = HDR_ROW + row + 2
-    for key in ORDER_PATTERN:
+    for key in VALID_GROUP_KEY:
         if items.has_key(key):
             row += 1
             worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
