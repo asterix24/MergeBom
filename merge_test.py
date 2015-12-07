@@ -138,15 +138,31 @@ class TestMergeBom(unittest.TestCase):
             for j in b[i]:
                 print j
 
+    def test_orderRef(self):
+        test = [
+            "C0, C103, C1, C3001, C12",
+            "TR100, TR1, TR0, TR10, TR10",
+            "RES100, RES1, RES0, RES1001, RES10",
+            "SW1",
+            "RN1A, RN0B, RN1000, RN3",
+        ]
+        check = [
+            "C0, C1, C12, C103, C3001",
+            "TR0, TR1, TR10, TR10, TR100",
+            "RES0, RES1, RES10, RES100, RES1001",
+            "SW1",
+            "RN0B, RN1A, RN3, RN1000",
+        ]
+
+        for n,i in enumerate(test):
+            l = order_designator(i)
+            self.assertEqual(l, check[n])
 
 if __name__ == "__main__":
-    #if len(sys.argv) < 2:
-    #    printfln("%s <ip addr>" % sys.argv[0])
-    #    sys.exit(1)
-
     suite = unittest.TestSuite()
     #suite.addTest(TestMergeBom("test_group"))
     #suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_diff"))
+    #suite.addTest(TestMergeBom("test_diff"))
+    suite.addTest(TestMergeBom("test_orderRef"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

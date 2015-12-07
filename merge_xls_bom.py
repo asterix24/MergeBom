@@ -73,7 +73,7 @@ FILES = {}
 valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description', u'libref']
 
 def import_data(bom_file_list):
-    table_dict = {}
+    table_list = []
     header = {}
     global FILES
 
@@ -93,7 +93,7 @@ def import_data(bom_file_list):
         footprint   = header['footprint']
         description = header['description']
 
-
+        table_dict = {}
         for row in data:
             # skip header
             if row[designator].lower() == 'designator':
@@ -114,53 +114,58 @@ def import_data(bom_file_list):
                         table_dict[r] = [os.path.basename(file_name), 1, r, row[description],
                             row[comment], row[footprint]]
 
-    return header, table_dict
+        table_list.append(table_dict)
 
+    return header, table_list
+
+
+CON = 'J'
 CAP = 'C'
 
-valid_group_key = ['J', 'S', 'F','R', CAP,'D','DZ','L', 'Q','TR','Y', 'U']
+valid_group_key = [CON, 'S', 'F','R', CAP,'D','DZ','L', 'Q','TR','Y', 'U']
 
-def group_items(table_dict):
+def group_items(table_list):
     grouped_items = {}
-    for designator in table_dict.keys():
-        # Grop found designator componets by its category
-        c = re.search('^[a-zA-Z_]{1,3}', designator)
-        group_key = ''
-        if c is not None:
-            group_key = c.group().upper()
-            # Buttons and spacer
-            if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
-                group_key = 'S'
-            # Fuses
-            if group_key in ['G']:
-                group_key = 'F'
-            # Tranformer
-            if group_key in ['T' ]:
-                group_key = 'TR'
-            # Resistors, array, etc.
-            if group_key in ['RN', 'R_G']:
-                group_key = 'R'
-            # Connectors
-            if group_key in ['X', 'P', 'SIM']:
-                group_key = 'J'
-            # Discarted ref
-            if group_key in ['TP']:
-                warning("WARNING!! KEY SKIPPED [%s]" % group_key)
-                continue
+    for table_dict in table_list:
+        for designator in table_dict.keys():
+            # Grop found designator componets by its category
+            c = re.search('^[a-zA-Z_]{1,3}', designator)
+            group_key = ''
+            if c is not None:
+                group_key = c.group().upper()
+                # Buttons and spacer
+                if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
+                    group_key = 'S'
+                # Fuses
+                if group_key in ['G']:
+                    group_key = 'F'
+                # Tranformer
+                if group_key in ['T' ]:
+                    group_key = 'TR'
+                # Resistors, array, etc.
+                if group_key in ['RN', 'R_G']:
+                    group_key = 'R'
+                # Connectors
+                if group_key in ['X', 'P', 'SIM']:
+                    group_key = 'J'
+                # Discarted ref
+                if group_key in ['TP']:
+                    warning("WARNING!! KEY SKIPPED [%s]" % group_key)
+                    continue
 
-            if group_key not in valid_group_key:
-                error("GROUP key not FOUND!")
-                error("%s, %s, %s" % (c.group(), designator, table_dict[designator]))
-                sys.exit(1)
+                if group_key not in valid_group_key:
+                    error("GROUP key not FOUND!")
+                    error("%s, %s, %s" % (c.group(), designator, table_dict[designator]))
+                    sys.exit(1)
 
-            if grouped_items.has_key(group_key):
-                grouped_items[group_key].append(table_dict[designator])
+                if grouped_items.has_key(group_key):
+                    grouped_items[group_key].append(table_dict[designator])
+                else:
+                    grouped_items[group_key] = [table_dict[designator]]
             else:
-                grouped_items[group_key] = [table_dict[designator]]
-        else:
-            error("GROUP key not FOUND!")
-            error(designator)
-            sys.exit(1)
+                error("GROUP key not FOUND!")
+                error(designator)
+                sys.exit(1)
 
     return grouped_items
 
@@ -176,6 +181,16 @@ def diff_table(grouped_items):
                 key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
     return table_a, table_b
+
+def order_designator(ref_str):
+    ref_str = ref_str.replace(" ", "")
+    l = ref_str.split(",")
+    try:
+        d = sorted(l, key=lambda x:int(re.search('[0-9]+', x).group()))
+    except NoneType:
+        error("Could not order Designators [%s]" % l)
+        sys.exit(1)
+    return ", ".join(d)
 
 ORDER_PATTERN = [
     'J', 'S', 'F','R',
