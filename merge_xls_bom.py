@@ -125,6 +125,26 @@ ORDER_PATTERN_NAMES = {
 
 class MergeBom (object):
     def __init__(self, list_bom_files):
+        """
+        Data structure
+
+        [
+            file_name: [
+                designator : [ all ]
+                designator : [ all ]
+                ...
+                designator : [ all ]
+            ],
+            ...
+            file_name: [
+                designator : [ all ]
+                designator : [ all ]
+                ...
+                designator : [ all ]
+            ],
+        ]
+
+        """
         self.files = {}
         self.table_list = []
 
@@ -295,18 +315,27 @@ class MergeBom (object):
         self.count()
         return self.table
 
-def diff_table(grouped_items):
-    diff = {}
-    for category in VALID_GROUP_KEY:
-        if grouped_items.has_key(category):
-            table_a = {}
-            table_b = {}
-            a = None
-            for item in grouped_items[category]:
-                print item[FILENAME], item
-                key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+    def diff(self):
+        assert(len(self.table_list) == 2)
+        diff = {}
+        A, B = self.table_list
+        file_a = A[A.keys()[0]][FILENAME]
+        file_b = B[A.keys()[0]][FILENAME]
 
-    return table_a, table_b
+        for k in A.keys():
+            if B.has_key(k):
+                if A[k][1:] != B[k][1:]:
+                    diff[k] = (A[k], B[k])
+                del B[k]
+            else:
+                diff[k] = (A[k], None)
+
+            del A[k]
+
+        for k in B.keys():
+            diff[k] = (None, B[k])
+
+        return diff
 
 def write_xls(header, items, file_list, handler, sheetname="BOM"):
     STR_ROW = 1

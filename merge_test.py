@@ -121,19 +121,44 @@ class TestMergeBom(unittest.TestCase):
             "test/bomdiff2.xlsx",
         ]
 
-        h, d = import_data(file_list)
-        d = group_items(d)
-        a, b = diff_table(d)
+        check = {
+            'C45': (
+              None,
+              ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]']
+            ),
+            'C1045': (
+              ['bomdiff1.xlsx', 1, u'C1045', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
+              None,
+            ),
+            'C204': (
+              ['bomdiff1.xlsx', 1, u'C204', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+              None,
+            ),
+            'C2046': (
+              None,
+              ['bomdiff2.xlsx', 1, u'C2046', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+            ),
+            'C104': (
+              ['bomdiff1.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
+              ['bomdiff2.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
+            ),
+            'C1': (
+              None,
+              ['bomdiff2.xlsx', 1, u'C1', u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
+            )
+            }
 
-        for i in a.keys():
-            print i
-            for j in a[i]:
-                print j
+        m = MergeBom(file_list)
+        k = m.diff()
 
-        for i in b.keys():
-            print i
-            for j in b[i]:
-                print j
+        print
+        for i in k.keys():
+            print i, ">>", k[i][0]
+            print i, "<<", k[i][1]
+            print "~" * 80
+            self.assertEqual(k[i][0], check[i][0])
+            self.assertEqual(k[i][1], check[i][1])
+
 
     def test_orderRef(self):
         test = [
@@ -160,7 +185,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_import"))
     suite.addTest(TestMergeBom("test_group"))
     suite.addTest(TestMergeBom("test_led"))
-    #suite.addTest(TestMergeBom("test_diff"))
+    suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 
