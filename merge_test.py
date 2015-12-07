@@ -30,26 +30,26 @@ class TestMergeBom(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_merge(self):
-        print "merge"
+    def test_import(self):
         file_list = [
-            "test/bom_uno.xls",
-            "test/bom_due.xls",
-            "test/bom_tre.xls",
-            "test/bom_quattro.xls",
-            "test/test.xlsx"
+            "test/bom0.xlsx",
+            "test/bom1.xlsx",
+            "test/bom2.xlsx",
+        ]
+        check = [
+            (7,),
+            (4,),
+            (4,),
         ]
 
+        l = MergeBom(file_list)
+        data = l.table_data()
+        self.assertEqual(len(data), 3)
+        print
+        for n, i in enumerate(data):
+            self.assertEqual(len(i), check[n][0])
+            print len(i)
 
-        d = import_data(file_list)
-        d = group_items(d)
-        d = grouped_count(d)
-        #header, data = parse_data(file_list)
-        #file_list = map(os.path.basename, file_list)
-        #stats = write_xls(header, data, file_list, "/tmp/uno.xls")
-        for i in d.keys():
-            for j in d[i]:
-                print j
 
     def test_led(self):
         file_list = [
@@ -160,9 +160,10 @@ class TestMergeBom(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_group"))
+    #suite.addTest(TestMergeBom("test_led"))
     #suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
+    #suite.addTest(TestMergeBom("test_orderRef"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

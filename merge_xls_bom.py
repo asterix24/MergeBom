@@ -62,61 +62,80 @@ def fillTableRow(row, col1, col2, col3):
 
     return s
 
+
+# Exchange data layout after file import
 FILENAME    = 0
 QUANTITY    = 1
 DESIGNATOR  = 2
 DESCRIPTION = 3
 COMMENT     = 4
 FOOTPRINT   = 5
-FILES = {}
 
-valid_keys = [u'quantity', u'designator', u'comment', u'footprint', u'description', u'libref']
+VALID_KEYS = [
+    u'quantity',
+    u'designator',
+    u'comment',
+    u'footprint',
+    u'description',
+]
 
-def import_data(bom_file_list):
-    table_list = []
-    header = {}
-    global FILES
+class MergeBom (object):
+    def __init__(self, list_bom_files):
+        self.files = {}
+        self.table_list = []
 
-    for index_file, file_name in enumerate(bom_file_list):
-        wb, data = read_xls(file_name)
-        FILES[os.path.basename(file_name)] = index_file
+        for index_file, file_name in enumerate(list_bom_files):
+            wb, data = read_xls(file_name)
+            self.files[os.path.basename(file_name)] = index_file
 
-        # Get all header keys
-        for row in data:
-            for n, item in enumerate(row):
-                if item.lower() in valid_keys:
-                    header[item.lower()] = n
+            # Get all header keys
+            header = {}
+            for row in data:
+                for n, item in enumerate(row):
+                    if item.lower() in VALID_KEYS:
+                        header[item.lower()] = n
 
-        quantity    = header['quantity']
-        designator  = header['designator']
-        comment     = header['comment']
-        footprint   = header['footprint']
-        description = header['description']
+            try:
+                quantity    = header['quantity']
+                designator  = header['designator']
+                comment     = header['comment']
+                footprint   = header['footprint']
+                description = header['description']
+            except KeyError:
+                error("No key header found!")
+                sys.exit(1)
 
-        table_dict = {}
-        for row in data:
-            # skip header
-            if row[designator].lower() == 'designator':
-                continue
+            table_dict = {}
+            for row in data:
+                # skip header
+                if row[designator].lower() == 'designator':
+                    continue
 
-            if filter(lambda x: x, row):
-                # Fix designator field, we want all designator separated by
-                # comma followed by space. In this way excel could resize row
-                # cell correctly
-                if re.findall("\S,[\S]+", row[designator]):
-                    row[designator] = row[designator].replace(",", ", ")
+                if filter(lambda x: x, row):
+                    # Fix designator field, we want all designator separated by
+                    # comma followed by space. In this way excel could resize row
+                    # cell correctly
+                    if re.findall("\S,[\S]+", row[designator]):
+                        row[designator] = row[designator].replace(",", ", ")
 
-                # Explode designator field to have one component for line
-                d = row[designator].split(',')
-                for reference in d:
-                    r = reference.replace(' ', '')
-                    if r:
-                        table_dict[r] = [os.path.basename(file_name), 1, r, row[description],
-                            row[comment], row[footprint]]
+                    # Explode designator field to have one component for line
+                    d = row[designator].split(',')
+                    for reference in d:
+                        r = reference.replace(' ', '')
+                        if r:
+                            table_dict[r] = [
+                                os.path.basename(file_name),
+                                1, # one item for a row
+                                r, # designator
+                                row[description],
+                                row[comment],
+                                row[footprint]
+                            ]
 
-        table_list.append(table_dict)
+            self.table_list.append(table_dict)
 
-    return header, table_list
+    def table_data(self):
+        return self.table_list
 
 
 CON = 'J'
