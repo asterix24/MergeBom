@@ -180,6 +180,19 @@ class TestMergeBom(unittest.TestCase):
             l = order_designator(i)
             self.assertEqual(l, check[n])
 
+    def test_outFile(self):
+        file_list = [
+            "test/bom_uno.xls",
+            "test/bom_due.xls",
+            "test/bom_tre.xls",
+            "test/bom_quattro.xls",
+        ]
+
+        m = MergeBom(file_list)
+        d = m.merge()
+        file_list = map(os.path.basename, file_list)
+        stats = write_xls(d, file_list, "/tmp/uno.xls")
+
 if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_import"))
@@ -187,5 +200,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_led"))
     suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))
+    suite.addTest(TestMergeBom("test_outFile"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

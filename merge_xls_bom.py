@@ -319,9 +319,6 @@ class MergeBom (object):
         assert(len(self.table_list) == 2)
         diff = {}
         A, B = self.table_list
-        file_a = A[A.keys()[0]][FILENAME]
-        file_b = B[A.keys()[0]][FILENAME]
-
         for k in A.keys():
             if B.has_key(k):
                 if A[k][1:] != B[k][1:]:
@@ -337,7 +334,7 @@ class MergeBom (object):
 
         return diff
 
-def write_xls(header, items, file_list, handler, sheetname="BOM"):
+def write_xls(items, file_list, handler, sheetname="BOM"):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
