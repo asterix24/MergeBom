@@ -191,7 +191,15 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        stats = write_xls(d, file_list, "/tmp/uno.xls")
+        stats = write_xls(d, file_list, "/tmp/uno.xls", revision="C", project="TEST")
+
+    def test_mergedFile(self):
+        file_list = [
+            "test/bom-merged.xls",
+        ]
+
+        m = MergeBom(file_list)
+        print d.extra_data()
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
@@ -201,5 +209,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))
     suite.addTest(TestMergeBom("test_outFile"))
+    suite.addTest(TestMergeBom("test_mergedFile"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 

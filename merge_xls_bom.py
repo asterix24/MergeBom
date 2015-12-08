@@ -89,6 +89,12 @@ VALID_KEYS = [
     u'description',
 ]
 
+EXTRA_KEYS = [
+    u'date',
+    u'project',
+    u'revision',
+]
+
 CON = 'J'
 CAP = 'C'
 
@@ -147,6 +153,7 @@ class MergeBom (object):
         """
         self.files = {}
         self.table_list = []
+        self.extra_keys = {}
 
         for index_file, file_name in enumerate(list_bom_files):
             wb, data = read_xls(file_name)
@@ -158,6 +165,8 @@ class MergeBom (object):
                 for n, item in enumerate(row):
                     if item.lower() in VALID_KEYS:
                         header[item.lower()] = n
+                    if item.lower() in EXTRA_KEYS:
+                        self.extra_keys[item.lower()] = row
 
             try:
                 quantity    = header['quantity']
@@ -200,6 +209,9 @@ class MergeBom (object):
 
     def table_data(self):
         return self.table_list
+
+    def extra_data(self):
+        return self.extra_keys
 
     def group(self):
         self.grouped_items = {}
@@ -334,7 +346,7 @@ class MergeBom (object):
 
         return diff
 
-def write_xls(items, file_list, handler, sheetname="BOM"):
+def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject"):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
@@ -374,8 +386,8 @@ def write_xls(items, file_list, handler, sheetname="BOM"):
         'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
         '',
         '',
-        'Project:',
-        'Revision:',
+        'Project: %s' % project,
+        'Revision: %s' % revision,
         '',
         'BOM files:',
     ]
@@ -427,7 +439,11 @@ def read_xls(handler):
         for row in range(s.nrows):
             values = []
             for col in range(s.ncols):
-                curr = s.cell(row,col)
+                try:
+                    curr = s.cell(row, col)
+                except IndexError:
+                    print row, col
+                    continue
                 value = ""
                 try:
                     value = str(int(curr.value))
