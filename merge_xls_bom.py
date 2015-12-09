@@ -160,6 +160,7 @@ class MergeBom (object):
 
             # Get all header keys
             header = {}
+            extra_keys = {}
             for row in data:
                 for n, item in enumerate(row):
 
@@ -174,7 +175,10 @@ class MergeBom (object):
                     except ValueError:
                         continue
                     if k in EXTRA_KEYS:
-                        self.extra_keys.append({k:v.replace(' ','')})
+                        extra_keys[k] = v.replace(' ','')
+
+            self.extra_keys.append(extra_keys)
+
 
             try:
                 designator  = header['designator']
@@ -363,10 +367,13 @@ class MergeBom (object):
 
         return diff
 
-def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject", diff=False, extra_data={}):
+def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject", diff=False, extra_data=[]):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
+
+    A_BOM= "OLD << "
+    B_BOM= "NEW >> "
 
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
@@ -413,7 +420,24 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
 
     # Header info row
     dt = datetime.datetime.now()
+    info = []
+    for i in file_list:
+        info.append("- %s" % i)
     if diff:
+        info = [
+            'Component Variation',
+            '',
+            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+            '',
+            '',
+            'Project: %s' % project,
+            '',
+            'Old Revision: %s' % extra_data[0]['revision'],
+            'New Revision: %s' % extra_data[1]['revision'],
+            '',
+            'BOM files:',
+        ]
+    else:
         info = [
             'Bill of Materials',
             '',
@@ -427,22 +451,6 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         ]
         for i in file_list:
             info.append("- %s" % i)
-    else:
-        info = [
-            'Component Variation',
-            '',
-            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
-            '',
-            '',
-            'Project: %s' % project,
-            '',
-            'Old Revision: %s' % revision,
-            'New Revision: %s' % revision,
-            '',
-            'BOM files:',
-        ]
-        for i in file_list:
-            info.append("- %s" % i)
 
     row = STR_ROW
     for i in info:
@@ -451,33 +459,45 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
 
     col = 0
     worksheet.write(row, col, "T.Qty", hdr_fmt)
-    col += 1
-    for i in file_list:
-        worksheet.write(row, col, i, hdr_fmt)
-        col += 1
+    if diff:
+        sa = "%s [%s]" % (A_BOM, file_list[0])
+        sb = "%s [%s]" % (B_BOM, file_list[1])
+        worksheet.merge_range('A%s:D%s' % (row, row), sa, diffa_fmt)
+        row += 1
+        worksheet.merge_range('A%s:D%s' % (row, row), sb, diffb_fmt)
+        row += 1
 
-    for i in VALID_KEYS:
-        worksheet.write(row, col, i.capitalize(), hdr_fmt)
-        col += 1
-    row += 1
+        for i in ['Reference', 'Status', 'Revision', '', 'Reference']:
+            worksheet.write(row, col, i.capitalize(), hdr_fmt)
+            col += 1
+        row += 1
+    else:
+        for i in file_list:
+            worksheet.write(row, col, i, hdr_fmt)
+            col += 1
+
+        for i in VALID_KEYS:
+            worksheet.write(row, col, i.capitalize(), hdr_fmt)
+            col += 1
+        row += 1
+
+
 
     row = HDR_ROW + row + 2
     if diff:
         for i in items.keys():
-            worksheet.merge_range('A%s:O%s' % (row, row), "%s" % row, diff_sep_fmt)
-            row += 1
-
-            A = [i, "<<", extra_data['revision'].upper()] + items[i][0]
-            B = [i, ">>", extra_data['revision'].upper()] + items[i][1]
-            error("%s >> %s" % (i, A))
-            warning("%s >> %s" % (i, B))
+            worksheet.merge_range('A%s:J%s' % (row, row), "%s" % row, diff_sep_fmt)
+            A = [i, A_BOM, extra_data[0]['revision'].upper()] + items[i][0][2:]
+            B = [i, B_BOM, extra_data[1]['revision'].upper()] + items[i][1][2:]
+            error("%s %s %s" % (i, A_BOM, A))
+            warning("%s %s %s" % (i, B_BOM, B))
             print "~" * 80
 
             for n, a in enumerate(A):
                 worksheet.write(row,  n, a, diffa_fmt)
                 worksheet.write((row + 1), n, B[n], diffb_fmt)
 
-            row += 3
+            row += 4
     else:
         l = []
         # Start to write components on xlsx
