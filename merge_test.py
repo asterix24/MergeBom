@@ -199,7 +199,7 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         m = MergeBom(file_list)
-        print d.extra_data()
+        print m.extra_data()
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()

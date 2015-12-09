@@ -82,7 +82,6 @@ COMMENT     = 4
 FOOTPRINT   = 5
 
 VALID_KEYS = [
-    u'quantity',
     u'designator',
     u'comment',
     u'footprint',
@@ -169,13 +168,16 @@ class MergeBom (object):
                         self.extra_keys[item.lower()] = row
 
             try:
-                quantity    = header['quantity']
                 designator  = header['designator']
                 comment     = header['comment']
                 footprint   = header['footprint']
                 description = header['description']
-            except KeyError:
-                error("No key header found!")
+            except KeyError, e:
+                error("No key header found! [%s]", e)
+                warning("Valid are:")
+                for i in VALID_KEYS:
+                    warning("i")
+
                 sys.exit(1)
 
             table_dict = {}
@@ -407,8 +409,8 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         worksheet.write(row, col, i, hdr_fmt)
         col += 1
 
-    for i in [u'Designator', u'Comment', u'Footprint', u'Description']:
-        worksheet.write(row, col, i, hdr_fmt)
+    for i in VALID_KEYS:
+        worksheet.write(row, col, i.capitalize(), hdr_fmt)
         col += 1
     row += 1
 
@@ -441,8 +443,8 @@ def read_xls(handler):
             for col in range(s.ncols):
                 try:
                     curr = s.cell(row, col)
+                    print curr
                 except IndexError:
-                    print row, col
                     continue
                 value = ""
                 try:
@@ -481,14 +483,4 @@ if __name__ == "__main__":
     file_list = map(os.path.basename, file_list)
     stats = write_xls(header, data, file_list, options.out_filename)
 
-    #print
-    #print
-    #print ":-" * 40
-    #for i in ORDER_PATTERN:
-    #    if stats.has_key(i):
-    #        print "%5s %s" % (stats[i], ORDER_PATTERN_NAMES[i])
-
-    #print "=" * 80
-    #print "Total: %s" % (stats['total'])
-    #print ":-" * 40
 
