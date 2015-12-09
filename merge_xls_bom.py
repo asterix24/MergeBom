@@ -162,10 +162,19 @@ class MergeBom (object):
             header = {}
             for row in data:
                 for n, item in enumerate(row):
+
+                    # search header to import corretly all data
                     if item.lower() in VALID_KEYS:
                         header[item.lower()] = n
-                    if item.lower() in EXTRA_KEYS:
-                        self.extra_keys[item.lower()] = row
+
+                    # search extra data, like project name and revision
+                    k = ""
+                    try:
+                        k, v = item.lower().split(":")
+                    except ValueError:
+                        continue
+                    if k in EXTRA_KEYS:
+                        self.extra_keys[k] = v
 
             try:
                 designator  = header['designator']
@@ -443,9 +452,9 @@ def read_xls(handler):
             for col in range(s.ncols):
                 try:
                     curr = s.cell(row, col)
-                    print curr
                 except IndexError:
                     continue
+
                 value = ""
                 try:
                     value = str(int(curr.value))
