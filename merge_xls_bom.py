@@ -465,6 +465,8 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
 
     col = 0
     worksheet.write(row, col, "T.Qty", hdr_fmt)
+    # fisrt colum is for total quantity.
+    col += 1
     if diff:
         sa = "%s [%s]" % (A_BOM, file_list[0])
         sb = "%s [%s]" % (B_BOM, file_list[1])
