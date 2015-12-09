@@ -152,7 +152,7 @@ class MergeBom (object):
         """
         self.files = {}
         self.table_list = []
-        self.extra_keys = {}
+        self.extra_keys = []
 
         for index_file, file_name in enumerate(list_bom_files):
             wb, data = read_xls(file_name)
@@ -174,7 +174,7 @@ class MergeBom (object):
                     except ValueError:
                         continue
                     if k in EXTRA_KEYS:
-                        self.extra_keys[k] = v.replace(' ','')
+                        self.extra_keys.append({k:v.replace(' ','')})
 
             try:
                 designator  = header['designator']
@@ -341,23 +341,29 @@ class MergeBom (object):
     def diff(self):
         assert(len(self.table_list) == 2)
         diff = {}
-        A, B = self.table_list
+
+        aA, bB = self.files.items()
+        fA = aA[0]
+        A  = self.table_list[aA[1]]
+        fB = bB[0]
+        B  = self.table_list[bB[1]]
+
         for k in A.keys():
             if B.has_key(k):
                 if A[k][1:] != B[k][1:]:
                     diff[k] = (A[k], B[k])
                 del B[k]
             else:
-                diff[k] = (A[k], None)
+                diff[k] = (A[k], [fB] + ['-'] * (len(A[k]) - 1))
 
             del A[k]
 
         for k in B.keys():
-            diff[k] = (None, B[k])
+            diff[k] = ([fA] + ['-'] * (len(B[k]) - 1), B[k])
 
         return diff
 
-def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject"):
+def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject", diff=False, extra_data={}):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
@@ -381,6 +387,22 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         'valign': 'vcenter',
         'align': 'left',})
 
+    diffa_fmt = workbook.add_format({
+        'align': 'left',
+        'valign': 'vcenter',
+        'fg_color': 'FFCC33'})
+    diffb_fmt = workbook.add_format({
+        'align': 'left',
+        'valign': 'vcenter',
+        'fg_color': '#CCFFCC'})
+    diff_sep_fmt = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#DDDDDD'})
+
+
     hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
     merge_fmt = workbook.add_format({
         'bold': 1,
@@ -389,28 +411,44 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         'valign': 'vcenter',
         'fg_color': 'yellow'})
 
-    # Time info
+    # Header info row
     dt = datetime.datetime.now()
-    info = [
-        'Bill of Materials',
-        '',
-        'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
-        '',
-        '',
-        'Project: %s' % project,
-        'Revision: %s' % revision,
-        '',
-        'BOM files:',
-    ]
-    for i in file_list:
-        info.append("- %s" % i)
+    if diff:
+        info = [
+            'Bill of Materials',
+            '',
+            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+            '',
+            '',
+            'Project: %s' % project,
+            'Revision: %s' % revision,
+            '',
+            'BOM files:',
+        ]
+        for i in file_list:
+            info.append("- %s" % i)
+    else:
+        info = [
+            'Component Variation',
+            '',
+            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+            '',
+            '',
+            'Project: %s' % project,
+            '',
+            'Old Revision: %s' % revision,
+            'New Revision: %s' % revision,
+            '',
+            'BOM files:',
+        ]
+        for i in file_list:
+            info.append("- %s" % i)
 
     row = STR_ROW
     for i in info:
         worksheet.merge_range('A%s:O%s' % (row, row), i, info_fmt)
         row += 1
 
-    # Header info row
     col = 0
     worksheet.write(row, col, "T.Qty", hdr_fmt)
     col += 1
@@ -423,20 +461,37 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         col += 1
     row += 1
 
-    l = []
-    # Start to write components on xlsx
     row = HDR_ROW + row + 2
-    for key in VALID_GROUP_KEY:
-        if items.has_key(key):
+    if diff:
+        for i in items.keys():
+            worksheet.merge_range('A%s:O%s' % (row, row), "%s" % row, diff_sep_fmt)
             row += 1
-            worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
-            for i in items[key]:
-                for c, col in enumerate(i):
-                    if c == 0:
-                        worksheet.write(row, STR_COL, col, tot_fmt)
-                    else:
-                        worksheet.write(row, c, col, def_fmt)
+
+            A = [i, "<<", extra_data['revision'].upper()] + items[i][0]
+            B = [i, ">>", extra_data['revision'].upper()] + items[i][1]
+            error("%s >> %s" % (i, A))
+            warning("%s >> %s" % (i, B))
+            print "~" * 80
+
+            for n, a in enumerate(A):
+                worksheet.write(row,  n, a, diffa_fmt)
+                worksheet.write((row + 1), n, B[n], diffb_fmt)
+
+            row += 3
+    else:
+        l = []
+        # Start to write components on xlsx
+        for key in VALID_GROUP_KEY:
+            if items.has_key(key):
                 row += 1
+                worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
+                for i in items[key]:
+                    for c, col in enumerate(i):
+                        if c == 0:
+                            worksheet.write(row, STR_COL, col, tot_fmt)
+                        else:
+                            worksheet.write(row, c, col, def_fmt)
+                    row += 1
 
     workbook.close()
 
@@ -473,7 +528,10 @@ if __name__ == "__main__":
 
     parser = OptionParser()
     parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
-    parser.add_option("-d", "--dirname", dest="dir_name", default='.', help="BOM directory's")
+    parser.add_option("-p", "--dirname", dest="dir_name", default='.', help="BOM directory's")
+    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="BOM directory's")
+    parser.add_option("-r", "--revision", dest="rev", default='A', help="BOM revision")
+    parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names")
     (options, args) = parser.parse_args()
     print args
 
@@ -486,10 +544,15 @@ if __name__ == "__main__":
         file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
         file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
-    header, data = import_data(file_list)
-    data = group_items(data)
-    data = grouped_count(data)
+    m = MergeBom(file_list)
     file_list = map(os.path.basename, file_list)
-    stats = write_xls(header, data, file_list, options.out_filename)
 
+
+    if options.diff:
+        d = m.diff()
+        l = m.extra_data()
+        stats = write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
+    else:
+        d = m.merge()
+        stats = write_xls(d, file_list, options.out_filename, revision=options.rev, project=options.prj_name)
 

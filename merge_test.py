@@ -123,19 +123,19 @@ class TestMergeBom(unittest.TestCase):
 
         check = {
             'C45': (
-              None,
-              ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]']
+              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
+              ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]'],
             ),
             'C1045': (
               ['bomdiff1.xlsx', 1, u'C1045', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
-              None,
+              ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C204': (
               ['bomdiff1.xlsx', 1, u'C204', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
-              None,
+              ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C2046': (
-              None,
+              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
               ['bomdiff2.xlsx', 1, u'C2046', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
             ),
             'C104': (
@@ -143,7 +143,7 @@ class TestMergeBom(unittest.TestCase):
               ['bomdiff2.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
             ),
             'C1': (
-              None,
+              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
               ['bomdiff2.xlsx', 1, u'C1', u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
             )
             }
