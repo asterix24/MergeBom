@@ -174,7 +174,7 @@ class MergeBom (object):
                     except ValueError:
                         continue
                     if k in EXTRA_KEYS:
-                        self.extra_keys[k] = v
+                        self.extra_keys[k] = v.replace(' ','')
 
             try:
                 designator  = header['designator']
