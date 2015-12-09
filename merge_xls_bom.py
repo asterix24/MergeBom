@@ -155,8 +155,13 @@ class MergeBom (object):
         self.extra_keys = []
 
         for index_file, file_name in enumerate(list_bom_files):
+            warning(file_name)
             wb, data = read_xls(file_name)
-            self.files[os.path.basename(file_name)] = index_file
+            n = os.path.basename(file_name)
+            if self.files.has_key(n):
+                n = "%s-%s" % (index_file, n)
+
+            self.files[n] = index_file
 
             # Get all header keys
             header = {}
@@ -343,9 +348,10 @@ class MergeBom (object):
         return self.table
 
     def diff(self):
-        assert(len(self.table_list) == 2)
+        if len(self.table_list) > 2:
+            error("To much file ti compare!")
+            sys.exit(1)
         diff = {}
-
         aA, bB = self.files.items()
         fA = aA[0]
         A  = self.table_list[aA[1]]
