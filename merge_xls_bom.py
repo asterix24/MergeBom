@@ -352,16 +352,43 @@ class MergeBom (object):
             error("To much file ti compare!")
             sys.exit(1)
         diff = {}
-        aA, bB = self.files.items()
-        fA = aA[0]
-        A  = self.table_list[aA[1]]
-        fB = bB[0]
-        B  = self.table_list[bB[1]]
+        warning("%s" % self.files.items())
+        for i in self.files.items():
+            if i[1] == 0:
+                fA = i[0]
+                A = self.table_list[0]
+            if i[1] == 1:
+                fB = i[0]
+                B = self.table_list[1]
+
+        warning("A:%s B:%s" % (fA, fB))
 
         for k in A.keys():
             if B.has_key(k):
-                if A[k][1:] != B[k][1:]:
+
+                c = re.search('^[a-zA-Z_]{1,3}', A[k][DESIGNATOR])
+                category = ''
+                if c is not None:
+                    category = c.group().upper()
+
+                if category  == 'J':
+                    la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
+                    lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
+
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]))
+
+                if category  == 'D' and "LED" in A[k][FOOTPRINT]:
+                    la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
+                    lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
+
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]))
+                else:
+                    la = A[k][1:]
+                    lb = B[k][1:]
+
+                if la != lb:
                     diff[k] = (A[k], B[k])
+
                 del B[k]
             else:
                 diff[k] = (A[k], [fB] + ['-'] * (len(A[k]) - 1))
