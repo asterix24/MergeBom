@@ -31,6 +31,8 @@ def warning(s):
     print colored(">> " + s,'yellow')
 def error(s):
     print colored("!! " + s,'red')
+def info(s, prefix="> "):
+    print colored(prefix + s,'green')
 
 def fillRowCenter(row, s):
     r = row[:(len(row)/2) - (len(s)/2)] + s + row[(len(row)/2) + (len(s)/2):]
@@ -112,7 +114,7 @@ VALID_GROUP_KEY = [
     'U'
 ]
 
-ORDER_PATTERN_NAMES = {
+CATEGORY_NAMES = {
     'J':  'J  Connectors',
     'S':  'S  Mechanical parts and buttons',
     'F':  'F  Fuses',
@@ -153,14 +155,16 @@ class MergeBom (object):
         self.files = {}
         self.table_list = []
         self.extra_keys = []
+        self.stats = {}
 
+        self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
+            self.stats['file_num'] += 1
             warning(file_name)
             wb, data = read_xls(file_name)
             n = os.path.basename(file_name)
             if self.files.has_key(n):
                 n = "%s-%s" % (index_file, n)
-
             self.files[n] = index_file
 
             # Get all header keys
@@ -183,7 +187,6 @@ class MergeBom (object):
                         extra_keys[k] = v.replace(' ','')
 
             self.extra_keys.append(extra_keys)
-
 
             try:
                 designator  = header['designator']
@@ -297,10 +300,11 @@ class MergeBom (object):
         TABLE_FOOTPRINT   = TABLE_COMMENT + 1
         TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
 
+        self.stats['total'] = 0
         for category in VALID_GROUP_KEY:
             if self.grouped_items.has_key(category):
                 tmp = {}
-                count = 0
+                self.stats[category] = 0
                 for item in self.grouped_items[category]:
                     if category  == 'J':
                         key = item[DESCRIPTION] + item[FOOTPRINT]
@@ -314,7 +318,8 @@ class MergeBom (object):
 
                     #print key
                     #print "<<", item[DESIGNATOR]
-                    count += 1
+                    self.stats[category] += 1
+                    self.stats['total'] += 1
 
                     # First colum is total Qty
                     curr_file_index = self.files[item[FILENAME]] + TABLE_TOTALQTY + 1
@@ -338,9 +343,17 @@ class MergeBom (object):
                         row[curr_file_index] = item[QUANTITY]
                         tmp[key] = row
                         #print "NEW", tmp[key], curr_file_index, item[FILENAME]
-                print count
 
                 self.table[category] = tmp.values()
+
+    def statistics(self):
+        info("STATISTICS:")
+        for i in VALID_GROUP_KEY:
+            if self.stats.has_key(i):
+                info(CATEGORY_NAMES[i], prefix="- ")
+                print "%5.5s %5.5s" % (i, self.stats[i])
+
+        warning("Total: %s" % self.stats['total'])
 
     def merge(self):
         self.group()
@@ -539,7 +552,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
         for key in VALID_GROUP_KEY:
             if items.has_key(key):
                 row += 1
-                worksheet.merge_range('A%s:O%s' % (row, row), ORDER_PATTERN_NAMES[key], merge_fmt)
+                worksheet.merge_range('A%s:O%s' % (row, row), CATEGORY_NAMES[key], merge_fmt)
                 for i in items[key]:
                     for c, col in enumerate(i):
                         if c == 0:

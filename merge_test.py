@@ -205,6 +205,15 @@ class TestMergeBom(unittest.TestCase):
         self.assertEqual(d[0]['project'], "test")
         self.assertEqual(d[0]['revision'], "c")
 
+    def test_stats(self):
+        file_list = [
+            "test/bom-merged.xls",
+        ]
+
+        m = MergeBom(file_list)
+        m.merge()
+        m.statistics()
+
 if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_import"))
@@ -214,5 +223,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_orderRef"))
     suite.addTest(TestMergeBom("test_outFile"))
     suite.addTest(TestMergeBom("test_mergedFile"))
+    suite.addTest(TestMergeBom("test_stats"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 
