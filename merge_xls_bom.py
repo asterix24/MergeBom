@@ -74,6 +74,24 @@ def order_designator(ref_str):
         sys.exit(1)
     return ", ".join(d)
 
+def order_value(l):
+    for i in l:
+        i = i.lower().strip()
+        #s = re.findall("^([0-9]+)([k,r,m]{1})", i)
+        v = 0
+        print i, "-> ",
+        for c in i:
+            try:
+                v = int(c, 10)
+            except ValueError:
+                if c == 'm':
+                    v *= 1000000
+                if c == 'k':
+                    v *= 1000
+                if c == 'R':
+                    v *= 1
+        print v
+    return l
 
 # Exchange data layout after file import
 FILENAME    = 0

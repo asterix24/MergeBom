@@ -180,6 +180,18 @@ class TestMergeBom(unittest.TestCase):
             l = order_designator(i)
             self.assertEqual(l, check[n])
 
+    def test_orderCompValue(self):
+        test = [
+            "1k", "1", "10R", "0R1", "2.2K", "0.3",
+        ]
+        check = [
+            "0R1", "0R3", "1R", "10R", "1k", "2k2",
+        ]
+
+        l = order_value(test)
+        for n,i in enumerate(l):
+            self.assertEqual(i, check[n])
+
     def test_outFile(self):
         file_list = [
             "test/bom_uno.xls",
@@ -224,5 +236,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_outFile"))
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
+    suite.addTest(TestMergeBom("test_orderCompValue"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
 
