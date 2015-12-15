@@ -19,7 +19,7 @@
 
 import unittest
 import sys
-from merge_xls_bom import *
+from mergebom import *
 
 class TestMergeBom(unittest.TestCase):
     def __init__(self, testname):
