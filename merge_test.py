@@ -183,12 +183,12 @@ class TestMergeBom(unittest.TestCase):
     def test_orderCompValue(self):
         test = [
             ("1k", "1k5", "1", "10R", "0R1", "2.2k", "0.3"),
-            ("100nF", "1F", "10pF", "2.2uF", "47uF"),
+            ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF"),
             ("1nH", "1H", "10pH", "2.2uH", "47uH"),
         ]
         check = [
             ("0R1", "0.3", "1", "10R", "1k", "1k5", "2.2k"),
-            ("10pF", "100nF", "2.2uF", "47uF", "1F"),
+            ("10pF", "100nF", "0.1uF", "2.2uF", "47uF", "1F"),
             ("10pH", "1nH", "2.2uH", "47uH", "1H"),
         ]
 

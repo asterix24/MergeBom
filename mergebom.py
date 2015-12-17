@@ -329,11 +329,11 @@ class MergeBom (object):
         self.table = {}
 
         # Finally Table layout
-        TABLE_TOTALQTY    = 0
-        TABLE_DESIGNATOR  = len(self.files) + 1
-        TABLE_COMMENT     = TABLE_DESIGNATOR + 1
-        TABLE_FOOTPRINT   = TABLE_COMMENT + 1
-        TABLE_DESCRIPTION = TABLE_FOOTPRINT + 1
+        self.TABLE_TOTALQTY    = 0
+        self.TABLE_DESIGNATOR  = len(self.files) + 1
+        self.TABLE_COMMENT     = self.TABLE_DESIGNATOR + 1
+        self.TABLE_FOOTPRINT   = self.TABLE_COMMENT + 1
+        self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
 
         self.stats['total'] = 0
         for category in VALID_GROUP_KEY:
@@ -357,14 +357,14 @@ class MergeBom (object):
                     self.stats['total'] += 1
 
                     # First colum is total Qty
-                    curr_file_index = self.files[item[FILENAME]] + TABLE_TOTALQTY + 1
+                    curr_file_index = self.files[item[FILENAME]] + self.TABLE_TOTALQTY + 1
 
                     if tmp.has_key(key):
                         #print "UPD", tmp[key], curr_file_index, item[FILENAME]
-                        tmp[key][TABLE_TOTALQTY] += item[QUANTITY]
+                        tmp[key][self.TABLE_TOTALQTY] += item[QUANTITY]
                         tmp[key][curr_file_index] += item[QUANTITY]
-                        tmp[key][TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                        tmp[key][TABLE_DESIGNATOR] = order_designator(tmp[key][TABLE_DESIGNATOR])
+                        tmp[key][self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
+                        tmp[key][self.TABLE_DESIGNATOR] = order_designator(tmp[key][self.TABLE_DESIGNATOR])
                     else:
                         row = [item[QUANTITY]] + \
                               [0] * len(self.files) + \
@@ -393,6 +393,12 @@ class MergeBom (object):
     def merge(self):
         self.group()
         self.count()
+        for category in VALID_GROUP_KEY:
+            if self.table.has_key(category):
+                for n, item in enumerate(self.table[category]):
+                    self.table[category][n][self.TABLE_DESIGNATOR] = \
+                            order_designator(item[self.TABLE_DESIGNATOR])
+
         return self.table
 
     def diff(self):
