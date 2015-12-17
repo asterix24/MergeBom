@@ -74,24 +74,41 @@ def order_designator(ref_str):
         sys.exit(1)
     return ", ".join(d)
 
+MULT = {
+    'R': 1,
+    'k': 1000,
+    'M': 1000000,
+    'p': 10e-12,
+    'n': 10e-9,
+    'u': 10e-6,
+}
+
 def order_value(l):
+    print
+    data = []
     for i in l:
-        i = i.lower().strip()
-        #s = re.findall("^([0-9]+)([k,r,m]{1})", i)
-        v = 0
-        print i, "-> ",
+        mult = 1
+        v = ""
+        acc = 0
         for c in i:
+            if c in ["F", "H"]:
+                continue
+            if MULT.has_key(c):
+                acc = float(v) * MULT[c]
+                mult = MULT[c] / 10
+                v = ""
+                continue
+            v += c
+        if v:
             try:
-                v = int(c, 10)
+                acc += float(v) * mult
             except ValueError:
-                if c == 'm':
-                    v *= 1000000
-                if c == 'k':
-                    v *= 1000
-                if c == 'R':
-                    v *= 1
-        print v
-    return l
+                error("Wrong multiplier [%s]" % c)
+                sys.exit(1)
+
+        data.append((acc, i))
+
+    return sorted(data, key=lambda x: x[0])
 
 # Exchange data layout after file import
 FILENAME    = 0

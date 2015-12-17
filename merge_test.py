@@ -182,15 +182,21 @@ class TestMergeBom(unittest.TestCase):
 
     def test_orderCompValue(self):
         test = [
-            "1k", "1", "10R", "0R1", "2.2K", "0.3",
+            ("1k", "1k5", "1", "10R", "0R1", "2.2k", "0.3"),
+            ("100nF", "1F", "10pF", "2.2uF", "47uF"),
+            ("1nH", "1H", "10pH", "2.2uH", "47uH"),
         ]
         check = [
-            "0R1", "0R3", "1R", "10R", "1k", "2k2",
+            ("0R1", "0.3", "1", "10R", "1k", "1k5", "2.2k"),
+            ("10pF", "100nF", "2.2uF", "47uF", "1F"),
+            ("10pH", "1nH", "2.2uH", "47uH", "1H"),
         ]
 
-        l = order_value(test)
-        for n,i in enumerate(l):
-            self.assertEqual(i, check[n])
+        for k, m in enumerate(test):
+            l = order_value(m)
+            for n, i in enumerate(l):
+                print i[1], "->", check[k][n]
+                self.assertEqual(i[1], check[k][n])
 
     def test_outFile(self):
         file_list = [
@@ -238,4 +244,3 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_orderCompValue"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)
-
