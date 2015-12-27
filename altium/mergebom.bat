@@ -1,0 +1,3 @@
+python z:\src\mergebom\altium\mergebom_altium.py %*
+
+set /p DUMMY=Hit ENTER to continue...
