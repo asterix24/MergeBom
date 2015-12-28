@@ -21,16 +21,19 @@ import sys, os
 import glob
 
 curr_path = None
-with open('C:\\Users\\nessuno\\Desktop\\uno.txt', 'w') as f:
-	f.write("Argomenti: %s\r\n" % len(sys.argv))
-	for n, i in enumerate(sys.argv):
-		if n:
-			curr_path = os.path.dirname(i)
-			f.write("Prova: %s\r\n" %  curr_path)
+for n, i in enumerate(sys.argv):
+    if n:
+        curr_path = os.path.dirname(i)
 
-	if curr_path is not None:
-	    file_list = glob.glob(os.path.join(curr_path, '*.xls'))
-	    file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
+if curr_path is not None:
+    report_file = "mergebom_report.txt"
+    with open(report_file, 'w') as f:
+        f.write("Argomenti: %s\r\n" % len(sys.argv))
+        f.write("Directory: %s\r\n" %  curr_path)
 
-	    for i in file_list:
-			f.write("file: %s\r\n" % i)
+        if curr_path is not None:
+            file_list = glob.glob(os.path.join(curr_path, '*.xls'))
+            file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
+
+            for i in file_list:
+                f.write("file: %s\r\n" % i)
