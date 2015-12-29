@@ -20,6 +20,13 @@
 import sys, os
 import glob
 
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))
+if not path in sys.path:
+    sys.path.insert(1, path)
+    del path
+
+from mergebom import *
+
 curr_path = None
 for n, i in enumerate(sys.argv):
     if n:
@@ -30,10 +37,23 @@ if curr_path is not None:
     with open(report_file, 'w') as f:
         f.write("Argomenti: %s\r\n" % len(sys.argv))
         f.write("Directory: %s\r\n" %  curr_path)
+        print curr_path
+        print os.path.join(curr_path, "prova")
 
-        if curr_path is not None:
-            file_list = glob.glob(os.path.join(curr_path, '*.xls'))
-            file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
+        file_list = glob.glob(os.path.join(curr_path, '*.xls'))
+        file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
+        print file_list
 
-            for i in file_list:
-                f.write("file: %s\r\n" % i)
+        for i in file_list:
+            f.write("file: %s\r\n" % i)
+            print i
+
+        print "......."
+        m = MergeBom(file_list, handler=f, terminal=False)
+        file_list = map(os.path.basename, file_list)
+        d = m.merge()
+
+        stats = write_xls(d, file_list, os.path.join(curr_path, "mergerbom.xlsx"), 
+            revision="Test", project="Prova")
+
+
