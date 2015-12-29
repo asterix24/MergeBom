@@ -16,7 +16,7 @@
  */
 
 function dirname(path) {
-     return path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+     return path.replace(/\\[^\\]*$/g, '');
 }
 
 function ExeMergeBom() {
@@ -31,7 +31,7 @@ function ExeMergeBom() {
                 if (err != 0) {
                     ShowMessage("Errore nell'esecuzione di MergeBom. " + err);
                 } else {
-                    var report_doc = Client.OpenDocument('Text', path + "\\" + "mergebom_report.txt");
+                    var report_doc = Client.OpenDocument('Text', path + '\\' + "mergebom_report.txt");
                     if (report_doc) {
                         Client.ShowDocument(report_doc);
                     } else {
