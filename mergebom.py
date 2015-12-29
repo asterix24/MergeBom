@@ -83,7 +83,7 @@ def order_value(l):
             try:
                 acc += float(v) * mult
             except ValueError:
-                error("Wrong multiplier [%s]" % c, self.handler, self.terminal)
+                error("Wrong multiplier [%s]" % c, self.handler, terminal=self.terminal)
                 sys.exit(1)
 
         data.append((acc, i))
@@ -173,11 +173,12 @@ class MergeBom (object):
         self.stats = {}
         self.handler = handler
         self.terminal = terminal
+        print "--", self.terminal
 
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
             self.stats['file_num'] += 1
-            warning(file_name, self.handler, self.terminal)
+            warning(file_name, self.handler, terminal=self.terminal)
             wb, data = read_xls(file_name)
             n = os.path.basename(file_name)
             if self.files.has_key(n):
@@ -211,10 +212,10 @@ class MergeBom (object):
                 footprint   = header['footprint']
                 description = header['description']
             except KeyError, e:
-                error("No key header found! [%s]" % e, self.handler, self.terminal)
-                warning("Valid are:", self.handler, self.terminal)
+                error("No key header found! [%s]" % e, self.handler, terminal=self.terminal)
+                warning("Valid are:", self.handler, terminal=self.terminal)
                 for i in VALID_KEYS:
-                    warning("i", self.handler, self.terminal)
+                    warning("i", self.handler, terminal=self.terminal)
 
                 sys.exit(1)
 
@@ -279,12 +280,12 @@ class MergeBom (object):
                         group_key = 'J'
                     # Discarted ref
                     if group_key in ['TP']:
-                        warning("WARNING!! KEY SKIPPED [%s]" % group_key, self.handler, self.terminal)
+                        warning("WARNING!! KEY SKIPPED [%s]" % group_key, self.handler, terminal=self.terminal)
                         continue
 
                     if group_key not in VALID_GROUP_KEY:
-                        error("GROUP key not FOUND!", self.handler, self.terminal)
-                        error("%s, %s, %s" % (c.group(), designator, table_dict[designator]), self.handler, self.terminal)
+                        error("GROUP key not FOUND!", self.handler, terminal=self.terminal)
+                        error("%s, %s, %s" % (c.group(), designator, table_dict[designator]), self.handler, terminal=self.terminal)
                         sys.exit(1)
 
                     if self.grouped_items.has_key(group_key):
@@ -292,8 +293,8 @@ class MergeBom (object):
                     else:
                         self.grouped_items[group_key] = [table_dict[designator]]
                 else:
-                    error("GROUP key not FOUND!", self.handler, self.terminal)
-                    error(designator, self.handler, self.terminal)
+                    error("GROUP key not FOUND!", self.handler, terminal=self.terminal)
+                    error(designator, self.handler, terminal=self.terminal)
                     sys.exit(1)
 
     def table_grouped(self):
@@ -325,11 +326,11 @@ class MergeBom (object):
                 for item in self.grouped_items[category]:
                     if category  == 'J':
                         key = item[DESCRIPTION] + item[FOOTPRINT]
-                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, self.terminal)
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, terminal=self.terminal)
                         item[COMMENT] = "Connector"
                     if category  == 'D' and "LED" in item[FOOTPRINT]:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
-                            warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, self.terminal)
+                            warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, terminal=self.terminal)
                     else:
                         key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
@@ -364,13 +365,13 @@ class MergeBom (object):
                 self.table[category] = tmp.values()
 
     def statistics(self):
-        info("STATISTICS:", self.handler, self.terminal)
+        info("STATISTICS:", self.handler, terminal=self.terminal)
         for i in VALID_GROUP_KEY:
             if self.stats.has_key(i):
                 info(CATEGORY_NAMES[i], self.handler, terminal=self.terminal, prefix="- ")
                 info("%5.5s %5.5s" % (i, self.stats[i]), self.handler, terminal=self.terminal, prefix="  ")
 
-        warning("Total: %s" % self.stats['total'], self.handler, self.terminal)
+        warning("Total: %s" % self.stats['total'], self.handler, terminal=self.terminal)
 
     def merge(self):
         self.group()
@@ -385,10 +386,10 @@ class MergeBom (object):
 
     def diff(self):
         if len(self.table_list) > 2:
-            error("To much file ti compare!", self.handler, self.terminal)
+            error("To much file ti compare!", self.handler, terminal=self.terminal)
             sys.exit(1)
         diff = {}
-        warning("%s" % self.files.items(), self.handler, self.terminal)
+        warning("%s" % self.files.items(), self.handler, terminal=self.terminal)
         for i in self.files.items():
             if i[1] == 0:
                 fA = i[0]
@@ -397,7 +398,7 @@ class MergeBom (object):
                 fB = i[0]
                 B = self.table_list[1]
 
-        warning("A:%s B:%s" % (fA, fB), self.handler, self.terminal)
+        warning("A:%s B:%s" % (fA, fB), self.handler, terminal=self.terminal)
 
         for k in A.keys():
             if B.has_key(k):
@@ -411,13 +412,13 @@ class MergeBom (object):
                     la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
                     lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
 
-                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, self.terminal)
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, terminal=self.terminal)
 
                 if category  == 'D' and "LED" in A[k][FOOTPRINT]:
                     la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
                     lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
 
-                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, self.terminal)
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, terminal=self.terminal)
                 else:
                     la = A[k][1:]
                     lb = B[k][1:]
@@ -560,9 +561,9 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
             worksheet.merge_range('A%s:J%s' % (row, row), "%s" % row, diff_sep_fmt)
             A = [i, A_BOM, extra_data[0]['revision'].upper()] + items[i][0][2:]
             B = [i, B_BOM, extra_data[1]['revision'].upper()] + items[i][1][2:]
-            error("%s %s %s" % (i, A_BOM, A), self.handler, self.terminal)
-            warning("%s %s %s" % (i, B_BOM, B), self.handler, self.terminal)
-            info("~" * 80, self.handler, self.terminal, prefix="")
+            error("%s %s %s" % (i, A_BOM, A), self.handler, terminal=self.terminal)
+            warning("%s %s %s" % (i, B_BOM, B), self.handler, terminal=self.terminal)
+            info("~" * 80, self.handler, terminal=self.terminal, prefix="")
 
             for n, a in enumerate(A):
                 worksheet.write(row,  n, a, diffa_fmt)
