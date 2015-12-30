@@ -29,6 +29,7 @@ for n, i in enumerate(sys.argv):
 if curr_path is not None:
     report_file = os.path.join(curr_path, "mergebom_report.txt")
     print report_file
+
     with open(report_file, 'w') as f:
         f.write("Argomenti: %s\r\n" % len(sys.argv))
         f.write("Directory: %s\r\n" %  curr_path)
@@ -36,14 +37,31 @@ if curr_path is not None:
         file_list = glob.glob(os.path.join(curr_path, '*.xls'))
         file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
 
-        for i in file_list:
-            f.write("file: %s\r\n" % i)
+        print file_list, len(file_list)
+        assert(len(file_list) == 1)
 
-        m = MergeBom(file_list, handler=f, terminal=False)
-        file_list = map(os.path.basename, file_list)
+        src_bom_file_name = None
+        out_bom_file_name = None
+        for i in file_list:
+            path = os.path.dirname(i)
+            name = os.path.basename(i)
+            src_bom_file_name = os.path.join(path, "tmp_" + name)
+            out_bom_file_name = os.path.join(path, name)
+
+            print "rename file %s" % out_bom_file_name
+
+            os.rename(out_bom_file_name, src_bom_file_name)
+            f.write("SRC file: %s\n" % src_bom_file_name)
+            f.write("OUT file: %s\n" % out_bom_file_name)
+
+        m = MergeBom([src_bom_file_name], handler=f, terminal=False)
         d = m.merge()
 
-        stats = write_xls(d, file_list, os.path.join(curr_path, "mergerbom.xlsx"), 
+        stats = write_xls(d, [os.path.basename(src_bom_file_name)], out_bom_file_name, 
             revision="Test", project="Prova")
+
+        # Remove old src file.
+        os.remove(src_bom_file_name)
+        
 
 
