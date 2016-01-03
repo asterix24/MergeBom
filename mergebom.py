@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # MergeBom is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,18 +17,16 @@
 #
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import csv
-import sys, os
+import sys
+import os
 import re
-
 import xlrd
 import xlsxwriter
 import datetime
 
 from termcolor import colored
+
 
 def printout(s, handler, prefix="> ", terminal=True, color='green'):
     s = "%s %s\n" % (prefix, s)
@@ -35,21 +36,25 @@ def printout(s, handler, prefix="> ", terminal=True, color='green'):
     handler.write(s)
     handler.flush()
 
+
 def warning(s, handler, prefix=">> ", terminal=True):
     printout(s, handler, prefix=prefix, terminal=terminal, color='yellow')
+
 
 def error(s, handler, prefix="!! ", terminal=True):
     printout(s, handler, prefix=prefix, terminal=terminal, color='red')
 
+
 def info(s, handler, prefix="> ", terminal=True):
     printout(s, handler, prefix=prefix, terminal=terminal, color='green')
+
 
 def order_designator(ref_str):
     ref_str = ref_str.replace(" ", "")
     l = ref_str.split(",")
     try:
-        d = sorted(l, key=lambda x:int(re.search('[0-9]+', x).group()))
-    except NoneType:
+        d = sorted(l, key=lambda x: int(re.search('[0-9]+', x).group()))
+    except TypeError:
         error("Could not order Designators [%s]" % l)
         sys.exit(1)
     return ", ".join(d)
@@ -63,7 +68,8 @@ MULT = {
     'u': 10e-6,
 }
 
-def order_value(l):
+
+def order_value(l, handler=sys.stdout, terminal=True):
     print
     data = []
     for i in l:
@@ -73,7 +79,7 @@ def order_value(l):
         for c in i:
             if c in ["F", "H"]:
                 continue
-            if MULT.has_key(c):
+            if c in MULT:
                 acc = float(v) * MULT[c]
                 mult = MULT[c] / 10
                 v = ""
@@ -83,7 +89,8 @@ def order_value(l):
             try:
                 acc += float(v) * mult
             except ValueError:
-                error("Wrong multiplier [%s]" % c, self.handler, terminal=self.terminal)
+                error("Wrong multiplier [%s]" % c,
+                      handler, terminal=terminal)
                 sys.exit(1)
 
         data.append((acc, i))
@@ -134,7 +141,7 @@ CATEGORY_NAMES = {
     'S':  'S  Mechanical parts and buttons',
     'F':  'F  Fuses',
     'R':  'R  Resistors',
-     CAP :  'C  Capacitors',
+    CAP :  'C  Capacitors',
     'D':  'D  Diodes',
     'DZ': 'DZ Zener, Schottky, Transil',
     'L':  'L  Inductors, chokes',
@@ -181,7 +188,8 @@ class MergeBom (object):
             warning(file_name, self.handler, terminal=self.terminal)
             wb, data = read_xls(file_name)
             n = os.path.basename(file_name)
-            if self.files.has_key(n):
+
+            if n in self.files:
                 n = "%s-%s" % (index_file, n)
             self.files[n] = index_file
 
@@ -202,7 +210,7 @@ class MergeBom (object):
                     except ValueError:
                         continue
                     if k in EXTRA_KEYS:
-                        extra_keys[k] = v.replace(' ','')
+                        extra_keys[k] = v.replace(' ', '')
 
             self.extra_keys.append(extra_keys)
 
@@ -212,7 +220,8 @@ class MergeBom (object):
                 footprint   = header['footprint']
                 description = header['description']
             except KeyError, e:
-                error("No key header found! [%s]" % e, self.handler, terminal=self.terminal)
+                error("No key header found! [%s]" % e, self.handler,
+                      terminal=self.terminal)
                 warning("Valid are:", self.handler, terminal=self.terminal)
                 for i in VALID_KEYS:
                     warning("i", self.handler, terminal=self.terminal)
@@ -226,9 +235,9 @@ class MergeBom (object):
                     continue
 
                 if filter(lambda x: x, row):
-                    # Fix designator field, we want all designator separated by
-                    # comma followed by space. In this way excel could resize row
-                    # cell correctly
+                    # Fix designator field, we want all designator separated
+                    # by comma followed by space.
+                    # In this way excel could resize row cell correctly
                     if re.findall("\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
 
@@ -239,8 +248,8 @@ class MergeBom (object):
                         if r:
                             table_dict[r] = [
                                 os.path.basename(file_name),
-                                1, # one item for a row
-                                r, # designator
+                                1,  # one item for a row
+                                r,  # designator
                                 row[description],
                                 row[comment],
                                 row[footprint]
@@ -264,13 +273,13 @@ class MergeBom (object):
                 if c is not None:
                     group_key = c.group().upper()
                     # Buttons and spacer
-                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT','SW']:
+                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT', 'SW']:
                         group_key = 'S'
                     # Fuses
                     if group_key in ['G']:
                         group_key = 'F'
                     # Tranformer
-                    if group_key in ['T' ]:
+                    if group_key in ['T']:
                         group_key = 'TR'
                     # Resistors, array, etc.
                     if group_key in ['RN', 'R_G']:
@@ -280,12 +289,15 @@ class MergeBom (object):
                         group_key = 'J'
                     # Discarted ref
                     if group_key in ['TP']:
-                        warning("WARNING!! KEY SKIPPED [%s]" % group_key, self.handler, terminal=self.terminal)
+                        warning("WARNING!! KEY SKIPPED [%s]" % group_key,
+                                self.handler, terminal=self.terminal)
                         continue
 
                     if group_key not in VALID_GROUP_KEY:
-                        error("GROUP key not FOUND!", self.handler, terminal=self.terminal)
-                        error("%s, %s, %s" % (c.group(), designator, table_dict[designator]), self.handler, terminal=self.terminal)
+                        error("GROUP key not FOUND!", self.handler,
+                              terminal=self.terminal)
+                        error("%s, %s, %s" % (c.group(), designator, table_dict[designator]),
+                              self.handler, terminal=self.terminal)
                         sys.exit(1)
 
                     if self.grouped_items.has_key(group_key):
@@ -586,8 +598,6 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
                     row += 1
 
     workbook.close()
-
-    return {}
 
 def read_xls(handler):
     wb = xlrd.open_workbook(handler)

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # MergeBom is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,10 +17,9 @@
 #
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import sys, os
+import sys
+import os
 import glob
 from mergebom import *
 
@@ -31,8 +33,9 @@ if curr_path is not None:
     print report_file
 
     with open(report_file, 'w') as f:
-        f.write("Argomenti: %s\r\n" % len(sys.argv))
-        f.write("Directory: %s\r\n" %  curr_path)
+        f.write("Argomenti: %s\n" % len(sys.argv))
+        f.write("Directory: %s\n" % curr_path)
+        f.write("\n")
 
         file_list = glob.glob(os.path.join(curr_path, '*.xls'))
         file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
@@ -56,12 +59,10 @@ if curr_path is not None:
 
         m = MergeBom([src_bom_file_name], handler=f, terminal=False)
         d = m.merge()
+        m.statistics()
 
-        stats = write_xls(d, [os.path.basename(src_bom_file_name)], out_bom_file_name, 
-            revision="Test", project="Prova")
+        write_xls(d, [os.path.basename(src_bom_file_name)],
+                  out_bom_file_name, revision="Test", project="Prova")
 
         # Remove old src file.
         os.remove(src_bom_file_name)
-        
-
-

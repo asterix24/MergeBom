@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # MergeBom is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,12 +17,11 @@
 #
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import unittest
 import sys
 from mergebom import *
+
 
 class TestMergeBom(unittest.TestCase):
     def __init__(self, testname):
@@ -27,6 +29,7 @@ class TestMergeBom(unittest.TestCase):
 
     def setUp(self):
         pass
+    
     def tearDown(self):
         pass
 
@@ -49,7 +52,6 @@ class TestMergeBom(unittest.TestCase):
         for n, i in enumerate(data):
             self.assertEqual(len(i), check[n][0])
             print len(i)
-
 
     def test_led(self):
         file_list = [
@@ -75,15 +77,14 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list)
         d = m.merge()
 
-        #file_list = map(os.path.basename, file_list)
-        #stats = write_xls(h, d, file_list, "/tmp/uno.xls")
+        # file_list = map(os.path.basename, file_list)
+        # stats = write_xls(h, d, file_list, "/tmp/uno.xls")
 
         for category in d.keys():
             for n, i in enumerate(d[category]):
                 print "T >", i
                 print "C <", check[category][n]
                 self.assertEqual(i, check[category][n])
-
 
     def test_group(self):
         file_list = [
@@ -99,12 +100,11 @@ class TestMergeBom(unittest.TestCase):
           [2, 2, 0, 0, u'C5, C6', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
         ]
 
-
         m = MergeBom(file_list)
         d = m.merge()
 
-        #file_list = map(os.path.basename, file_list)
-        #stats = write_xls(h, d, file_list, "/tmp/uno.xls")
+        # file_list = map(os.path.basename, file_list)
+        # stats = write_xls(h, d, file_list, "/tmp/uno.xls")
 
         for i in d.keys():
             for n, j in enumerate(d[i]):
@@ -159,7 +159,6 @@ class TestMergeBom(unittest.TestCase):
             self.assertEqual(k[i][0], check[i][0])
             self.assertEqual(k[i][1], check[i][1])
 
-
     def test_orderRef(self):
         test = [
             "C0, C103, C1, C3001, C12",
@@ -176,7 +175,7 @@ class TestMergeBom(unittest.TestCase):
             "RN0B, RN1A, RN3, RN1000",
         ]
 
-        for n,i in enumerate(test):
+        for n, i in enumerate(test):
             l = order_designator(i)
             self.assertEqual(l, check[n])
 
@@ -209,7 +208,7 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        stats = write_xls(d, file_list, "/tmp/uno.xls", revision="C", project="TEST")
+        write_xls(d, file_list, "/tmp/uno.xls", revision="C", project="TEST")
 
     def test_mergedFile(self):
         file_list = [
