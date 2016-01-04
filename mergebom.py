@@ -27,6 +27,27 @@ import datetime
 
 from termcolor import colored
 
+logo_simple = """
+
+#     #                             ######
+##   ## ###### #####   ####  ###### #     #  ####  #    #
+# # # # #      #    # #    # #      #     # #    # ##  ##
+#  #  # #####  #    # #      #####  ######  #    # # ## #
+#     # #      #####  #  ### #      #     # #    # #    #
+#     # #      #   #  #    # #      #     # #    # #    #
+#     # ###### #    #  ####  ###### ######   ####  #    #
+
+"""
+
+logo = """
+███╗   ███╗███████╗██████╗  ██████╗ ███████╗██████╗  ██████╗ ███╗   ███╗
+████╗ ████║██╔════╝██╔══██╗██╔════╝ ██╔════╝██╔══██╗██╔═══██╗████╗ ████║
+██╔████╔██║█████╗  ██████╔╝██║  ███╗█████╗  ██████╔╝██║   ██║██╔████╔██║
+██║╚██╔╝██║██╔══╝  ██╔══██╗██║   ██║██╔══╝  ██╔══██╗██║   ██║██║╚██╔╝██║
+██║ ╚═╝ ██║███████╗██║  ██║╚██████╔╝███████╗██████╔╝╚██████╔╝██║ ╚═╝ ██║
+╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝     ╚═╝
+
+"""
 
 def printout(s, handler, prefix="> ", terminal=True, color='green'):
     s = "%s %s\n" % (prefix, s)
@@ -377,13 +398,7 @@ class MergeBom (object):
                 self.table[category] = tmp.values()
 
     def statistics(self):
-        info("STATISTICS:", self.handler, terminal=self.terminal)
-        for i in VALID_GROUP_KEY:
-            if self.stats.has_key(i):
-                info(CATEGORY_NAMES[i], self.handler, terminal=self.terminal, prefix="- ")
-                info("%5.5s %5.5s" % (i, self.stats[i]), self.handler, terminal=self.terminal, prefix="  ")
-
-        warning("Total: %s" % self.stats['total'], self.handler, terminal=self.terminal)
+        return self.stats
 
     def merge(self):
         self.group()
@@ -646,14 +661,25 @@ if __name__ == "__main__":
         file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
         file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
+    info(logo, sys.stdout, terminal=True, prefix="")
     m = MergeBom(file_list)
     file_list = map(os.path.basename, file_list)
 
     if options.diff:
         d = m.diff()
         l = m.extra_data()
-        stats = write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
+        write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
     else:
         d = m.merge()
-        stats = write_xls(d, file_list, options.out_filename, revision=options.rev, project=options.prj_name)
+        write_xls(d, file_list, options.out_filename, revision=options.rev, project=options.prj_name)
+
+
+        stats = m.statistics()
+        warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                info(CATEGORY_NAMES[i], sys.stdout, terminal=True, prefix="- ")
+                info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
+
+        warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
 
