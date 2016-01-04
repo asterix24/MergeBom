@@ -29,7 +29,7 @@ class TestMergeBom(unittest.TestCase):
 
     def setUp(self):
         pass
-    
+
     def tearDown(self):
         pass
 
@@ -227,9 +227,17 @@ class TestMergeBom(unittest.TestCase):
             "test/bom-merged.xls",
         ]
 
+        info(logo, sys.stdout, terminal=True, prefix="")
         m = MergeBom(file_list)
         m.merge()
-        m.statistics()
+        stats = m.statistics()
+        warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                info(CATEGORY_NAMES[i], sys.stdout, terminal=True, prefix="- ")
+                info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
+
+        warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
