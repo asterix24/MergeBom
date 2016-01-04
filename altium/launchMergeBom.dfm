@@ -2,30 +2,38 @@ object MergeBom: TMergeBom
   Left = 0
   Top = 0
   Caption = 'MergeBom'
-  ClientHeight = 202
-  ClientWidth = 304
+  ClientHeight = 326
+  ClientWidth = 491
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -17
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  PixelsPerInch = 96
-  TextHeight = 13
+  PixelsPerInch = 144
+  TextHeight = 21
   object Ok: TButton
-    Left = 26
-    Top = 160
-    Width = 75
-    Height = 25
+    Left = 42
+    Top = 258
+    Width = 121
+    Height = 41
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Caption = 'Ok'
     TabOrder = 0
   end
   object Cancel: TButton
-    Left = 114
-    Top = 160
-    Width = 75
-    Height = 25
+    Left = 184
+    Top = 258
+    Width = 121
+    Height = 41
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Caption = 'Cancel'
     TabOrder = 1
   end

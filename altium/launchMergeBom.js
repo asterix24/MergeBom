@@ -20,6 +20,8 @@ function dirname(path) {
 }
 
 function ExeMergeBom() {
+    var mergebomExe= "mergebom_altium.exe";
+    //var mergebomExe= "mergebom.bat";
     var wk = GetWorkspace;
     Client.StartServer('WRK');
     if (Client) {
@@ -27,7 +29,7 @@ function ExeMergeBom() {
             var p = wk.DM_FocusedProject();
             var path = dirname(p.DM_ProjectFullPath);
             if (path) {
-                var err = RunApplication('mergebom.bat' + "  " + path);
+                var err = RunApplication(mergebomExe + "  " + path);
                 if (err != 0) {
                     ShowMessage("Errore nell'esecuzione di MergeBom. " + err);
                 } else {
