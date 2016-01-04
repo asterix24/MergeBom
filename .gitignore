@@ -1,5 +1,7 @@
 *.swp
 *.pyc
+*.pyd
+build/
 ~$*
 __Previews/
 History/
