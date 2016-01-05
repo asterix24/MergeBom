@@ -15,10 +15,6 @@
  * Copyright 2015 Daniele Basile <asterix24@gmail.com>
  */
 
-function dirname(path) {
-     return path.replace(/\\[^\\]*$/g, '');
-}
-
 function ExeMergeBom() {
     var mergebomExe= "mergebom_altium.exe";
     //var mergebomExe= "mergebom.bat";
@@ -26,21 +22,34 @@ function ExeMergeBom() {
     Client.StartServer('WRK');
     if (Client) {
         if (wk != Null) {
-            var p = wk.DM_FocusedProject();
-            var path = dirname(p.DM_ProjectFullPath);
-            if (path) {
-                var err = RunApplication(mergebomExe + "  " + path);
-                if (err != 0) {
-                    ShowMessage("Errore nell'esecuzione di MergeBom. " + err);
-                } else {
-                    var report_doc = Client.OpenDocument('Text', path + '\\' + "mergebom_report.txt");
-                    if (report_doc) {
-                        Client.ShowDocument(report_doc);
-                    } else {
-                        ShowMessage("Errore nell'apertura del documento.");
+            for (i = 0; i < wk.DM_ProjectCount; i++) {
+                var p = wk.DM_Projects(i);
+                for (j = 0; j < p.DM_GeneratedDocumentCount; j++) {
+                    var d = p.DM_GeneratedDocuments(j)
+                    var ext = ExtractFileExt(d.DM_FullPath);
+                    var bom_file = ExtractFileName(d.DM_FullPath);
+                    var path = ExtractFilePath(d.DM_FullPath);
+
+                    bom_file = bom_file.replace(ext,'');
+
+                    if ((ext == '.xls') || (ext == '.xlsx')) {
+                        //ShowError(path + " " + d.DM_FullPath);
+                        var err = RunApplication(mergebomExe + "  " + d.DM_FullPath);
+                        if (err != 0) {
+                            ShowError("Errore nell'esecuzione di MergeBom. " + err);
+                        } else {
+                            var report_doc = Client.OpenDocument('Text', path + '\\' + bom_file + "_report.txt");
+                            if (report_doc) {
+                                Client.ShowDocument(report_doc);
+                                showInfo("MergeBom Done!")
+                            } else {
+                                ShowError("Errore nell'apertura del documento.");
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+

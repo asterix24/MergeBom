@@ -24,14 +24,27 @@ import glob
 import datetime
 from mergebom import *
 
-curr_path = None
-for n, i in enumerate(sys.argv):
-    if n:
-        curr_path = i
+try:
+    bom_file = sys.argv[1]
+    print sys.argv
+except IndexError:
+    sys.exit(0)
 
-if curr_path is not None:
-    report_file = os.path.join(curr_path, "mergebom_report.txt")
-    #print report_file
+if bom_file:
+    bom_file_name = os.path.basename(bom_file)
+    bom_file_name = bom_file_name.replace('.xls', '')
+    bom_file_name = bom_file_name.replace('.xlsx', '')
+
+    curr_path = os.path.dirname(bom_file)
+
+    report_file = os.path.join(curr_path, bom_file_name + "_report.txt")
+
+    if not bom_file:
+        report_file = os.path.join(curr_path, "mergebom_report.txt")
+
+    print "Curr path:", curr_path
+    print "Bom file:", bom_file
+    print "report file:", report_file
 
     with open(report_file, 'w') as f:
         f.write(logo_simple)
@@ -43,31 +56,24 @@ if curr_path is not None:
         f.write("Project Name: %s\n" % "NN")
         f.write("\n")
 
-        file_list = glob.glob(os.path.join(curr_path, '*.xls'))
-        file_list += glob.glob(os.path.join(curr_path, '*.xlsx'))
-
-        if not file_list:
+        if not bom_file:
             f.write("No file found..\n")
             f.close()
             sys.exit(0)
 
-        f.write("%s\n" % file_list)
-        #print file_list, len(file_list)
-        assert(len(file_list) == 1)
-
+        f.write("%s\n" % bom_file)
         src_bom_file_name = None
         out_bom_file_name = None
-        for i in file_list:
-            path = os.path.dirname(i)
-            name = os.path.basename(i)
-            src_bom_file_name = os.path.join(path, "tmp_" + name)
-            out_bom_file_name = os.path.join(path, name)
+        path = os.path.dirname(bom_file)
+        name = os.path.basename(bom_file)
+        src_bom_file_name = os.path.join(path, "tmp_" + name)
+        out_bom_file_name = os.path.join(path, name)
 
-            #print "rename file %s" % out_bom_file_name
+        #print "rename file %s" % out_bom_file_name
 
-            os.rename(out_bom_file_name, src_bom_file_name)
-            f.write("SRC file: %s\n" % src_bom_file_name)
-            f.write("OUT file: %s\n" % out_bom_file_name)
+        os.rename(out_bom_file_name, src_bom_file_name)
+        f.write("SRC file: %s\n" % src_bom_file_name)
+        f.write("OUT file: %s\n" % out_bom_file_name)
 
         f.write("\nCheck Merged items:\n")
         f.write("-" * 80)
