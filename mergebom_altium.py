@@ -39,8 +39,8 @@ if curr_path is not None:
         f.write("Report file.\n")
         f.write("Date: %s\n" % datetime.datetime.today().strftime("%a %d %B %Y %X"))
         f.write("Directory: %s\n" % curr_path)
-        #f.write("Revision: %s\n" % "NN")
-        #f.write("Project Name: %s\n" % "NN")
+        f.write("Revision: %s\n" % "NN")
+        f.write("Project Name: %s\n" % "NN")
         f.write("\n")
 
         file_list = glob.glob(os.path.join(curr_path, '*.xls'))
