@@ -22,13 +22,30 @@ import sys
 import os
 import glob
 import datetime
+import ConfigParser
+
 from mergebom import *
 
-try:
-    bom_file = sys.argv[1]
-    print sys.argv
-except IndexError:
-    sys.exit(0)
+
+if len(sys.argv) < 3:
+    print "Usage %s <prj name> <version.txt> <bom_file>" % sys.argv[0]
+    sys.exit(1)
+
+
+prj_name = sys.argv[1]
+version_file = sys.argv[2]
+bom_file = sys.argv[3]
+
+print sys.argv
+
+config = ConfigParser.ConfigParser()
+config.readfp(open(version_file))
+
+prj_name = config.get(prj_name, 'name')
+hw_ver = config.get(prj_name, 'hw_ver')
+pcb_ver = config.get(prj_name, 'pcb_ver')
+mod_date = datetime.datetime.today().strftime("%a %d %B %Y %X")
+last_date = config.set(prj_name, mod_date)
 
 if bom_file:
     bom_file_name = os.path.basename(bom_file)
@@ -50,10 +67,11 @@ if bom_file:
         f.write(logo_simple)
         f.write("\n")
         f.write("Report file.\n")
-        f.write("Date: %s\n" % datetime.datetime.today().strftime("%a %d %B %Y %X"))
+        f.write("Date: %s\n" % mod_date)
         f.write("Directory: %s\n" % curr_path)
-        f.write("Revision: %s\n" % "NN")
-        f.write("Project Name: %s\n" % "NN")
+        f.write("Project Name: %s\n" % prj_name)
+        f.write("Hardware Revision: %s\n" % hw_ver)
+        f.write("PCB Revision: %s\n" % pcb_ver)
         f.write("\n")
 
         if not bom_file:
@@ -82,8 +100,9 @@ if bom_file:
         d = m.merge()
         stats = m.statistics()
 
-        write_xls(d, [os.path.basename(src_bom_file_name)],
-                  out_bom_file_name, revision="Test", project="Prova")
+        bom_xls = os.path.basename(src_bom_file_name).replace('xls', 'xlsx')
+        write_xls(d, [bom_xls],
+                  out_bom_file_name, hw_ver=hw_ver, pcb_ver=pcb_ver, project=prj_name)
 
         f.write("\n\n")
         f.write("=" * 80)
