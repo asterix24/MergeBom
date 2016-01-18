@@ -208,7 +208,7 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        write_xls(d, file_list, "/tmp/uno.xls", revision="C", project="TEST")
+        write_xls(d, file_list, "/tmp/uno.xls", hw_ver="13", pcb_ver="C", project="TEST")
 
     def test_mergedFile(self):
         file_list = [
@@ -220,7 +220,7 @@ class TestMergeBom(unittest.TestCase):
         print d
         self.assertEqual(len(d), 1)
         self.assertEqual(d[0]['project'], "test")
-        self.assertEqual(d[0]['revision'], "c")
+        self.assertEqual(d[0]['pcb_version'], "c")
 
     def test_stats(self):
         file_list = [
@@ -239,6 +239,22 @@ class TestMergeBom(unittest.TestCase):
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
 
+    def test_version(self):
+        import ConfigParser
+        config = ConfigParser.ConfigParser()
+        config.readfp(open('test/version.txt'))
+
+        t = [ 'uno', 'due' ]
+        for j in t:
+            for i in config.items(j):
+                print i
+
+
+        print config.get('uno', 'name')
+        print config.get('uno', 'hw_ver')
+
+
+
 if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_import"))
@@ -250,4 +266,5 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_orderCompValue"))
+    suite.addTest(TestMergeBom("test_version"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)

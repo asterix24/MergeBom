@@ -136,7 +136,8 @@ VALID_KEYS = [
 EXTRA_KEYS = [
     u'date',
     u'project',
-    u'revision',
+    u'hardware_version',
+    u'pcb_version',
 ]
 
 CON = 'J'
@@ -464,7 +465,7 @@ class MergeBom (object):
 
         return diff
 
-def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project="MyProject", diff=False, extra_data=[]):
+def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject", diff=False, extra_data=[]):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
@@ -542,7 +543,8 @@ def write_xls(items, file_list, handler, sheetname="BOM", revision="A", project=
             '',
             '',
             'Project: %s' % project,
-            'Revision: %s' % revision,
+            'Hardware_version: %s' % hw_ver,
+            'PCB_version: %s' % pcb_ver,
             '',
             'BOM files:',
         ]
@@ -647,7 +649,8 @@ if __name__ == "__main__":
     parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
     parser.add_option("-p", "--dirname", dest="dir_name", default='.', help="BOM directory's")
     parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="BOM directory's")
-    parser.add_option("-r", "--revision", dest="rev", default='A', help="BOM revision")
+    parser.add_option("-r", "--revision", dest="rev", default='0', help="HW Revision")
+    parser.add_option("-r", "--pcb-revision", dest="pcb-rev", default='0', help="PCB Revision")
     parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names")
     (options, args) = parser.parse_args()
     print args
@@ -671,7 +674,7 @@ if __name__ == "__main__":
         write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
     else:
         d = m.merge()
-        write_xls(d, file_list, options.out_filename, revision=options.rev, project=options.prj_name)
+        write_xls(d, file_list, options.out_filename, hw_ver=options.rev, pcb_ver=options.pcb-ver, project=options.prj_name)
 
 
         stats = m.statistics()
