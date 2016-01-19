@@ -100,9 +100,16 @@ if bom_file:
         d = m.merge()
         stats = m.statistics()
 
+        st = []
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                st.append((stats[i], CATEGORY_NAMES[i]))
+        st.append((stats['total'], "Total"))
+
         out_bom_file_name = out_bom_file_name.replace('xls', 'xlsx')
         write_xls(d, [os.path.basename(src_bom_file_name)],
-                  out_bom_file_name, hw_ver=hw_ver, pcb_ver=pcb_ver, project=prj_name)
+                  out_bom_file_name, hw_ver=hw_ver, pcb_ver=pcb_ver, project=prj_name,
+                  statistics=st)
 
         f.write("\n\n")
         f.write("=" * 80)

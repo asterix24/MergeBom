@@ -250,7 +250,6 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list)
         d = m.merge()
         stats = m.statistics()
-
         st = []
         for i in stats.keys():
             if i in CATEGORY_NAMES:
