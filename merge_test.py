@@ -239,6 +239,20 @@ class TestMergeBom(unittest.TestCase):
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
 
+    def test_notPopulate(self):
+        """
+        Cerca i componenti da non montare
+        """
+        file_list = [
+            "test/bom-np.xls",
+        ]
+
+        m = MergeBom(file_list)
+        d = m.merge()
+        file_list = map(os.path.basename, file_list)
+        write_xls(d, file_list, "/tmp/uno.xls", hw_ver="13",
+                  pcb_ver="C", project="TEST")
+
     def test_version(self):
         import ConfigParser
         config = ConfigParser.ConfigParser()
@@ -267,4 +281,5 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_orderCompValue"))
     suite.addTest(TestMergeBom("test_version"))
+    suite.addTest(TestMergeBom("test_notPopulate"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)

@@ -173,6 +173,8 @@ CATEGORY_NAMES = {
     'U':  'U  IC',
 }
 
+NOT_POPULATE_KEY = ["NP", "NM"]
+
 
 class MergeBom (object):
     def __init__(self, list_bom_files, handler=sys.stdout, terminal=True):
@@ -358,13 +360,24 @@ class MergeBom (object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
-                    if category  == 'J':
+                    # Avoid merging for NP componets
+                    skip_merge = False
+                    for rexp in NOT_POPULATE_KEY:
+                        m = re.findall(rexp, item[COMMENT])
+                        if m:
+                            error("Not Populate connector, leave unmerged..[%s] match%s" %
+                                   (item[COMMENT], m), self.handler, terminal=self.terminal)
+
+                    if category  == 'J' and not skip_merge:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
-                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, terminal=self.terminal)
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]),
+                                self.handler, terminal=self.terminal)
                         item[COMMENT] = "Connector"
-                    if category  == 'D' and "LED" in item[FOOTPRINT]:
+
+                    if category  == 'D' and "LED" in item[FOOTPRINT] and not skip_merge:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
-                            warning("Merged key: %s (%s)" % (key, item[COMMENT]), self.handler, terminal=self.terminal)
+                            warning("Merged key: %s (%s)" % (key, item[COMMENT]),
+                                    self.handler, terminal=self.terminal)
                     else:
                         key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
