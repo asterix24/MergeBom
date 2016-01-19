@@ -32,7 +32,7 @@ if len(sys.argv) < 3:
     sys.exit(1)
 
 
-prj_name = sys.argv[1]
+section_name = sys.argv[1].lower()
 version_file = sys.argv[2]
 bom_file = sys.argv[3]
 
@@ -41,11 +41,11 @@ print sys.argv
 config = ConfigParser.ConfigParser()
 config.readfp(open(version_file))
 
-prj_name = config.get(prj_name, 'name')
-hw_ver = config.get(prj_name, 'hw_ver')
-pcb_ver = config.get(prj_name, 'pcb_ver')
+prj_name = config.get(section_name, 'name')
+hw_ver = config.get(section_name, 'hw_ver')
+pcb_ver = config.get(section_name, 'pcb_ver')
 mod_date = datetime.datetime.today().strftime("%a %d %B %Y %X")
-last_date = config.set(prj_name, mod_date)
+last_date = config.set(section_name, mod_date)
 
 if bom_file:
     bom_file_name = os.path.basename(bom_file)
