@@ -100,8 +100,8 @@ if bom_file:
         d = m.merge()
         stats = m.statistics()
 
-        bom_xls = os.path.basename(src_bom_file_name).replace('xls', 'xlsx')
-        write_xls(d, [bom_xls],
+        out_bom_file_name = out_bom_file_name.replace('xls', 'xlsx')
+        write_xls(d, [os.path.basename(src_bom_file_name)],
                   out_bom_file_name, hw_ver=hw_ver, pcb_ver=pcb_ver, project=prj_name)
 
         f.write("\n\n")
