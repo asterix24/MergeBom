@@ -249,9 +249,17 @@ class TestMergeBom(unittest.TestCase):
 
         m = MergeBom(file_list)
         d = m.merge()
+        stats = m.statistics()
+
+        st = []
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                st.append((stats[i], CATEGORY_NAMES[i]))
+        st.append((stats['total'], "Total"))
+
         file_list = map(os.path.basename, file_list)
-        write_xls(d, file_list, "/tmp/uno.xls", hw_ver="13",
-                  pcb_ver="C", project="TEST")
+        write_xls(d, file_list, "/tmp/uno.xlsx", hw_ver="13",
+                  pcb_ver="C", project="TEST", statistics=st)
 
     def test_version(self):
         import ConfigParser
