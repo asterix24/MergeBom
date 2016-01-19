@@ -360,21 +360,28 @@ class MergeBom (object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
-                    # Avoid merging for NP componets
-                    skip_merge = False
-                    for rexp in NOT_POPULATE_KEY:
-                        m = re.findall(rexp, item[COMMENT])
-                        if m:
-                            error("Not Populate connector, leave unmerged..[%s] match%s" %
-                                   (item[COMMENT], m), self.handler, terminal=self.terminal)
+                    if category  == 'J':
+                        # Avoid merging for NP componets
+                        skip_merge = False
+                        for rexp in NOT_POPULATE_KEY:
+                            m = re.findall(rexp, item[COMMENT])
+                            if m:
+                                skip_merge = True
+                                error("Not Populate connector, leave unmerged..[%s] [%s] match%s" %
+                                       (item[COMMENT], item[DESIGNATOR], m),
+                                       self.handler, terminal=self.terminal)
+                                item[COMMENT] = item[COMMENT].replace(rexp, ' NP ')
 
-                    if category  == 'J' and not skip_merge:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        if skip_merge:
+                            key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                        else:
+                            key = item[DESCRIPTION] + item[FOOTPRINT]
+                            item[COMMENT] = "Connector"
+
                         warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                 self.handler, terminal=self.terminal)
-                        item[COMMENT] = "Connector"
 
-                    if category  == 'D' and "LED" in item[FOOTPRINT] and not skip_merge:
+                    if category  == 'D' and "LED" in item[FOOTPRINT]:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
                             warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                     self.handler, terminal=self.terminal)
@@ -478,7 +485,8 @@ class MergeBom (object):
 
         return diff
 
-def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject", diff=False, extra_data=[]):
+def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject",
+              diff=False, extra_data=[], statistics=[]):
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
@@ -504,6 +512,18 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
         'font_size':11,
         'valign': 'vcenter',
         'align': 'left',})
+
+    info_fmt_red = workbook.add_format({
+        'bold': True,
+        'font_color': 'red',
+        'font_size':11,
+        'valign': 'vcenter',
+        'align': 'left',})
+
+    np_fmt = workbook.add_format({
+        'bold': True,
+        'font_color': 'red',
+        'valign': 'vcenter', })
 
     diffa_fmt = workbook.add_format({
         'align': 'left',
@@ -561,13 +581,33 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
             '',
             'BOM files:',
         ]
+
         for i in file_list:
             info.append("- %s" % i)
 
+
+
+        # Compute colum len to merge for header
+        #stop_col = 'F'
+        stop_col = chr(ord('A') + len(file_list+VALID_KEYS))
+
     row = STR_ROW
     for i in info:
-        worksheet.merge_range('A%s:O%s' % (row, row), i, info_fmt)
+        worksheet.merge_range('A%s:%s%s' % (row, stop_col, row), i, info_fmt)
         row += 1
+    row += 1
+
+    # Note and statistics
+    worksheet.write('A%s:%s%s' % (row, stop_col, row), "NP=NON MONTARE!", info_fmt_red)
+    row += 1
+
+    worksheet.write('A%s:%s%s' % (row, stop_col, row), "Statistics:", info_fmt)
+    for i in statistics:
+        for c, col in enumerate(i):
+            worksheet.write(row, c, col, info_fmt)
+        row += 1
+
+    row += 1
 
     col = 0
     worksheet.write(row, col, "T.Qty", hdr_fmt)
@@ -614,17 +654,25 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
             row += 4
     else:
         l = []
+
         # Start to write components on xlsx
         for key in VALID_GROUP_KEY:
             if items.has_key(key):
                 row += 1
-                worksheet.merge_range('A%s:O%s' % (row, row), CATEGORY_NAMES[key], merge_fmt)
+                worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
+                                      CATEGORY_NAMES[key], merge_fmt)
                 for i in items[key]:
                     for c, col in enumerate(i):
                         if c == 0:
                             worksheet.write(row, STR_COL, col, tot_fmt)
                         else:
-                            worksheet.write(row, c, col, def_fmt)
+                            # Mark NP to help user
+                            fmt = def_fmt
+                            if type(col) != int and re.findall("NP", col):
+                                    fmt = np_fmt
+                            worksheet.write(row, c, col, fmt)
+                            if type(col) != int:
+                                worksheet.set_column(row, c, len(col) * 6)
                     row += 1
 
     workbook.close()
@@ -663,7 +711,7 @@ if __name__ == "__main__":
     parser.add_option("-p", "--dirname", dest="dir_name", default='.', help="BOM directory's")
     parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="BOM directory's")
     parser.add_option("-r", "--revision", dest="rev", default='0', help="HW Revision")
-    parser.add_option("-r", "--pcb-revision", dest="pcb-rev", default='0', help="PCB Revision")
+    parser.add_option("-w", "--pcb-revision", dest="pcb_ver", default='0', help="PCB Revision")
     parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names")
     (options, args) = parser.parse_args()
     print args
@@ -687,7 +735,15 @@ if __name__ == "__main__":
         write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
     else:
         d = m.merge()
-        write_xls(d, file_list, options.out_filename, hw_ver=options.rev, pcb_ver=options.pcb-ver, project=options.prj_name)
+        stats = m.statistics()
+        st = []
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                st.append((stats[i], CATEGORY_NAMES[i]))
+        st.append((stats['total'], "Total"))
+
+        write_xls(d, file_list, options.out_filename, hw_ver=options.rev,
+                  pcb_ver=options.pcb_ver, project=options.prj_name, statistics=st)
 
 
         stats = m.statistics()
