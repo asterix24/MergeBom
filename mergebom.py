@@ -204,7 +204,6 @@ class MergeBom (object):
         self.stats = {}
         self.handler = handler
         self.terminal = terminal
-        print "--", self.terminal
 
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
