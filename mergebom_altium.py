@@ -26,108 +26,156 @@ import ConfigParser
 
 from mergebom import *
 
+class Report(object):
+    def __init__(self, directory, logo=None):
 
-if len(sys.argv) < 3:
-    print "Usage %s <prj name> <version.txt> <bom_file>" % sys.argv[0]
-    sys.exit(1)
+        self.src_bom = None
 
+        self.report_file = os.path.join(directory, "mergebom_report.txt")
+        self.f = open(self.report_file,'w+')
 
-section_name = sys.argv[1].lower()
-version_file = sys.argv[2]
-bom_file = sys.argv[3]
+        if logo is not None:
+            self.f.write(logo)
+            self.f.write("\n")
 
-print sys.argv
+        self.f.write("Report file.\n")
+        dt = datetime.datetime.now()
+        self.f.write("Date: %s\n" % dt.strftime("%A, %d %B %Y %X"))
+        self.f.write("." * 80)
+        self.f.write("\n")
 
-config = ConfigParser.ConfigParser()
-config.readfp(open(version_file))
+    def __del__(self):
+        self.f.flush()
+        self.f.close()
 
-prj_name = config.get(section_name, 'name')
-hw_ver = config.get(section_name, 'hw_ver')
-pcb_ver = config.get(section_name, 'pcb_ver')
-mod_date = datetime.datetime.today().strftime("%a %d %B %Y %X")
-last_date = config.set(section_name, mod_date)
+    def write_header(self, d, file_list):
+        self.f.write("Date: %s\n" %              d['mod_date'])
+        self.f.write("Project Name: %s\n" %      d['prj_name'])
+        self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
+        self.f.write("PCB Revision: %s\n" %      d['pcb_ver'])
+        self.f.write("\n")
 
-if bom_file:
-    bom_file_name = os.path.basename(bom_file)
-    bom_file_name = bom_file_name.replace('.xls', '')
-    bom_file_name = bom_file_name.replace('.xlsx', '')
+        self.f.write("Bom Files:\n")
+        for i in file_list:
+            self.f.write(" - %s\n" % i)
 
-    curr_path = os.path.dirname(bom_file)
+        self.f.write("\n== Check Merged items: ==\n")
+        self.f.write("-" * 80)
+        self.f.write("\n")
 
-    report_file = os.path.join(curr_path, bom_file_name + "_report.txt")
+    def write_stats(self, stats):
+        self.f.write("\n\n")
+        self.f.write("=" * 80)
+        self.f.write("\n")
 
-    if not bom_file:
-        report_file = os.path.join(curr_path, "mergebom_report.txt")
-
-    print "Curr path:", curr_path
-    print "Bom file:", bom_file
-    print "report file:", report_file
-
-    with open(report_file, 'w') as f:
-        f.write(logo_simple)
-        f.write("\n")
-        f.write("Report file.\n")
-        f.write("Date: %s\n" % mod_date)
-        f.write("Directory: %s\n" % curr_path)
-        f.write("Project Name: %s\n" % prj_name)
-        f.write("Hardware Revision: %s\n" % hw_ver)
-        f.write("PCB Revision: %s\n" % pcb_ver)
-        f.write("\n")
-
-        if not bom_file:
-            f.write("No file found..\n")
-            f.close()
-            sys.exit(0)
-
-        f.write("%s\n" % bom_file)
-        src_bom_file_name = None
-        out_bom_file_name = None
-        path = os.path.dirname(bom_file)
-        name = os.path.basename(bom_file)
-        src_bom_file_name = os.path.join(path, "tmp_" + name)
-        out_bom_file_name = os.path.join(path, name)
-
-        #print "rename file %s" % out_bom_file_name
-
-        os.rename(out_bom_file_name, src_bom_file_name)
-        f.write("SRC file: %s\n" % src_bom_file_name)
-        f.write("OUT file: %s\n" % out_bom_file_name)
-
-        f.write("\nCheck Merged items:\n")
-        f.write("-" * 80)
-        f.write("\n")
-        m = MergeBom([src_bom_file_name], handler=f, terminal=False)
-        d = m.merge()
-        stats = m.statistics()
-
-        st = []
+        self.f.write("File num: %s\n" % stats['file_num'])
         for i in stats.keys():
             if i in CATEGORY_NAMES:
-                st.append((stats[i], CATEGORY_NAMES[i]))
-        st.append((stats['total'], "Total"))
+                self.f.write(CATEGORY_NAMES[i] + "\n")
+                self.f.write("%5.5s %5.5s\n" % (i, stats[i]))
 
-        out_bom_file_name = out_bom_file_name.replace('xls', 'xlsx')
-        write_xls(d, [os.path.basename(src_bom_file_name)],
-                  out_bom_file_name, hw_ver=hw_ver, pcb_ver=pcb_ver, project=prj_name,
-                  statistics=st)
+        self.f.write("\n")
+        self.f.write("~" * 80)
+        self.f.write("\n")
+        self.f.write("Total: %s\n" % stats['total'])
 
-        f.write("\n\n")
-        f.write("=" * 80)
-        f.write("\n")
+    def error(self, msg):
+        self.f.write("Error:")
+        self.f.write("%s", msg)
+        self.f.write("\n")
 
-        warning("File num: %s\n" % stats['file_num'], f, terminal=False, prefix="")
-        for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                info(CATEGORY_NAMES[i], f, terminal=False, prefix="- ")
-                info("%5.5s %5.5s" % (i, stats[i]), f, terminal=False, prefix="  ")
+    def handler(self):
+        return self.f
 
-        f.write("\n")
-        f.write("~" * 80)
-        f.write("\n")
-        warning("Total: %s" % stats['total'], f, terminal=False)
 
-        f.flush()
-        f.close()
-        # Remove old src file.
-        os.remove(src_bom_file_name)
+def read_ini(config, section_name):
+    d = {}
+    d['prj_name' ] = config.get(section_name, 'name')
+    d['hw_ver'   ] = config.get(section_name, 'hw_ver')
+    d['pcb_ver'  ] = config.get(section_name, 'pcb_ver')
+    d['mod_date' ] = datetime.datetime.today().strftime("%a %d %B %Y %X")
+    d['last_date'] = config.set(section_name, d['mod_date'])
+
+    return d
+
+if __name__ == "__main__":
+    from optparse import OptionParser
+
+    parser = OptionParser()
+    parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names.")
+    parser.add_option("-b", "--bom-file", dest="bom_file", default="bom.xlsx", help="BOM file name.")
+    parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
+    parser.add_option("-d", "--search-dir", dest="directory", default='./', help="Directory path to seach.")
+    parser.add_option("-o", "--out-bomname", dest="out_bom_file", default=None, help="Directory path to seach.")
+    (options, args) = parser.parse_args()
+
+    print args, options
+
+    # generate report file, and init it
+    report = Report(options.directory, logo=logo_simple)
+
+    # search version file
+    file_list = glob.glob(os.path.join(options.directory, options.version_file))
+    if not file_list and len(file_list) != 1:
+        print "Error No version file found!"
+        report.error("Error: No version file found!\n")
+        sys.exit(1)
+
+    # Whit version file search all bom files
+    version_file = file_list[0]
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(version_file))
+
+    for section in  config.sections():
+        ini_data = read_ini(config, section)
+
+        # Search bom file, in section we fount path
+        for search_path in [ (options.directory,"Assembly"),
+                    (options.directory,"Assembly", section) ]:
+
+            path = os.path.join(*search_path)
+            file_list = glob.glob(os.path.join(path, '*.xls'))
+            file_list += glob.glob(os.path.join(path, '*.xlsx'))
+
+            if not file_list:
+                continue
+
+            report.write_header(ini_data, file_list)
+            for i in file_list:
+                filename = os.path.basename(i)
+                filename, file_extension = os.path.splitext(i)
+                n = i.replace(file_extension, "tmp"+file_extension)
+                print n
+                os.rename(i, n)
+
+            m = MergeBom(file_list, handler=report.handler(), terminal=False)
+            d = m.merge()
+
+            stats = m.statistics()
+            report.write_stats(stats)
+            st = []
+            for i in stats.keys():
+                if i in CATEGORY_NAMES:
+                    st.append((stats[i], CATEGORY_NAMES[i]))
+            st.append((stats['total'], "Total"))
+
+            print "section", section
+            bom_file_name = os.path.join(path, "bom-%s.xlsx" % section)
+            print "bom file", bom_file_name
+            if options.out_bom_file is not None:
+                bom_file_name = options.out_bom_file
+
+            write_xls(d, map(os.path.basename, file_list), bom_file_name,
+                      hw_ver=ini_data['hw_ver'], pcb_ver=ini_data['pcb_ver'],
+                      project=ini_data['prj_name'],
+                      statistics=st)
+
+            # Remove old src file.
+            for i in file_list:
+                os.remove(i)
+
+
+
+
+
 
