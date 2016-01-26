@@ -23,6 +23,8 @@ import os
 import glob
 import datetime
 import ConfigParser
+import tempfile
+import shutil
 
 from mergebom import *
 
@@ -49,6 +51,8 @@ class Report(object):
         self.f.close()
 
     def write_header(self, d, file_list):
+        self.f.write("\n")
+        self.f.write(":" * 80)
         self.f.write("Date: %s\n" %              d['mod_date'])
         self.f.write("Project Name: %s\n" %      d['prj_name'])
         self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
@@ -133,6 +137,7 @@ if __name__ == "__main__":
         for search_path in [ (options.directory,"Assembly"),
                     (options.directory,"Assembly", section) ]:
 
+            # current path
             path = os.path.join(*search_path)
             file_list = glob.glob(os.path.join(path, '*.xls'))
             file_list += glob.glob(os.path.join(path, '*.xlsx'))
@@ -141,14 +146,18 @@ if __name__ == "__main__":
                 continue
 
             report.write_header(ini_data, file_list)
-            for i in file_list:
-                filename = os.path.basename(i)
-                filename, file_extension = os.path.splitext(i)
-                n = i.replace(file_extension, "tmp"+file_extension)
-                print n
-                os.rename(i, n)
+            tmpdir = tempfile.gettempdir()
 
-            m = MergeBom(file_list, handler=report.handler(), terminal=False)
+            process_file = []
+            for i in file_list:
+                name = os.path.basename(i)
+                dst = os.path.join(tmpdir, name)
+                shutil.copy(i, dst)
+                process_file.append(dst)
+                os.remove(i)
+                print dst
+
+            m = MergeBom(process_file, handler=report.handler(), terminal=False)
             d = m.merge()
 
             stats = m.statistics()
@@ -171,11 +180,7 @@ if __name__ == "__main__":
                       statistics=st)
 
             # Remove old src file.
-            for i in file_list:
+            for i in process_file:
                 os.remove(i)
-
-
-
-
 
 
