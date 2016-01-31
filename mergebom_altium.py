@@ -28,6 +28,14 @@ import shutil
 
 from mergebom import *
 
+TEMPLATE = """[<prj>]
+name=<name>
+hw_ver=<hwver>
+pcb_ver=<pcbver>
+date=<date>
+
+"""
+
 class Report(object):
     def __init__(self, directory, logo=None):
 
@@ -54,7 +62,7 @@ class Report(object):
         self.f.write("\n")
         self.f.write(":" * 80)
         self.f.write("Date: %s\n" %              d['mod_date'])
-        self.f.write("Project Name: %s\n" %      d['prj_name'])
+        self.f.write("Project Name: %s\n" %      d['name'])
         self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
         self.f.write("PCB Revision: %s\n" %      d['pcb_ver'])
         self.f.write("\n")
@@ -94,11 +102,10 @@ class Report(object):
 
 def read_ini(config, section_name):
     d = {}
-    d['prj_name' ] = config.get(section_name, 'name')
+    d['name' ] = config.get(section_name, 'name')
     d['hw_ver'   ] = config.get(section_name, 'hw_ver')
     d['pcb_ver'  ] = config.get(section_name, 'pcb_ver')
-    d['mod_date' ] = datetime.datetime.today().strftime("%a %d %B %Y %X")
-    d['last_date'] = config.set(section_name, d['mod_date'])
+    d['date'     ] = config.get(section_name, 'date')
 
     return d
 
@@ -106,7 +113,8 @@ if __name__ == "__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
-    parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names.")
+    parser.add_option("-i", "--init", dest="init_flag", action="store_true", help="Create version file at first time.")
+    parser.add_option("-n", "--prj-name", dest="prj_name", default='MyProject', help="Project names.")
     parser.add_option("-b", "--bom-file", dest="bom_file", default="bom.xlsx", help="BOM file name.")
     parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
     parser.add_option("-d", "--search-dir", dest="directory", default='./', help="Directory path to seach.")
@@ -114,6 +122,16 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     print args, options
+
+    if options.init_flag:
+        with open(os.path.join(options.directory, options.version_file), "w") as f:
+            vv = TEMPLATE.replace("<prj>", options.prj_name)
+            vv = vv.replace("<name>", options.prj_name)
+            vv = vv.replace("<date>", datetime.datetime.today().strftime("%Y%m%d"))
+            f.write(vv)
+            f.flush()
+        print "File correctly generated."
+        sys.exit(0)
 
     # generate report file, and init it
     report = Report(options.directory, logo=logo_simple)
@@ -176,7 +194,7 @@ if __name__ == "__main__":
 
             write_xls(d, map(os.path.basename, file_list), bom_file_name,
                       hw_ver=ini_data['hw_ver'], pcb_ver=ini_data['pcb_ver'],
-                      project=ini_data['prj_name'],
+                      project=ini_data['name'],
                       statistics=st)
 
             # Remove old src file.

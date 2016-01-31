@@ -261,20 +261,27 @@ class TestMergeBom(unittest.TestCase):
                   pcb_ver="C", project="TEST", statistics=st)
 
     def test_version(self):
+        import subprocess
+        import mergebom_altium
         import ConfigParser
+
+        subprocess.call(["python", "./mergebom_altium.py", "-i",
+                         "-v", "prova.txt", "-d", "/tmp"])
+
+        check = {
+            'name': "MyProject",
+            'hw_ver': "<hwver>",
+            'pcb_ver': "<pcbver>",
+            'date': "",
+        }
+
         config = ConfigParser.ConfigParser()
-        config.readfp(open('test/version.txt'))
+        config.readfp(open("/tmp/prova.txt"))
+        d = mergebom_altium.read_ini(config, "MyProject")
 
-        t = [ 'uno', 'due' ]
-        for j in t:
-            for i in config.items(j):
-                print i
-
-
-        print config.get('uno', 'name')
-        print config.get('uno', 'hw_ver')
-
-
+        self.assertTrue("date" in d)
+        for i in ["name", "hw_ver", "pcb_ver"]:
+            self.assertEqual(d[i], check[i])
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
