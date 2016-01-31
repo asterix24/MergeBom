@@ -179,7 +179,7 @@ class TestMergeBom(unittest.TestCase):
             l = order_designator(i)
             self.assertEqual(l, check[n])
 
-    def test_orderCompValue(self):
+    def test_valueToFloat(self):
         test = [
             ("1R1","1R2", "0R3", "1R8"),
             ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3"),
@@ -192,17 +192,32 @@ class TestMergeBom(unittest.TestCase):
             (10e-12, 100e-9, 0.1e-6, 1e-6, 2.2e-6, 47e-6, 1),
             (10e-12, 1e-9, 2.2e-6, 47e-6, 1),
         ]
-        check = [
-            ("0R1", "0.3", "1", "10R", "1k", "1k5", "2.2k"),
-            ("10pF", "100nF", "0.1uF", "1uF", "2.2uF", "47uF", "1F"),
-            ("10pH", "1nH", "2.2uH", "47uH", "1H"),
-        ]
 
         for k, m in enumerate(test):
             l = order_value(m)
             for n, i in enumerate(l):
                 print i, "->", checkv1[k][n]
                 self.assertTrue(abs((i - checkv1[k][n]) < 0.1))
+                print "-" * 80
+
+    def test_floatToValue(self):
+        test = [
+            (1000, 1500, 2200, 2210, 4700, 47000),
+            (1000000, 1500000, 860000, 8600000),
+            (0.1, 1, 1.2),
+        ]
+        check = [
+            ("1k","1k5", "2k2", "2k21", "4k7", "47k"),
+            ("1M", "1M5", "860k", "8M6"),
+            ("0R1", "1R", "1R2"),
+        ]
+
+        for k, m in enumerate(test):
+            l = value_toStr(m)
+            self.assertTrue(l)
+            for n, i in enumerate(l):
+                print i, "->", check[k][n]
+                self.assertEqual(i, check[k][n])
                 print "-" * 80
 
     def test_outFile(self):
@@ -293,15 +308,16 @@ class TestMergeBom(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
-    suite.addTest(TestMergeBom("test_outFile"))
-    suite.addTest(TestMergeBom("test_mergedFile"))
-    suite.addTest(TestMergeBom("test_stats"))
-    suite.addTest(TestMergeBom("test_orderCompValue"))
-    suite.addTest(TestMergeBom("test_version"))
-    suite.addTest(TestMergeBom("test_notPopulate"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_group"))
+    #suite.addTest(TestMergeBom("test_led"))
+    #suite.addTest(TestMergeBom("test_diff"))
+    #suite.addTest(TestMergeBom("test_orderRef"))
+    #suite.addTest(TestMergeBom("test_outFile"))
+    #suite.addTest(TestMergeBom("test_mergedFile"))
+    #suite.addTest(TestMergeBom("test_stats"))
+    #suite.addTest(TestMergeBom("test_valueToFloat"))
+    suite.addTest(TestMergeBom("test_floatToValue"))
+    #suite.addTest(TestMergeBom("test_version"))
+    #suite.addTest(TestMergeBom("test_notPopulate"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)

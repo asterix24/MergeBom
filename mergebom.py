@@ -125,6 +125,36 @@ def order_value(l, handler=sys.stdout, terminal=True):
 
     return sorted(data)
 
+DIV = [
+    (1e6 , 'M',),
+    (1e3 , 'k',),
+    (1   , 'R',),
+]
+
+def value_toStr(l, handler=sys.stdout, terminal=True):
+    print
+    data = []
+    for v in l:
+        acc = ""
+        for div, label in DIV:
+            c = int(v / div)
+            if c:
+                print ">", v, c, label
+                acc += str(c)
+                acc += label
+                v = int(v - (c * div));
+                if v:
+                    acc += str(int(v))
+                    acc = acc.rstrip('0')
+                    print ">", v
+                break
+
+        print "*" *4
+
+        data.append(acc)
+
+    return data
+
 # Exchange data layout after file import
 FILENAME    = 0
 QUANTITY    = 1
