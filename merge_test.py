@@ -181,21 +181,29 @@ class TestMergeBom(unittest.TestCase):
 
     def test_orderCompValue(self):
         test = [
-            ("1k", "1k5", "1", "10R", "0R1", "2.2k", "0.3"),
-            ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF"),
+            ("1R1","1R2", "0R3", "1R8"),
+            ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3"),
+            ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF"),
             ("1nH", "1H", "10pH", "2.2uH", "47uH"),
+        ]
+        checkv1 = [
+            (0.3, 1.1, 1.2, 1.8),
+            (0.3, 1, 1.2, 10, 1000, 1500, 2200),
+            (10e-12, 100e-9, 0.1e-6, 1e-6, 2.2e-6, 47e-6, 1),
+            (10e-12, 1e-9, 2.2e-6, 47e-6, 1),
         ]
         check = [
             ("0R1", "0.3", "1", "10R", "1k", "1k5", "2.2k"),
-            ("10pF", "100nF", "0.1uF", "2.2uF", "47uF", "1F"),
+            ("10pF", "100nF", "0.1uF", "1uF", "2.2uF", "47uF", "1F"),
             ("10pH", "1nH", "2.2uH", "47uH", "1H"),
         ]
 
         for k, m in enumerate(test):
             l = order_value(m)
             for n, i in enumerate(l):
-                print i[1], "->", check[k][n]
-                self.assertEqual(i[1], check[k][n])
+                print i, "->", checkv1[k][n]
+                self.assertTrue(abs((i - checkv1[k][n]) < 0.1))
+                print "-" * 80
 
     def test_outFile(self):
         file_list = [

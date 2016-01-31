@@ -82,41 +82,48 @@ def order_designator(ref_str):
 
 MULT = {
     'R': 1,
-    'k': 1000,
-    'M': 1000000,
-    'p': 10e-12,
-    'n': 10e-9,
-    'u': 10e-6,
+    'k': 1e3,
+    'M': 1e6,
+    'p': 1e-12,
+    'n': 1e-9,
+    'u': 1e-6,
 }
 
 
 def order_value(l, handler=sys.stdout, terminal=True):
-    print
+    if type(l) != tuple and type(l) != list:
+        warning("Type data is not a listo or a tuple",
+                 handler, terminal=terminal)
+        l = [l]
+
     data = []
     for i in l:
         mult = 1
         v = ""
-        acc = 0
-        for c in i:
+        accumulator = 0
+        # search first multiplier letter
+        for n, c in enumerate(i):
+            # Skip unit letter
             if c in ["F", "H"]:
                 continue
+            # Found multiplier convert to number
             if c in MULT:
-                acc = float(v) * MULT[c]
-                mult = MULT[c] / 10
+                accumulator = float(v) * MULT[c]
+                mult = MULT[c] / 10.0
                 v = ""
                 continue
             v += c
         if v:
             try:
-                acc += float(v) * mult
+                accumulator += float(v) * mult
             except ValueError:
                 error("Wrong multiplier [%s]" % c,
                       handler, terminal=terminal)
                 sys.exit(1)
 
-        data.append((acc, i))
+        data.append(accumulator)
 
-    return sorted(data, key=lambda x: x[0])
+    return sorted(data)
 
 # Exchange data layout after file import
 FILENAME    = 0
@@ -395,7 +402,7 @@ class MergeBom (object):
                     # First colum is total Qty
                     curr_file_index = self.files[item[FILENAME]] + self.TABLE_TOTALQTY + 1
 
-                    if tmp.has_key(key):
+                    if key in tmp:
                         #print "UPD", tmp[key], curr_file_index, item[FILENAME]
                         tmp[key][self.TABLE_TOTALQTY] += item[QUANTITY]
                         tmp[key][curr_file_index] += item[QUANTITY]
