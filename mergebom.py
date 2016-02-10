@@ -89,7 +89,6 @@ MULT = {
     'u': 1e-6,
 }
 
-
 def order_value(l, handler=sys.stdout, terminal=True):
     if type(l) != tuple and type(l) != list:
         warning("Type data is not a listo or a tuple",
@@ -125,33 +124,51 @@ def order_value(l, handler=sys.stdout, terminal=True):
 
     return sorted(data)
 
-DIV = [
-    (1e6 , 'M',),
-    (1e3 , 'k',),
-    (1   , 'R',),
-]
+import math
+def eng_string(x):
+    '''
+    Returns float/int value <x> formatted in a simplified engineering format -
+    using an exponent that is a multiple of 3.
+
+    format: printf-style string used to format the value before the exponent.
+          1230.0 => 1.23k
+      -1230000.0 => -1.23M
+    '''
+    x = float(x)
+    sign = ''
+    if x < 0:
+        x = -x
+        sign = '-'
+    exp = int(math.floor( math.log10( x)))
+    exp3 = exp - (exp % 3)
+    x3 = x / (10 ** exp3)
+
+    if exp3 >= -24 and exp3 <= 24 and exp3 != 0:
+        exp3_text = 'yzafpnum kMGTPEZY'[(exp3 - (-24)) / 3]
+    elif exp3 == 0:
+        exp3_text = ''
+
+    return (sign, str(x3), exp3_text)
 
 def value_toStr(l, handler=sys.stdout, terminal=True):
-    print
     data = []
-    for v in l:
-        acc = ""
-        for div, label in DIV:
-            c = int(v / div)
-            if c:
-                print ">", v, c, label
-                acc += str(c)
-                acc += label
-                v = int(v - (c * div));
-                if v:
-                    acc += str(int(v))
-                    acc = acc.rstrip('0')
-                    print ">", v
-                break
+    for i in l:
+        value, unit = i
+        sign, number, notation = eng_string(value)
 
-        print "*" *4
+        if notation == "":
+            number = number.rstrip("0")
+            number = number.replace(".", "R")
+        elif notation in ["k","M","G","T","P","E","Z","Y"]:
+            number = number.replace(".", notation)
+            number = number.rstrip("0")
+        elif notation in ["y","z","a","f","p","n","u","m"]:
+            number = number.rstrip("0")
+            number = re.sub(r"\.$", "", number)
+            number = "%s%s" % (number, notation)
 
-        data.append(acc)
+        number = "%s%s%s" % (sign, number, unit)
+        data.append(number)
 
     return data
 
@@ -790,4 +807,3 @@ if __name__ == "__main__":
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
-
