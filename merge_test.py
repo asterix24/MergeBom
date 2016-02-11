@@ -202,20 +202,20 @@ class TestMergeBom(unittest.TestCase):
 
     def test_floatToValue(self):
         test = [
-            ((1000, ""), (1500, ""), (2200, ""), (2210, ""), (4700, ""), (47000, "")),
-            ((1000000, ""), (1500000, ""), (860000, ""), (8600000, "")),
-            ((1.2, ""), (3.33, ""), (0.12, ""), (1.234, ""), (0.33, ""), (3.3e-8,"")),
+            ((1000, "ohm"), (1500, "ohm"), (2200, "ohm"), (2210, "ohm"), (4700, "ohm"), (47000, "ohm")),
+            ((1000000, "ohm"), (1500000, "ohm"), (860000, "ohm"), (8600000, "ohm")),
+            ((1.2, "ohm"), (3.33, "ohm"), (0.12, "ohm"), (1.234, "ohm"), (0.33, "ohm"), (3.3e-8,"ohm")),
             ((0.000010, "F"), (1e-3, "F"), (10e-3,"H")),
             ((1.5e-6, "F"), (33e-12, "F"), (100e-9, "F")),
-            ((1, ""), (0.1, "")),
+            ((1, "ohm"), (0.1, "ohm"), (10, "ohm"), (100, "ohm"), (12.5, "ohm")),
         ]
         check = [
             ("1k","1k5", "2k2", "2k21", "4k7", "47k"),
             ("1M", "1M5", "860k", "8M6"),
-            ("1R2", "3R33", "120m", "1R234", "330m", "33n"),
+            ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm"),
             ("10uF", "1mF", "10mH"),
             ("1.5uF", "33pF", "100nF"),
-            ("1R", "100m"),
+            ("1R", "0.1R", "10R", "100R", "12.5R"),
         ]
 
         for k, m in enumerate(test):
@@ -314,16 +314,16 @@ class TestMergeBom(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
-    suite.addTest(TestMergeBom("test_outFile"))
-    suite.addTest(TestMergeBom("test_mergedFile"))
-    suite.addTest(TestMergeBom("test_stats"))
-    suite.addTest(TestMergeBom("test_valueToFloat"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_group"))
+    #suite.addTest(TestMergeBom("test_led"))
+    #suite.addTest(TestMergeBom("test_diff"))
+    #suite.addTest(TestMergeBom("test_orderRef"))
+    #suite.addTest(TestMergeBom("test_outFile"))
+    #suite.addTest(TestMergeBom("test_mergedFile"))
+    #suite.addTest(TestMergeBom("test_stats"))
+    #suite.addTest(TestMergeBom("test_valueToFloat"))
     suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_version"))
-    suite.addTest(TestMergeBom("test_notPopulate"))
+    #suite.addTest(TestMergeBom("test_version"))
+    #suite.addTest(TestMergeBom("test_notPopulate"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)

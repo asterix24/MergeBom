@@ -158,14 +158,25 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
 
         if notation == "":
             number = number.rstrip("0")
-            number = number.replace(".", "R")
+            if unit == "ohm":
+                number = str(value)
+                unit = "R"
+
         elif notation in ["k","M","G","T","P","E","Z","Y"]:
             number = number.replace(".", notation)
             number = number.rstrip("0")
+
+            if unit == "ohm":
+                unit = ""
+
         elif notation in ["y","z","a","f","p","n","u","m"]:
             number = number.rstrip("0")
-            number = re.sub(r"\.$", "", number)
-            number = "%s%s" % (number, notation)
+            if notation == "m" and unit == "ohm":
+                number = str(value)
+                unit = "R"
+            else:
+                number = re.sub(r"\.$", "", number)
+                number = "%s%s" % (number, notation)
 
         number = "%s%s%s" % (sign, number, unit)
         data.append(number)
