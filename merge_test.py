@@ -48,10 +48,8 @@ class TestMergeBom(unittest.TestCase):
         l = MergeBom(file_list)
         data = l.table_data()
         self.assertEqual(len(data), 3)
-        print
         for n, i in enumerate(data):
             self.assertEqual(len(i), check[n][0])
-            print len(i)
 
     def test_led(self):
         file_list = [
@@ -181,23 +179,34 @@ class TestMergeBom(unittest.TestCase):
 
     def test_valueToFloat(self):
         test = [
-            ("1R1","1R2", "0R3", "1R8"),
-            ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3"),
-            ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF"),
-            ("1nH", "1H", "10pH", "2.2uH", "47uH"),
+            ("R", ("1R1","1R2", "0R3", "1R8")),
+            ("R", ("1.1R","1.2R", "0.3R", "1.8R")),
+            ("R", ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3")),
+            ("F", ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF")),
+            ("H", ("1nH", "1H", "10pH", "2.2uH", "47uH")),
+            ("R", ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm")),
         ]
         checkv1 = [
-            (0.3, 1.1, 1.2, 1.8),
-            (0.3, 1, 1.2, 10, 1000, 1500, 2200),
-            (10e-12, 100e-9, 0.1e-6, 1e-6, 2.2e-6, 47e-6, 1),
-            (10e-12, 1e-9, 2.2e-6, 47e-6, 1),
+            ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
+            ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
+            ((0.3, "ohm"), (  1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
+            ((10e-12, "F"), (100e-9, "F"), (0.1e-6, "F"), (1e-6, "F"), (2.2e-6, "F"), (47e-6, "F"), (1.0, "F")),
+            ((10e-12, "H"), (1e-9, "H"), (2.2e-6, "H"), (47e-6, "H"), (1.0, "H")),
+            ((3.3e-8,"ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm")),
         ]
 
+        print
         for k, m in enumerate(test):
-            l = order_value(m)
+            l = []
+            for mm in m[1]:
+                c = value_toFloat(mm, m[0])
+                l.append(c)
+
+            l = sorted(l, key=lambda x: x[0])
             for n, i in enumerate(l):
                 print i, "->", checkv1[k][n]
-                self.assertTrue(abs((i - checkv1[k][n]) < 0.1))
+                self.assertTrue(str(i[0]) == str(checkv1[k][n][0]))
+                self.assertEqual(i[1], checkv1[k][n][1])
                 print "-" * 80
 
     def test_floatToValue(self):
@@ -312,18 +321,27 @@ class TestMergeBom(unittest.TestCase):
         for i in ["name", "hw_ver", "pcb_ver"]:
             self.assertEqual(d[i], check[i])
 
+    def test_order(self):
+        file_list = [
+            "test/bom.xls",
+        ]
+
+        m = MergeBom(file_list)
+        d = m.table_fixValueStr()
+
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    #suite.addTest(TestMergeBom("test_import"))
-    #suite.addTest(TestMergeBom("test_group"))
-    #suite.addTest(TestMergeBom("test_led"))
-    #suite.addTest(TestMergeBom("test_diff"))
-    #suite.addTest(TestMergeBom("test_orderRef"))
-    #suite.addTest(TestMergeBom("test_outFile"))
-    #suite.addTest(TestMergeBom("test_mergedFile"))
-    #suite.addTest(TestMergeBom("test_stats"))
-    #suite.addTest(TestMergeBom("test_valueToFloat"))
+    suite.addTest(TestMergeBom("test_import"))
+    suite.addTest(TestMergeBom("test_group"))
+    suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_diff"))
+    suite.addTest(TestMergeBom("test_orderRef"))
+    suite.addTest(TestMergeBom("test_outFile"))
+    suite.addTest(TestMergeBom("test_mergedFile"))
+    suite.addTest(TestMergeBom("test_stats"))
+    suite.addTest(TestMergeBom("test_valueToFloat"))
     suite.addTest(TestMergeBom("test_floatToValue"))
-    #suite.addTest(TestMergeBom("test_version"))
-    #suite.addTest(TestMergeBom("test_notPopulate"))
+    suite.addTest(TestMergeBom("test_version"))
+    suite.addTest(TestMergeBom("test_notPopulate"))
+    suite.addTest(TestMergeBom("test_order"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=2).run(suite)

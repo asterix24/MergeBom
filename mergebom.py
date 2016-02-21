@@ -80,49 +80,40 @@ def order_designator(ref_str):
         sys.exit(1)
     return ", ".join(d)
 
-MULT = {
-    'R': 1,
-    'k': 1e3,
-    'M': 1e6,
-    'p': 1e-12,
-    'n': 1e-9,
-    'u': 1e-6,
+ENG_LETTER = {
+    'G': (1e9,     1e8),
+    'M': (1e6,     1e5),
+    'k': (1e3,     1e2),
+    'R': (1,       0.1),
+    'u': (1e-6,   1e-7),
+    'n': (1e-9,  1e-10),
+    'p': (1e-12, 1e-13),
 }
 
-def order_value(l, handler=sys.stdout, terminal=True):
-    if type(l) != tuple and type(l) != list:
-        warning("Type data is not a listo or a tuple",
-                 handler, terminal=terminal)
-        l = [l]
+def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
+    acc = 0
+    value = "0"
+    mult = 1
+    div = 1
+    if unit == "R":
+        unit = "ohm"
 
-    data = []
-    for i in l:
-        mult = 1
-        v = ""
-        accumulator = 0
-        # search first multiplier letter
-        for n, c in enumerate(i):
-            # Skip unit letter
-            if c in ["F", "H"]:
-                continue
-            # Found multiplier convert to number
-            if c in MULT:
-                accumulator = float(v) * MULT[c]
-                mult = MULT[c] / 10.0
-                v = ""
-                continue
-            v += c
-        if v:
-            try:
-                accumulator += float(v) * mult
-            except ValueError:
-                error("Wrong multiplier [%s]" % c,
-                      handler, terminal=terminal)
-                sys.exit(1)
+    for c in l:
+        #print "l[%s] c[%s] acc[%s]" % (l, c, acc)
+        if c in ENG_LETTER:
+            acc = float(value)
+            mult, div = ENG_LETTER[c]
+            value = "0"
+            continue
 
-        data.append(accumulator)
+        if c in unit:
+            continue
+        value += c
 
-    return sorted(data)
+    value = acc * mult + float(value) * div
+    if unit == "R":
+        unit = "ohm"
+    return value, unit
 
 import math
 def eng_string(x):
@@ -396,6 +387,14 @@ class MergeBom (object):
                     error("GROUP key not FOUND!", self.handler, terminal=self.terminal)
                     error(designator, self.handler, terminal=self.terminal)
                     sys.exit(1)
+
+    def table_fixValueStr(self):
+        self.group()
+        self.count()
+        for key in ["R", "C", "L"]:
+            for m in self.grouped_items[key]:
+                print m[COMMENT], key
+                #print order_value(m[COMMENT])
 
     def table_grouped(self):
         return self.grouped_items
