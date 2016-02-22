@@ -90,30 +90,60 @@ ENG_LETTER = {
     'p': (1e-12, 1e-13),
 }
 
+CATEGORY_TO_UNIT = {
+    'R': "ohm",
+    'C': "F",
+    'L': "H",
+    'Y': "Hz",
+}
+
 def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
     acc = 0
     value = "0"
     mult = 1
     div = 1
-    if unit == "R":
-        unit = "ohm"
+    if not unit in CATEGORY_TO_UNIT:
+        error("Unknow category [%s] allowed are[%s]" % (unit, CATEGORY_TO_UNIT.keys()),
+               handler, terminal=terminal)
+        sys.exit(1)
+
+    # K is always chilo .. so fix case
+    l = l.replace("K", "k")
+
+    # manage correctly NP value
+    for n in NOT_POPULATE_KEY:
+        if n in l:
+            return -1, l, ""
+
+    # In string value we could find a note or other info, remove it, put for later
+    note = ""
+    if " " in l:
+        ss = l.split(" ")
+        l = ss[0]
+        note = ss[1:]
+        print ">", l, note
 
     for c in l:
-        #print "l[%s] c[%s] acc[%s]" % (l, c, acc)
         if c in ENG_LETTER:
             acc = float(value)
             mult, div = ENG_LETTER[c]
             value = "0"
             continue
 
-        if c in unit:
+        if c in CATEGORY_TO_UNIT[unit]:
             continue
-        value += c
 
-    value = acc * mult + float(value) * div
-    if unit == "R":
-        unit = "ohm"
-    return value, unit
+        value += c
+        #print "[",c,"<>", value, "]",
+
+    try:
+        value = acc * mult + float(value) * div
+    except ValueError, e:
+        error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (l, acc, mult, value, div, e),
+               handler, terminal=terminal)
+        return -2, l, note
+
+    return value, CATEGORY_TO_UNIT[unit], note
 
 import math
 def eng_string(x):
@@ -130,7 +160,7 @@ def eng_string(x):
     if x < 0:
         x = -x
         sign = '-'
-    exp = int(math.floor( math.log10( x)))
+    exp = int(math.floor(math.log10(x)))
     exp3 = exp - (exp % 3)
     x3 = x / (10 ** exp3)
 
@@ -142,37 +172,42 @@ def eng_string(x):
     return (sign, str(x3), exp3_text)
 
 def value_toStr(l, handler=sys.stdout, terminal=True):
-    data = []
-    for i in l:
-        value, unit = i
+    try:
+        value, unit, note = l
+    except ValueError, e:
+        print "Unpack error %s {%s}" % (i, e)
+
+    if value in [-1, -2]:
+        return "%s %s" % (unit, " ".join(note))
+
+    if value == 0.0:
+        sign, number, notation = "", "0", ""
+    else:
         sign, number, notation = eng_string(value)
 
-        if notation == "":
-            number = number.rstrip("0")
-            if unit == "ohm":
-                number = str(value)
-                unit = "R"
+    if notation == "":
+        number = number.rstrip("0")
+        if unit == "ohm":
+            number = str(value)
+            unit = "R"
 
-        elif notation in ["k","M","G","T","P","E","Z","Y"]:
-            number = number.replace(".", notation)
-            number = number.rstrip("0")
+    elif notation in ["k","M","G","T","P","E","Z","Y"]:
+        number = number.replace(".", notation)
+        number = number.rstrip("0")
 
-            if unit == "ohm":
-                unit = ""
+        if unit == "ohm":
+            unit = ""
 
-        elif notation in ["y","z","a","f","p","n","u","m"]:
-            number = number.rstrip("0")
-            if notation == "m" and unit == "ohm":
-                number = str(value)
-                unit = "R"
-            else:
-                number = re.sub(r"\.$", "", number)
-                number = "%s%s" % (number, notation)
+    elif notation in ["y","z","a","f","p","n","u","m"]:
+        number = number.rstrip("0")
+        if notation == "m" and unit == "ohm":
+            number = str(value)
+            unit = "R"
+        else:
+            number = re.sub(r"\.$", "", number)
+            number = "%s%s" % (number, notation)
 
-        number = "%s%s%s" % (sign, number, unit)
-        data.append(number)
-
-    return data
+    return "%s%s%s %s" % (sign, number, unit, " ".join(note))
 
 # Exchange data layout after file import
 FILENAME    = 0
@@ -391,10 +426,26 @@ class MergeBom (object):
     def table_fixValueStr(self):
         self.group()
         self.count()
-        for key in ["R", "C", "L"]:
-            for m in self.grouped_items[key]:
-                print m[COMMENT], key
-                #print order_value(m[COMMENT])
+        for category in VALID_GROUP_KEY:
+            if self.table.has_key(category):
+                for n, item in enumerate(self.table[category]):
+                    self.table[category][n][self.TABLE_DESIGNATOR] = \
+                            order_designator(item[self.TABLE_DESIGNATOR])
+
+                if category in ["R", "C", "L", "Y"]:
+                    for m in self.table[category]:
+                        m[self.TABLE_COMMENT] = value_toFloat(m[self.TABLE_COMMENT], category)
+                        #print m[COMMENT], key
+
+                self.table[category] = sorted(self.table[category],
+                                              key=lambda x: x[self.TABLE_COMMENT])
+
+                if category in ["R", "C", "L", "Y"]:
+                    for m in self.table[category]:
+                        m[self.TABLE_COMMENT] = value_toStr(m[self.TABLE_COMMENT], category)
+                        print m[self.TABLE_COMMENT], category
+
+        return self.table
 
     def table_grouped(self):
         return self.grouped_items
