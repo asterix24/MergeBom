@@ -179,14 +179,16 @@ class TestMergeBom(unittest.TestCase):
 
     def test_valueToFloat(self):
         test = [
+            ("C", ("100pF", )),
             ("R", ("1R1","1R2", "0R3", "1R8")),
             ("R", ("1.1R","1.2R", "0.3R", "1.8R")),
             ("R", ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3")),
-            ("F", ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF")),
-            ("H", ("1nH", "1H", "10pH", "2.2uH", "47uH")),
+            ("C", ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF")),
+            ("L", ("1nH", "1H", "10pH", "2.2uH", "47uH")),
             ("R", ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm")),
         ]
         checkv1 = [
+            ((1e-10, "F"),),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
             ((0.3, "ohm"), (  1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
@@ -199,8 +201,8 @@ class TestMergeBom(unittest.TestCase):
         for k, m in enumerate(test):
             l = []
             for mm in m[1]:
-                c = value_toFloat(mm, m[0])
-                l.append(c)
+                a, b, c = value_toFloat(mm, m[0])
+                l.append((a,b))
 
             l = sorted(l, key=lambda x: x[0])
             for n, i in enumerate(l):
@@ -211,12 +213,13 @@ class TestMergeBom(unittest.TestCase):
 
     def test_floatToValue(self):
         test = [
-            ((1000, "ohm"), (1500, "ohm"), (2200, "ohm"), (2210, "ohm"), (4700, "ohm"), (47000, "ohm")),
-            ((1000000, "ohm"), (1500000, "ohm"), (860000, "ohm"), (8600000, "ohm")),
-            ((1.2, "ohm"), (3.33, "ohm"), (0.12, "ohm"), (1.234, "ohm"), (0.33, "ohm"), (3.3e-8,"ohm")),
-            ((0.000010, "F"), (1e-3, "F"), (10e-3,"H")),
-            ((1.5e-6, "F"), (33e-12, "F"), (100e-9, "F")),
-            ((1, "ohm"), (0.1, "ohm"), (10, "ohm"), (100, "ohm"), (12.5, "ohm")),
+            ((1000, "ohm", ""), (1500, "ohm", ""), (2200, "ohm", ""), (2210, "ohm", ""), (4700, "ohm", ""), (47000, "ohm", "")),
+            ((1000000, "ohm", ""), (1500000, "ohm", ""), (860000, "ohm", ""), (8600000, "ohm", "")),
+            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (3.3e-8,"ohm", "")),
+            ((0.000010, "F", ""), (1e-3, "F", ""), (10e-3,"H", "")),
+            ((1.5e-6, "F", ""), (33e-12, "F", ""), (100e-9, "F", "")),
+            ((1, "ohm", ""), (0.1, "ohm", ""), (10, "ohm", ""), (100, "ohm", ""), (12.5, "ohm", "")),
+            ((11, "R", ""), (120, "R", ""), (50, "R", "")),
         ]
         check = [
             ("1k","1k5", "2k2", "2k21", "4k7", "47k"),
@@ -225,14 +228,16 @@ class TestMergeBom(unittest.TestCase):
             ("10uF", "1mF", "10mH"),
             ("1.5uF", "33pF", "100nF"),
             ("1R", "0.1R", "10R", "100R", "12.5R"),
+            ("11R", "120R", "50R"),
         ]
 
-        for k, m in enumerate(test):
-            l = value_toStr(m)
-            self.assertTrue(l)
-            for n, i in enumerate(l):
-                print i, "->", check[k][n]
-                self.assertEqual(i, check[k][n])
+        for k,l in enumerate(test):
+            for n, m in enumerate(l):
+                l = value_toStr(m)
+                self.assertTrue(l)
+
+                print l, "->", check[k][n]
+                self.assertEqual(l, check[k][n])
                 print "-" * 80
 
     def test_outFile(self):
@@ -328,6 +333,8 @@ class TestMergeBom(unittest.TestCase):
 
         m = MergeBom(file_list)
         d = m.table_fixValueStr()
+        file_list = map(os.path.basename, file_list)
+        write_xls(d, file_list, "/tmp/due.xls", hw_ver="13", pcb_ver="C", project="TEST")
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()

@@ -175,7 +175,8 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
     try:
         value, unit, note = l
     except ValueError, e:
-        print "Unpack error %s {%s}" % (i, e)
+        print "Unpack error %s {%s}" % (l, e)
+        sys.exit(1)
 
     if value in [-1, -2]:
         return "%s %s" % (unit, " ".join(note))
@@ -187,6 +188,7 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
 
     if notation == "":
         number = number.rstrip("0")
+        number = number.replace(".", "")
         if unit == "ohm":
             number = str(value)
             unit = "R"
@@ -207,7 +209,10 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
             number = re.sub(r"\.$", "", number)
             number = "%s%s" % (number, notation)
 
-    return "%s%s%s %s" % (sign, number, unit, " ".join(note))
+    space = ""
+    if note:
+        space = " "
+    return "%s%s%s%s%s" % (sign, number, unit, space, " ".join(note))
 
 # Exchange data layout after file import
 FILENAME    = 0
