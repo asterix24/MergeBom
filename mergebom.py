@@ -482,6 +482,7 @@ class MergeBom (object):
 
                     if category  == 'D' and "LED" in item[FOOTPRINT]:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
+                            item[COMMENT] = "LED"
                             warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                     self.handler, terminal=self.terminal)
                     else:
