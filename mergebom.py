@@ -121,7 +121,11 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
         ss = l.split(" ")
         l = ss[0]
         note = ss[1:]
-        print ">", l, note
+        #print ">", l, note
+
+    # First character should be a numer
+    if re.search("^[0-9]", l) is None:
+        return -2, l, note
 
     for c in l:
         if c in ENG_LETTER:
@@ -428,30 +432,6 @@ class MergeBom (object):
                     error(designator, self.handler, terminal=self.terminal)
                     sys.exit(1)
 
-    def table_fixValueStr(self):
-        self.group()
-        self.count()
-        for category in VALID_GROUP_KEY:
-            if self.table.has_key(category):
-                for n, item in enumerate(self.table[category]):
-                    self.table[category][n][self.TABLE_DESIGNATOR] = \
-                            order_designator(item[self.TABLE_DESIGNATOR])
-
-                if category in ["R", "C", "L", "Y"]:
-                    for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = value_toFloat(m[self.TABLE_COMMENT], category)
-                        #print m[COMMENT], key
-
-                self.table[category] = sorted(self.table[category],
-                                              key=lambda x: x[self.TABLE_COMMENT])
-
-                if category in ["R", "C", "L", "Y"]:
-                    for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = value_toStr(m[self.TABLE_COMMENT], category)
-                        print m[self.TABLE_COMMENT], category
-
-        return self.table
-
     def table_grouped(self):
         return self.grouped_items
 
@@ -548,6 +528,19 @@ class MergeBom (object):
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
                             order_designator(item[self.TABLE_DESIGNATOR])
+
+                if category in ["R", "C", "L", "Y"]:
+                    for m in self.table[category]:
+                        m[self.TABLE_COMMENT] = value_toFloat(m[self.TABLE_COMMENT], category)
+                        #print m[COMMENT], key
+
+                self.table[category] = sorted(self.table[category],
+                                              key=lambda x: x[self.TABLE_COMMENT])
+
+                if category in ["R", "C", "L", "Y"]:
+                    for m in self.table[category]:
+                        m[self.TABLE_COMMENT] = value_toStr(m[self.TABLE_COMMENT], category)
+                        print m[self.TABLE_COMMENT], category
 
         return self.table
 
