@@ -458,17 +458,21 @@ class MergeBom (object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
+
+                    # Fix Not poluate string in list
+                    for rexp in NOT_POPULATE_KEY:
+                        item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
+
                     if category  == 'J':
                         # Avoid merging for NP componets
                         skip_merge = False
-                        for rexp in NOT_POPULATE_KEY:
-                            m = re.findall(rexp, item[COMMENT])
-                            if m:
-                                skip_merge = True
-                                error("Not Populate connector, leave unmerged..[%s] [%s] match%s" %
-                                       (item[COMMENT], item[DESIGNATOR], m),
-                                       self.handler, terminal=self.terminal)
-                                item[COMMENT] = item[COMMENT].replace(rexp, ' NP ')
+                        m = re.findall('NP', item[COMMENT])
+                        if m:
+                            skip_merge = True
+                            error("Not Populate connector, leave unmerged..[%s] [%s] match%s" %
+                                   (item[COMMENT], item[DESIGNATOR], m),
+                                   self.handler, terminal=self.terminal)
+                            item[COMMENT] = "NP Connector"
 
                         if skip_merge:
                             key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
@@ -780,7 +784,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
                         else:
                             # Mark NP to help user
                             fmt = def_fmt
-                            if type(col) != int and re.findall("NP", col):
+                            if type(col) != int and re.findall(r"NP[^\w]", col):
                                     fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if type(col) != int:
