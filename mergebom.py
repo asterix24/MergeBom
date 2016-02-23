@@ -179,23 +179,22 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
     try:
         value, unit, note = l
     except ValueError, e:
-        print "Unpack error %s {%s}" % (l, e)
+        error("Unpack error %s {%s}" % (l, e), handler, terminal=terminal)
         sys.exit(1)
 
     if value in [-1, -2]:
         return "%s %s" % (unit, " ".join(note))
 
     if value == 0.0:
-        sign, number, notation = "", "0", ""
+        sign, number, notation = "", "0.0", ""
     else:
         sign, number, notation = eng_string(value)
 
     if notation == "":
-        number = number.rstrip("0")
-        number = number.replace(".", "")
         if unit == "ohm":
             number = str(value)
             unit = "R"
+        number = re.sub(r"\.0+$", '', number)
 
     elif notation in ["k","M","G","T","P","E","Z","Y"]:
         number = number.replace(".", notation)
@@ -364,7 +363,7 @@ class MergeBom (object):
                     if re.findall("\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
 
-                    # Explode designator field to have one component for line
+                   # Explode designator field to have one component for line
                     d = row[designator].split(',')
                     for reference in d:
                         r = reference.replace(' ', '')
@@ -867,3 +866,4 @@ if __name__ == "__main__":
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
+

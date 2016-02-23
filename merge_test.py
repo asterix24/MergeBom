@@ -357,6 +357,5 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_floatToValue"))
     suite.addTest(TestMergeBom("test_version"))
     suite.addTest(TestMergeBom("test_notPopulate"))
-    #suite.addTest(TestMergeBom("test_order"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=options.verbose).run(suite)
 
