@@ -61,7 +61,7 @@ class Report(object):
     def write_header(self, d, file_list):
         self.f.write("\n")
         self.f.write(":" * 80)
-        self.f.write("Date: %s\n" %              d['mod_date'])
+        self.f.write("Date: %s\n" %              d['date'])
         self.f.write("Project Name: %s\n" %      d['name'])
         self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
         self.f.write("PCB Revision: %s\n" %      d['pcb_ver'])
