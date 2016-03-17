@@ -129,10 +129,16 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
 
     for c in l:
         if c in ENG_LETTER:
-            acc = float(value)
-            mult, div = ENG_LETTER[c]
-            value = "0"
-            continue
+            try:
+                value = value.replace(',', '.')
+                acc = float(value)
+                mult, div = ENG_LETTER[c]
+                value = "0"
+                continue
+            except ValueError, e:
+                error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (l, acc, mult, value, div, e),
+                       handler, terminal=terminal)
+                sys.exit(1)
 
         if c in CATEGORY_TO_UNIT[unit]:
             continue
