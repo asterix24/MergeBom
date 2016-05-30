@@ -84,6 +84,66 @@ class TestMergeBom(unittest.TestCase):
                 print "C <", check[category][n]
                 self.assertEqual(i, check[category][n])
 
+    def test_rele(self):
+        file_list = [
+            "test/bomrele.xls",
+        ]
+
+        check = {
+            'J': [
+                [1, 1, u'J35', 'Connector', u'DSUB1.385-2H25A_FEMALE', u'Receptacle Assembly, 25 Position, Right Angle'],
+                [2, 2, u'J38, J43', 'Connector', u'TBLOCK_1X8_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 8x1, Vertical + Plug'],
+                [9, 9, u'J5, J9, J11, J15, J17, J19, J25, J30, J42', 'Connector', u'TBLOCK_1X3_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 3x1, Vertical + Plug'],
+                [1, 1, u'J3', 'Connector', u'HEADER_2x10_2.00MM_BOX_LEV_THD', u'Header, 10-Pin, Dual row, 2mm, Boxed with Lever'],
+                [3, 3, u'J48, J49, J50', 'Connector', u'SOCKET_2x26_2.54MM_THD', u'Socket Header, 52 pin, 26x2, 2.54mm, H=8.5mm'],
+                [1, 1, u'J12', 'Connector', u'HEADER_2x10_2.00MM_BOX_THD', u'Header, 8-Pin, Dual row, 2mm, Boxed'],
+                [19, 19, u'J4, J10, J18, J22, J23, J27, J31, J32, J33, J34, J36, J37, J39, J40, J41, J44, J45, J46, J47', 'Connector', u'TBLOCK_1X2_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 2x1, Vertical + Plug'],
+                [28, 28, u'J21, J24, J26, J29, J51, J52, J53, J54, J55, J56, J57, J58, J59, J60, J61, J62, J63, J64, J65, J66, J67, J68, J69, J70, J71, J72, J73, J74', 'Connector', u'HEADER_1X3_2.54MM_THD', u'Pin Header, 3x1, 2.54mm, THD'],
+                [10, 10, u'J8, J16, J20, J28, J75, J76, J77, J78, J79, J80', 'Connector', u'HEADER_1X2_2.54MM_THD', u'Pin Header, 2x1, 2.54mm, THD'],
+            ],
+            'U': [
+                [1, 1, u'U1', u'24C128', u'SOIC8', u'EEPROM'],
+                [8, 8, u'U19, U21, U22, U23, U25, U27, U28, U29', u'4N25', u'SOIC6_OPTO', u'Optocoupler'],
+                [4, 4, u'U14, U15, U16, U17', u'74HC4051', u'SOIC16', u'Analog Mux 8:1'],
+                [3, 3, u'U11, U20, U26', u'AD5624RBRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
+                [2, 2, u'U31, U33', u'AD799x', u'TSOP65P640X120-20L', u'ADC 10/12bit I2C'],
+                [6, 6, u'U32, U34, U35, U36, U37, U47', u'AD8418BRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
+                [1, 1, u'U6', u'ADS7951SBDBT', u'TSSOP50P640-30L', u'ADC'],
+                [2, 2, u'U3, U4', u'LM22670TJ-ADJ', u'TO-263-7', u'Switching regulator.'],
+                [1, 1, u'U2', u'LM22671MR-ADJ', u'SOIC8_PAD', u'DC-DC switch converter'],
+                [3, 3, u'U12, U18, U24', u'OPA4188AID', u'SOIC14', u'Quad Op Amp'],
+                [1, 1, u'U13', u'OPA4188AID', u'SOIC14', u'Op Amp'],
+                [1, 1, u'U5', u'REF3325AIDBZR', u'SOT-23', u'Shunt volt reference +2.5V'],
+                [6, 6, u'U38, U39, U42, U43, U44, U46', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 12V'],
+                [1, 1, u'U45', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 24V'],
+                [1, 1, u'U41', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele Altra marca 16A 12V'],
+                [1, 1, u'U30', u'TLV431 SOT23', u'SOT-23', u'TLV431BQDBZT'],
+                [1, 1, u'U40', u'ULN2803', u'SOIC18', u'BJT Darlinton Array'],
+                [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK', u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
+                ],
+            'D': [
+                [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
+                [4, 4, u'D9, D10, D11, D12', u'BAS70-05', u'SOT-23', u'Schottky Barrier Double Diodes'],
+                [3, 3, u'D13, D14, D16', u'BAV99', u'SOT-23', u'BAV99 Diode'],
+                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
+                [2, 2, u'D1, D7', 'LED', u'0603_[1608]_K2-A1_LED', u'LED Green'],
+                [1, 1, u'D2', u'S2B', u'DO214AA_12', u'S2B Diode'],
+                [1, 1, u'D3', u'SMBJ28A', u'DO214AA_12', u'TRANSIL (SM6T12A)'],
+            ],
+          }
+
+        m = MergeBom(file_list)
+        d = m.merge()
+
+        # file_list = map(os.path.basename, file_list)
+        # stats = write_xls(h, d, file_list, "/tmp/uno.xls")
+
+        for category in d.keys():
+            for n, i in enumerate(d[category]):
+                print "T >", i
+                print "C <", check[category][n]
+                self.assertEqual(i, check[category][n])
+
     def test_group(self):
         file_list = [
             "test/bom0.xlsx",
@@ -348,6 +408,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_import"))
     suite.addTest(TestMergeBom("test_group"))
     suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_rele"))
     suite.addTest(TestMergeBom("test_diff"))
     suite.addTest(TestMergeBom("test_orderRef"))
     suite.addTest(TestMergeBom("test_outFile"))
