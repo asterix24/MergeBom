@@ -801,7 +801,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
                                     fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if type(col) != int:
-                                worksheet.set_column(row, c, len(col) * 6)
+                                worksheet.set_column(row, c, 500)
                     row += 1
 
     workbook.close()
