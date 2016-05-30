@@ -494,6 +494,13 @@ class MergeBom (object):
                             item[COMMENT] = "LED"
                             warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                     self.handler, terminal=self.terminal)
+
+                    elif category  == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
+                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        item[COMMENT] = u"Relay, Rele'"
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]),
+                                self.handler, terminal=self.terminal)
+
                     else:
                         key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
