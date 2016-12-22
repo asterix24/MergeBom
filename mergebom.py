@@ -401,7 +401,7 @@ class MergeBom (object):
                 if c is not None:
                     group_key = c.group().upper()
                     # Buttons and spacer
-                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT', 'SW']:
+                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT', 'SW', 'BUZ', 'K']:
                         group_key = 'S'
                     # Fuses
                     if group_key in ['G']:
@@ -492,6 +492,12 @@ class MergeBom (object):
                     if category  == 'D' and "LED" in item[FOOTPRINT]:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
                             item[COMMENT] = "LED"
+                            warning("Merged key: %s (%s)" % (key, item[COMMENT]),
+                                    self.handler, terminal=self.terminal)
+
+                    if category  == 'S' and "TACTILE" in item[FOOTPRINT]:
+                            key = item[DESCRIPTION] + item[FOOTPRINT]
+                            item[COMMENT] = "Tactile Switch"
                             warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                     self.handler, terminal=self.terminal)
 
@@ -801,7 +807,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
                                     fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if type(col) != int:
-                                worksheet.set_column(row, c, 500)
+                                worksheet.set_column(row, c, 50)
                     row += 1
 
     workbook.close()
