@@ -1,0 +1,452 @@
+
+
+#     #                             ######
+##   ## ###### #####   ####  ###### #     #  ####  #    #
+# # # # #      #    # #    # #      #     # #    # ##  ##
+#  #  # #####  #    # #      #####  ######  #    # # ## #
+#     # #      #####  #  ### #      #     # #    # #    #
+#     # #      #   #  #    # #      #     # #    # #    #
+#     # ###### #    #  ####  ###### ######   ####  #    #
+
+
+Report file.
+Date: Wednesday, 28 December 2016 17:48:41
+................................................................................
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20151201
+Project Name: SEB3 Board Overview
+Hardware Revision: 2
+PCB Revision: 
+
+Bom Files:
+ - ./Assembly\overview\bom-overview.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-overview.xlsx
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (MicroSD Connector 8pin  (WE 693072010801))microsd_holder (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin header, 14 pin, 7x2, 2.54mm, stacked H=12.5mm (LE212280-R)HEADER_2X7_2.54MM_15MM_Stacked_THD (Connector)
+>>  Merged key: NP (Pin header, 16 pin, 8x2, 2.54mm, Horizontal, (LES64480-R))HEADER_2x8_2.54MM_ANGLED_SMD - duplicate (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 20 pin, 10x2, 1.27mm)HEADER_2X10_1.27MM_SMD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 16 pin, 8x2, 2.54mmHEADER_2X8_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 16 pin, 8x2, 2.54mmHEADER_2X8_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: (wago 236-; we 691413720008B)CON_8P_SCREWLESS_5MM_45Entry (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 14 pin, 7x2, 2.54mm, H=8.5mmSOCKET_2x7_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_SMD (Connector)
+>>  Merged key: (wago 236-; we 691413720008B)CON_8P_SCREWLESS_5MM_45Entry (Connector)
+>>  Merged key: Terminal Block, Screwless, 10 pole, 2.5mm (WAGO  250-410)CON_10P_WAGO_2.5MM (Connector)
+>>  Merged key: Header, 4-PinCON_4P_WAGO_2.5MM (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C   398
+D  Diodes
+    D    77
+J  Connectors
+    J    75
+TR Transformers
+   TR     2
+L  Inductors, chokes
+    L    57
+Q  Transistors
+    Q    39
+R  Resistors
+    R   826
+DZ Zener, Schottky, Transil
+   DZ    17
+Y  Cristal, quarz, oscillator
+    Y     5
+U  IC
+    U    66
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 1562
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20151201
+Project Name: 1004090-005 SEB3 Logic Board
+Hardware Revision: 2
+PCB Revision: B
+
+Bom Files:
+ - ./Assembly\logic_carrier\bom-logic_carrier.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-logic_carrier.xlsx
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (MicroSD Connector 8pin  (WE 693072010801))microsd_holder (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin header, 14 pin, 7x2, 2.54mm, stacked H=12.5mm (LE212280-R)HEADER_2X7_2.54MM_15MM_Stacked_THD (Connector)
+>>  Merged key: NP (Pin header, 16 pin, 8x2, 2.54mm, Horizontal, (LES64480-R))HEADER_2x8_2.54MM_ANGLED_SMD - duplicate (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C   115
+D  Diodes
+    D    17
+J  Connectors
+    J     9
+L  Inductors, chokes
+    L    13
+Q  Transistors
+    Q     6
+R  Resistors
+    R   339
+DZ Zener, Schottky, Transil
+   DZ     1
+Y  Cristal, quarz, oscillator
+    Y     1
+U  IC
+    U     9
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 510
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20151201
+Project Name: 1004090-001 SEB3 Route Board
+Hardware Revision: 2
+PCB Revision: B
+
+Bom Files:
+ - ./Assembly\route_carrier\bom-route_carrier.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-route_carrier.xlsx
+>>  Merged key: (wago 236-; we 691413720008B)CON_8P_SCREWLESS_5MM_45Entry (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 14 pin, 7x2, 2.54mm, H=8.5mmSOCKET_2x7_2.54MM_THD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_SMD (Connector)
+>>  Merged key: Terminal Block, Screwless, 8 pole, 2.5mm (WAGO  250-408)CON_8P_WAGO_2.5MM (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2x8_2.54MM_SMD (Connector)
+>>  Merged key: (wago 236-; we 691413720008B)CON_8P_SCREWLESS_5MM_45Entry (Connector)
+>>  Merged key: Terminal Block, Screwless, 10 pole, 2.5mm (WAGO  250-410)CON_10P_WAGO_2.5MM (Connector)
+>>  Merged key: Header, 4-PinCON_4P_WAGO_2.5MM (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 20 pin, 10x2, 2.00mmHEADER_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mmSOCKET_2X4_2.54MM_SMD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C    34
+D  Diodes
+    D    19
+J  Connectors
+    J    47
+L  Inductors, chokes
+    L    26
+Q  Transistors
+    Q     4
+R  Resistors
+    R     9
+DZ Zener, Schottky, Transil
+   DZ     2
+U  IC
+    U     2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 143
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20151201
+Project Name: 1004090-002 SEB3 SP
+Hardware Revision: 14
+PCB Revision: B
+
+Bom Files:
+ - ./Assembly\sp\bom-sp.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-sp.xlsx
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2x4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+>>  Merged key: Relay DPST-CO 12V (TE CONNECTIVITY  IM06TS; HONGFA HFD4/12)RELAYS_DPST_THD_6x10_5.08mm (Relay, Rele')
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C   135
+D  Diodes
+    D    24
+J  Connectors
+    J     9
+TR Transformers
+   TR     2
+L  Inductors, chokes
+    L     6
+Q  Transistors
+    Q    26
+R  Resistors
+    R   258
+DZ Zener, Schottky, Transil
+   DZ     7
+Y  Cristal, quarz, oscillator
+    Y     2
+U  IC
+    U    38
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 507
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20160314
+Project Name: 1004090-003 SEB3 SLSC Digital
+Hardware Revision: 6
+PCB Revision: B
+
+Bom Files:
+ - ./Assembly\slsc-ht_digital\bom-slsc-ht_digital.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-slsc-ht_digital.xlsx
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 2 pin, 1x2, 2.54mm, THD)HEADER_1X2_2.54MM_THD (Connector)
+>>  Merged key: NP (Pin Header, 20 pin, 10x2, 1.27mm)HEADER_2X10_1.27MM_SMD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Pin Header, 16 pin, 8x2, 2.54mmHEADER_2X8_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 16 pin, 8x2, 2.54mmHEADER_2X8_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Pin Header, 8 pin, 4x2, 2.54mmHEADER_2X4_2.54MM_THD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C    99
+D  Diodes
+    D    14
+J  Connectors
+    J     8
+L  Inductors, chokes
+    L    11
+Q  Transistors
+    Q     1
+R  Resistors
+    R   220
+DZ Zener, Schottky, Transil
+   DZ     5
+Y  Cristal, quarz, oscillator
+    Y     2
+U  IC
+    U    13
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 373
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Date: 20160314
+Project Name: 1004090-003 SEB3 SLSC Power
+Hardware Revision: 6
+PCB Revision: B
+
+Bom Files:
+ - ./Assembly\slsc-ht_power\bom-slsc-ht_power.xlsx
+
+== Check Merged items: ==
+--------------------------------------------------------------------------------
+>>  c:\users\asterix\appdata\local\temp\bom-slsc-ht_power.xlsx
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Socket Header, 20 pin, 10x2, 2mm, H=4.5mmSOCKET_2X10_2MM_SMD (Connector)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+>>  Merged key: Diode LED Green0603_[1608]_LED (LED)
+
+
+================================================================================
+File num: 1
+C  Capacitors
+    C    29
+D  Diodes
+    D     3
+J  Connectors
+    J     2
+L  Inductors, chokes
+    L     2
+Q  Transistors
+    Q     2
+R  Resistors
+    R    29
+DZ Zener, Schottky, Transil
+   DZ     2
+U  IC
+    U     6
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Total: 75

@@ -2,8 +2,8 @@ object MergeBomForm: TMergeBomForm
   Left = 0
   Top = 0
   Caption = 'MergeBomForm'
-  ClientHeight = 496
-  ClientWidth = 665
+  ClientHeight = 549
+  ClientWidth = 829
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,7 +13,7 @@ object MergeBomForm: TMergeBomForm
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object close: TButton
+  object bClose: TButton
     AlignWithMargins = True
     Left = 16
     Top = 16
@@ -21,9 +21,9 @@ object MergeBomForm: TMergeBomForm
     Height = 32
     Caption = 'Close'
     TabOrder = 0
-    OnClick = closeClick
+    OnClick = bCloseClick
   end
-  object run: TButton
+  object brun: TButton
     AlignWithMargins = True
     Left = 15
     Top = 56
@@ -31,26 +31,16 @@ object MergeBomForm: TMergeBomForm
     Height = 32
     Caption = 'Run'
     TabOrder = 1
-    OnClick = runClick
-  end
-  object showlog: TButton
-    AlignWithMargins = True
-    Left = 15
-    Top = 99
-    Width = 89
-    Height = 32
-    Caption = 'ShowLog'
-    TabOrder = 2
-    OnClick = showlogClick
+    OnClick = brunClick
   end
   object log: TMemo
     Left = 120
     Top = 16
-    Width = 528
-    Height = 464
+    Width = 696
+    Height = 520
     Lines.Strings = (
       'log')
     ScrollBars = ssVertical
-    TabOrder = 3
+    TabOrder = 2
   end
 end

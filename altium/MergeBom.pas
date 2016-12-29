@@ -19,42 +19,39 @@
 
 Var
    MergeBomForm: TMergeBom;
-   mergelog        : string;
-   myFile          : TextFile;
-   text            : string;
    WorkSpace       : IWorkSpace;
    VersionFileName : TDynamicString;
+   MergeBomLog     : TDynamicString;
    PrjFullPath     : TDynamicString;
-
    Project        : IProject;
+   Document       : IDocument;
+   I              : Integer;
+   item           : String;
+   logfile        : TextFile;
+   line           : String;
+   ErrorCode      : Integer;
 
-   K              : Integer;
-   ReportFile     : Text;
-   ReportDocument : IServerDocument;
-
+procedure TMergeBomForm.bCloseClick(Sender: TObject);
+begin
+     Close;
+end;
 
 Procedure MainMergeBom;
 Begin
      MergeBomForm.ShowModal;
 End;
 
-procedure TMergeBomForm.closeClick(Sender: TObject);
+procedure TMergeBomForm.brunClick(Sender: TObject);
 begin
-     close;
-end;
+     log.Text := 'Run MergeBom Script..';
 
-procedure TMergeBomForm.runClick(Sender: TObject);
-var
-   Document       : IDocument;
-   I              : Integer;
-   item           : String;
-begin
-    VersionFileName := Nil;
-    WorkSpace := GetWorkSpace.DM_FocusedProject;
+     VersionFileName := Nil;
+     MergeBomLog := Nil;
+     WorkSpace := GetWorkSpace.DM_FocusedProject;
 
     If WorkSpace = Nil Then
        begin
-            log.Text := 'Invalid Workspace';
+            log.Lines.Add('Invalid Workspace');
             Exit;
        end;
 
@@ -66,51 +63,46 @@ begin
         if ansicomparestr(item, 'version.txt') = 0 then
            begin
                 VersionFileName := Document.DM_FullPath;
+                log.Lines.Add('Found Versione file..');
                 log.Lines.Add(PrjFullPath);
                 log.Lines.Add(VersionFileName);
            end;
     End;
 
-    If Not VarIsNull(text) Then
+    If Not VarIsNull(VersionFileName) and fileexists(VersionFileName) Then
        Begin
-         ShowMessage('Run Cmd');
-          {ErrorCode := RunApplication('C:\Program Files (x86)\Saturn PCB Design\PCB Toolkit V5\PCB Toolkit V5.65.exe');
-     If ErrorCode <> 0 Then
-        ShowError('System cannot start PCB Toolkit ' + GetErrorMessage(ErrorCode));
-     end;}
-       end
-       else
-           begin
-                log.Text := 'No Version File found.';
-           end
-    end;
-end;
+            ErrorCode := RunApplication('mergebom_altium.exe -d '+PrjFullPath+' -v'+ VersionFileName);
+            If ErrorCode <> 0 Then
+            Begin
+               log.Lines.Add('Unable to exe script to merge bom.');
+               log.Lines.Add(GetErrorMessage(ErrorCode));
+               Exit;
+            end;
+            log.Lines.Add('exe..');
+            MergeBomLog := PrjFullPath + '\mergebom_report.txt';
+            log.Lines.Add(MergeBomLog);
 
-procedure TMergeBomForm.showlogClick(Sender: TObject);
-begin
-     mergelog := 'Z:\src\fues-sch\seb3\mergebom_report.txt';
-     If Not VarIsNull(VersionFileName) Then
-        Begin
-        log.Text := 'No Version File found.';
-        end;
-
-     // Try to open the Test.txt file for writing to
-     if fileexists(VersionFileName) then
-     begin
-          AssignFile(myFile, VersionFileName);
-          Reset(myFile);
-          while not Eof(myFile) do
-          begin
-               ReadLn(myFile, text);
-               If Not VarIsNull(text) Then
+            If Not VarIsNull(MergeBomLog) and fileexists(MergeBomLog) Then
                Begin
-                    log.Lines.Add(text);
+                   AssignFile(logfile, MergeBomLog);
+                   Reset(logfile);
+                   while not Eof(logfile) do
+                         begin
+                              ReadLn(logfile, line);
+                              If Not VarIsNull(line) Then log.Lines.Add(line);
+                         end;
+                   CloseFile(logfile);
+               end
+            else
+                Begin
+                   log.Lines.Add('MergeLogFile not found..');
                end;
-          end;
-          CloseFile(myFile);
-     end
-     else
-         log.Text := 'MergeBom report not found.';
-     end;
+
+       end
+    else
+        begin
+             log.Text := 'No Version File found.';
+        end;
+    end;
 end;
 
