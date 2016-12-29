@@ -803,7 +803,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
                         else:
                             # Mark NP to help user
                             fmt = def_fmt
-                            if type(col) != int and re.findall(r"NP[^\w]", col):
+                            if type(col) != int and re.findall(r"\sNP\s", col):
                                     fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if type(col) != int:
