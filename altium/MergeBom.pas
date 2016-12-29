@@ -42,11 +42,14 @@ Begin
 End;
 
 procedure TMergeBomForm.brunClick(Sender: TObject);
+var
+   ext : string;
 begin
      log.Text := 'Run MergeBom Script..';
 
      VersionFileName := Nil;
      MergeBomLog := Nil;
+     PrjFullPath := Nil;
      WorkSpace := GetWorkSpace.DM_FocusedProject;
 
     If WorkSpace = Nil Then
@@ -59,16 +62,18 @@ begin
     Begin
         Document := WorkSpace.DM_LogicalDocuments(i);
         item := ExtractFileName(Document.DM_FullPath);
-        PrjFullPath := ExtractFilePath(Document.DM_FullPath);
+        log.Lines.Add(Document.DM_FullPath);
+
         if ansicomparestr(item, 'version.txt') = 0 then
            begin
+                PrjFullPath := ExtractFilePath(Document.DM_FullPath);
+                log.Lines.Add('Found Prj path..');
+                log.Lines.Add(PrjFullPath);
                 VersionFileName := Document.DM_FullPath;
                 log.Lines.Add('Found Versione file..');
-                log.Lines.Add(PrjFullPath);
                 log.Lines.Add(VersionFileName);
            end;
     End;
-
     If Not VarIsNull(VersionFileName) and fileexists(VersionFileName) Then
        Begin
             ErrorCode := RunApplication('mergebom_altium.exe -d '+PrjFullPath+' -v'+ VersionFileName);
