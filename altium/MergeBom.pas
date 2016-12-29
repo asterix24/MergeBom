@@ -87,6 +87,7 @@ begin
             MergeBomLog := PrjFullPath + '\mergebom_report.txt';
             log.Lines.Add(MergeBomLog);
 
+            {
             If Not VarIsNull(MergeBomLog) and fileexists(MergeBomLog) Then
                Begin
                    AssignFile(logfile, MergeBomLog);
@@ -102,6 +103,7 @@ begin
                 Begin
                    log.Lines.Add('MergeLogFile not found..');
                end;
+            }
 
        end
     else
