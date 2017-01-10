@@ -27,6 +27,9 @@ import datetime
 
 from termcolor import colored
 
+
+MERGEBOM_VER="1.0.0"
+
 logo_simple = """
 
 #     #                             ######
@@ -279,6 +282,7 @@ CATEGORY_NAMES = {
 }
 
 NOT_POPULATE_KEY = ["NP", "NM"]
+NP_REGEXP = r"^NP\s"
 
 
 class MergeBom (object):
@@ -472,7 +476,7 @@ class MergeBom (object):
                     if category  == 'J':
                         # Avoid merging for NP componets
                         skip_merge = False
-                        m = re.findall('NP', item[COMMENT])
+                        m = re.findall(NP_REGEXP, item[COMMENT])
                         if m:
                             skip_merge = True
                             error("Not Populate connector, leave unmerged..[%s] [%s] match%s" %
@@ -733,7 +737,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
     row += 1
 
     # Note and statistics
-    worksheet.write('A%s:%s%s' % (row, stop_col, row), "NP=NON MONTARE!", info_fmt_red)
+    worksheet.write('A%s:%s%s' % (row, stop_col, row), "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
     row += 1
 
     worksheet.write('A%s:%s%s' % (row, stop_col, row), "Statistics:", info_fmt)
@@ -803,7 +807,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
                         else:
                             # Mark NP to help user
                             fmt = def_fmt
-                            if type(col) != int and re.findall(r"NP[^\w]", col):
+                            if type(col) != int and re.findall(NP_REGEXP, col):
                                     fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if type(col) != int:

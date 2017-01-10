@@ -35,6 +35,7 @@ pcb_ver=<pcbver>
 date=<date>
 
 """
+MERGEBOM_ALTIUM_VER="1.0.0"
 
 class Report(object):
     def __init__(self, directory, logo=None):
@@ -49,6 +50,8 @@ class Report(object):
             self.f.write("\n")
 
         self.f.write("Report file.\n")
+	self.f.write("MergeBom Version: %s\n" % MERGEBOM_VER)
+	self.f.write("MergeBom Altium Version: %s\n" % MERGEBOM_ALTIUM_VER)
         dt = datetime.datetime.now()
         self.f.write("Date: %s\n" % dt.strftime("%A, %d %B %Y %X"))
         self.f.write("." * 80)
