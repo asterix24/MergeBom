@@ -175,7 +175,8 @@ def eng_string(x):
         sign = '-'
     exp = int(math.floor(math.log10(x)))
     exp3 = exp - (exp % 3)
-    x3 = x / (10 ** exp3)
+    #x3 = x / (10 ** exp3)
+    x3 = x / math.pow(10,exp3)
 
     if exp3 >= -24 and exp3 <= 24 and exp3 != 0:
         exp3_text = 'yzafpnum kMGTPEZY'[(exp3 - (-24)) / 3]
