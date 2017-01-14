@@ -6,3 +6,4 @@ build/
 __Previews/
 History/
 .DS_Store
+venv/
