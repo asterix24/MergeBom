@@ -386,16 +386,6 @@ class TestMergeBom(unittest.TestCase):
         for i in ["name", "hw_ver", "pcb_ver"]:
             self.assertEqual(d[i], check[i])
 
-    def test_order(self):
-        file_list = [
-            "test/bom.xls",
-        ]
-
-        m = MergeBom(file_list)
-        d = m.table_fixValueStr()
-        file_list = map(os.path.basename, file_list)
-        write_xls(d, file_list, "/tmp/due.xls", hw_ver="13", pcb_ver="C", project="TEST")
-
 if __name__ == "__main__":
     from optparse import OptionParser
 
