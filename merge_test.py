@@ -63,8 +63,8 @@ class TestMergeBom(unittest.TestCase):
             'D': [
                 [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
                 [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
-                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red'],
+                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
             ],
             'DZ': [
@@ -125,8 +125,8 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
                 [4, 4, u'D9, D10, D11, D12', u'BAS70-05', u'SOT-23', u'Schottky Barrier Double Diodes'],
                 [3, 3, u'D13, D14, D16', u'BAV99', u'SOT-23', u'BAV99 Diode'],
-                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
                 [2, 2, u'D1, D7', 'LED', u'0603_[1608]_K2-A1_LED', u'LED Green'],
+                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
                 [1, 1, u'D2', u'S2B', u'DO214AA_12', u'S2B Diode'],
                 [1, 1, u'D3', u'SMBJ28A', u'DO214AA_12', u'TRANSIL (SM6T12A)'],
             ],
