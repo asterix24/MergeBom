@@ -45,7 +45,8 @@ class TestMergeBom(unittest.TestCase):
             (4,),
         ]
 
-        l = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        l = MergeBom(file_list, cfg)
         data = l.table_data()
         self.assertEqual(len(data), 3)
         for n, i in enumerate(data):
@@ -70,7 +71,8 @@ class TestMergeBom(unittest.TestCase):
             ],
           }
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -130,7 +132,8 @@ class TestMergeBom(unittest.TestCase):
             ],
           }
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -156,7 +159,8 @@ class TestMergeBom(unittest.TestCase):
           [2, 2, 0, 0, u'C5, C6', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
         ]
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -204,7 +208,8 @@ class TestMergeBom(unittest.TestCase):
             )
             }
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         k = m.diff()
 
         print
@@ -306,17 +311,19 @@ class TestMergeBom(unittest.TestCase):
             "test/bom_quattro.xls",
         ]
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        write_xls(d, file_list, "/tmp/uno.xls", hw_ver="13", pcb_ver="C", project="TEST")
+        write_xls(d, file_list, cfg, "/tmp/uno.xls", hw_ver="13", pcb_ver="C", project="TEST")
 
     def test_mergedFile(self):
         file_list = [
             "test/bom-merged.xls",
         ]
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.extra_data()
         print d
         self.assertEqual(len(d), 1)
@@ -329,14 +336,15 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         info(logo, sys.stdout, terminal=True, prefix="")
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         m.merge()
         stats = m.statistics()
         warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
-        categories = cfg_getCategories()
+        categories = cfg.getCategories()
         for i in stats.keys():
             if i in categories:
-                info(cfg_get(i,'desc'), sys.stdout, terminal=True, prefix="- ")
+                info(cfg.get(i,'desc'), sys.stdout, terminal=True, prefix="- ")
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
@@ -349,18 +357,19 @@ class TestMergeBom(unittest.TestCase):
             "test/bom-np.xls",
         ]
 
-        m = MergeBom(file_list)
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
         d = m.merge()
         stats = m.statistics()
         st = []
-        categories = cfg_getCategories()
+        categories = cfg.getCategories()
         for i in stats.keys():
             if i in categories:
-                st.append((stats[i], cfg_get(i,'desc')))
+                st.append((stats[i], cfg.get(i,'desc')))
         st.append((stats['total'], "Total"))
 
         file_list = map(os.path.basename, file_list)
-        write_xls(d, file_list, "/tmp/uno.xlsx", hw_ver="13",
+        write_xls(d, file_list, cfg, "/tmp/uno.xlsx", hw_ver="13",
                   pcb_ver="C", project="TEST", statistics=st)
 
     def test_version(self):

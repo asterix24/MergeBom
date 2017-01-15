@@ -27,7 +27,7 @@ import datetime
 
 from lib import *
 
-def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject",
+def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject",
               diff=False, extra_data=[], statistics=[]):
     STR_ROW = 1
     HDR_ROW = 0
@@ -198,11 +198,11 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
         l = []
 
         # Start to write components on xlsx
-        categories = cfg_getCategories()
+        categories = cfg.getCategories()
         for key in categories:
             if items.has_key(key):
                 row += 1
-                title = "%s * %s *" % (key, cfg_get(key, 'desc'))
+                title = "%s * %s *" % (key, cfg.get(key, 'desc'))
                 worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
                                       title, merge_fmt)
                 for i in items[key]:

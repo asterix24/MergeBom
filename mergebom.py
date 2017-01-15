@@ -34,7 +34,7 @@ COMMENT     = 4
 FOOTPRINT   = 5
 
 class MergeBom (object):
-    def __init__(self, list_bom_files, handler=sys.stdout, terminal=True):
+    def __init__(self, list_bom_files, cfg, handler=sys.stdout, terminal=True):
         """
         Data structure
 
@@ -61,6 +61,9 @@ class MergeBom (object):
         self.stats = {}
         self.handler = handler
         self.terminal = terminal
+
+        self.cfg = cfg
+        self.categories = self.cfg.getCategories()
 
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
@@ -151,7 +154,7 @@ class MergeBom (object):
                 c = re.search('^[a-zA-Z_]{1,3}', designator)
                 group_key = ''
                 if c is not None:
-                    group_key = cfg_checkGroup(c.group().upper())
+                    group_key = self.cfg.checkGroup(c.group().upper())
 
                     if not group_key:
                         warning("WARNING!! KEY SKIPPED [%s]" % group_key,
@@ -196,8 +199,7 @@ class MergeBom (object):
         self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
 
         self.stats['total'] = 0
-        categories = cfg_getCategories()
-        for category in categories:
+        for category in self.categories:
             if self.grouped_items.has_key(category):
                 tmp = {}
                 self.stats[category] = 0
@@ -284,8 +286,7 @@ class MergeBom (object):
     def merge(self):
         self.group()
         self.count()
-        categories = cfg_getCategories()
-        for category in categories:
+        for category in self.categories:
             if self.table.has_key(category):
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
@@ -383,7 +384,8 @@ if __name__ == "__main__":
         file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
     info(logo, sys.stdout, terminal=True, prefix="")
-    m = MergeBom(file_list)
+    cfg = CfgMergeBom()
+    m = MergeBom(file_list, cfg)
     file_list = map(os.path.basename, file_list)
 
     if options.diff:
@@ -394,20 +396,19 @@ if __name__ == "__main__":
         d = m.merge()
         stats = m.statistics()
         st = []
-        categories = cfg_getCategories()
         for i in stats.keys():
-            if i in categories:
-                st.append((stats[i], cfg_get(i,'desc')))
+            if i in self.categories:
+                st.append((stats[i], self.cfg.get(i,'desc')))
         st.append((stats['total'], "Total"))
 
-        write_xls(d, file_list, options.out_filename, hw_ver=options.rev,
+        write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.rev,
                   pcb_ver=options.pcb_ver, project=options.prj_name, statistics=st)
 
 
         stats = m.statistics()
         warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
         for i in stats.keys():
-            if i in categories:
+            if i in self.categories:
                 info(i, sys.stdout, terminal=True, prefix="- ")
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 

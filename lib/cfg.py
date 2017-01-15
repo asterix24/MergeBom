@@ -167,37 +167,44 @@ NP_REGEXP = r"^NP\s"
 import toml
 import sys
 
-def cfg_checkGroup(group_key):
-    if not group_key:
-        return group_key
+class CfgMergeBom(object):
+    def __init__(self, cfgfile_name=None, handler=sys.stdout, terminal=True):
+        self.handler = handler
+        self.category_names = CATEGORY_NAMES_DEFAULT
 
-    for item in CATEGORY_NAMES_DEFAULT:
-        if group_key in item['group'] or group_key == item['ref']:
-            return item['ref']
+        if cfgfile_name is not None:
+            try:
+                with open(filename) as configfile:
+                    config  = toml.loads(configfile.read())
+                    self.category_names = config
+            except:
+                warning("No Valid Configuration file! Use Default", self.handler, terminal=self.terminal)
 
-    return None
+    def checkGroup(self, group_key):
+        if not group_key:
+            return group_key
 
-def cfg_getCategories():
-    categories = []
-    for item in CATEGORY_NAMES_DEFAULT:
-        if item['ref']:
-            categories.append(item['ref'])
+        for item in self.category_names:
+            if group_key in item['group'] or group_key == item['ref']:
+                return item['ref']
 
-    return categories
+        return None
 
-def cfg_get(category, key):
-    for item in CATEGORY_NAMES_DEFAULT:
-        if item['ref'] == category:
-            return item[key]
+    def getCategories(self):
+        categories = []
+        for item in self.category_names:
+            if item['ref']:
+                categories.append(item['ref'])
 
-    return None
+        return categories
 
-def cfg_load(filename):
-    config = None
-    with open(filename) as configfile:
-        config  = toml.loads(configfile.read())
+    def get(self, category, key):
+        for item in self.category_names:
+            if item['ref'] == category:
+                return item[key]
 
-    return config
+        return None
+
 
 if __name__  == "__main__":
     if len(sys.argv) < 2:
