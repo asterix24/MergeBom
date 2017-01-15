@@ -73,38 +73,33 @@ EXTRA_KEYS = [
     u'pcb_version',
 ]
 
-CON = 'J'
-CAP = 'C'
+CONNECTORS   = 'J'
+MECHANICALS  = 'S'
+FUSES        = 'F'
+RESISTORS    = 'R'
+CAPACITORS   = 'C'
+DIODES       = 'D'
+ZENERS       = 'DZ'
+INDUCTORS    = 'L'
+TRANSISTORS  = 'Q'
+TRANSFORMERS = 'TR'
+CRYSTALS     = 'Y'
+INTEGRATES   = 'U'
 
 CATEGORY_NAMES = {
-    'J':  'J  Connectors',
-    'S':  'S  Mechanical parts and buttons',
-    'F':  'F  Fuses',
-    'R':  'R  Resistors',
-    CAP :  'C  Capacitors',
-    'D':  'D  Diodes',
-    'DZ': 'DZ Zener, Schottky, Transil',
-    'L':  'L  Inductors, chokes',
-    'Q':  'Q  Transistors',
-    'TR': 'TR Transformers',
-    'Y':  'Y  Cristal, quarz, oscillator',
-    'U':  'U  IC',
+    CONNECTORS   :'J  Connectors',
+    MECHANICALS  :'S  Mechanical parts and buttons',
+    FUSES        :'F  Fuses',
+    RESISTORS    :'R  Resistors',
+    CAPACITORS   :'C  Capacitors',
+    DIODES       :'D  Diodes',
+    ZENERS       :'DZ Zener, Schottky, Transil',
+    INDUCTORS    :'L  Inductors, chokes',
+    TRANSISTORS  :'Q  Transistors',
+    TRANSFORMERS :'TR Transformers',
+    CRYSTALS     :'Y  Cristal, quarz, oscillator',
+    INTEGRATES   :'U  IC',
 }
-
-VALID_GROUP_KEY = [
-    CON,
-    'S',
-    'F',
-    'R',
-    CAP,
-    'D',
-    'DZ',
-    'L',
-    'Q',
-    'TR',
-    'Y',
-    'U'
-]
 
 
 NOT_POPULATE_KEY = ["NP", "NM"]

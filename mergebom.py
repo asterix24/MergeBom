@@ -175,7 +175,7 @@ class MergeBom (object):
                                 self.handler, terminal=self.terminal)
                         continue
 
-                    if group_key not in VALID_GROUP_KEY:
+                    if group_key not in CATEGORY_NAMES.keys():
                         error("GROUP key not FOUND!", self.handler,
                               terminal=self.terminal)
                         error("%s, %s, %s" % (c.group(), designator, table_dict[designator]),
@@ -213,7 +213,7 @@ class MergeBom (object):
         self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
 
         self.stats['total'] = 0
-        for category in VALID_GROUP_KEY:
+        for category in CATEGORY_NAMES.keys():
             if self.grouped_items.has_key(category):
                 tmp = {}
                 self.stats[category] = 0
@@ -300,7 +300,7 @@ class MergeBom (object):
     def merge(self):
         self.group()
         self.count()
-        for category in VALID_GROUP_KEY:
+        for category in CATEGORY_NAMES.keys():
             if self.table.has_key(category):
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \

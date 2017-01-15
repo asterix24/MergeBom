@@ -198,7 +198,7 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
         l = []
 
         # Start to write components on xlsx
-        for key in VALID_GROUP_KEY:
+        for key in CATEGORY_NAMES.keys():
             if items.has_key(key):
                 row += 1
                 worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
