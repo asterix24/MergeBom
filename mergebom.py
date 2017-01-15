@@ -33,8 +33,6 @@ DESCRIPTION = 3
 COMMENT     = 4
 FOOTPRINT   = 5
 
-
-
 class MergeBom (object):
     def __init__(self, list_bom_files, handler=sys.stdout, terminal=True):
         """
@@ -153,29 +151,14 @@ class MergeBom (object):
                 c = re.search('^[a-zA-Z_]{1,3}', designator)
                 group_key = ''
                 if c is not None:
-                    group_key = c.group().upper()
-                    # Buttons and spacer
-                    if group_key in ['B', 'BT', 'SCR', 'SPA', 'BAT', 'SW', 'BUZ', 'K']:
-                        group_key = 'S'
-                    # Fuses
-                    if group_key in ['G']:
-                        group_key = 'F'
-                    # Tranformer
-                    if group_key in ['T']:
-                        group_key = 'TR'
-                    # Resistors, array, etc.
-                    if group_key in ['RN', 'R_G']:
-                        group_key = 'R'
-                    # Connectors
-                    if group_key in ['X', 'P', 'SIM']:
-                        group_key = 'J'
-                    # Discarted ref
-                    if group_key in ['TP']:
+                    group_key = cfg_checkGroup(c.group().upper())
+
+                    if not group_key:
                         warning("WARNING!! KEY SKIPPED [%s]" % group_key,
                                 self.handler, terminal=self.terminal)
                         continue
 
-                    if group_key not in CATEGORY_NAMES.keys():
+                    if group_key is None:
                         error("GROUP key not FOUND!", self.handler,
                               terminal=self.terminal)
                         error("%s, %s, %s" % (c.group(), designator, table_dict[designator]),
@@ -213,7 +196,8 @@ class MergeBom (object):
         self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
 
         self.stats['total'] = 0
-        for category in CATEGORY_NAMES.keys():
+        categories = cfg_getCategories()
+        for category in categories:
             if self.grouped_items.has_key(category):
                 tmp = {}
                 self.stats[category] = 0
@@ -300,7 +284,8 @@ class MergeBom (object):
     def merge(self):
         self.group()
         self.count()
-        for category in CATEGORY_NAMES.keys():
+        categories = cfg_getCategories()
+        for category in categories:
             if self.table.has_key(category):
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
@@ -317,7 +302,7 @@ class MergeBom (object):
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
                         m[self.TABLE_COMMENT] = value_toStr(m[self.TABLE_COMMENT], category)
-                        print m[self.TABLE_COMMENT], category
+                        #print m[self.TABLE_COMMENT], category
 
         return self.table
 
@@ -409,9 +394,10 @@ if __name__ == "__main__":
         d = m.merge()
         stats = m.statistics()
         st = []
+        categories = cfg_getCategories()
         for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                st.append((stats[i], CATEGORY_NAMES[i]))
+            if i in categories:
+                st.append((stats[i], cfg_get(i,'desc')))
         st.append((stats['total'], "Total"))
 
         write_xls(d, file_list, options.out_filename, hw_ver=options.rev,
@@ -421,8 +407,8 @@ if __name__ == "__main__":
         stats = m.statistics()
         warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
         for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                info(CATEGORY_NAMES[i], sys.stdout, terminal=True, prefix="- ")
+            if i in categories:
+                info(i, sys.stdout, terminal=True, prefix="- ")
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)

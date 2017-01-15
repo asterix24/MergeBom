@@ -198,11 +198,13 @@ def write_xls(items, file_list, handler, sheetname="BOM", hw_ver="0", pcb_ver="A
         l = []
 
         # Start to write components on xlsx
-        for key in CATEGORY_NAMES.keys():
+        categories = cfg_getCategories()
+        for key in categories:
             if items.has_key(key):
                 row += 1
+                title = "%s * %s *" % (key, cfg_get(key, 'desc'))
                 worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
-                                      CATEGORY_NAMES[key], merge_fmt)
+                                      title, merge_fmt)
                 for i in items[key]:
                     for c, col in enumerate(i):
                         if c == 0:

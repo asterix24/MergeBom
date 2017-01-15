@@ -73,34 +73,137 @@ EXTRA_KEYS = [
     u'pcb_version',
 ]
 
-CONNECTORS   = 'J'
-MECHANICALS  = 'S'
-FUSES        = 'F'
-RESISTORS    = 'R'
-CAPACITORS   = 'C'
-DIODES       = 'D'
-ZENERS       = 'DZ'
-INDUCTORS    = 'L'
-TRANSISTORS  = 'Q'
-TRANSFORMERS = 'TR'
-CRYSTALS     = 'Y'
-INTEGRATES   = 'U'
-
-CATEGORY_NAMES = {
-    CONNECTORS   :'J  Connectors',
-    MECHANICALS  :'S  Mechanical parts and buttons',
-    FUSES        :'F  Fuses',
-    RESISTORS    :'R  Resistors',
-    CAPACITORS   :'C  Capacitors',
-    DIODES       :'D  Diodes',
-    ZENERS       :'DZ Zener, Schottky, Transil',
-    INDUCTORS    :'L  Inductors, chokes',
-    TRANSISTORS  :'Q  Transistors',
-    TRANSFORMERS :'TR Transformers',
-    CRYSTALS     :'Y  Cristal, quarz, oscillator',
-    INTEGRATES   :'U  IC',
-}
+CATEGORY_NAMES_DEFAULT = [
+    {
+        'name': 'Connectors',
+        'desc' : '* J Connectors  *',
+        'group' : ['X', 'P', 'SIM'],
+        'ref' : 'J',
+        },
+    {
+        'name': 'Mechanicals',
+        'desc' : '* S  Mechanical parts and buttons *',
+        'group' : [
+                'SCR',
+                'SPA',
+                # Battery
+                'BAT',
+                # Buzzer
+                'BUZ',
+                # Buttons
+                'BT',
+                'B',
+                'SW',
+                'K'],
+        'ref' : 'S',
+        },
+    {
+        'name':'Fuses',
+        'desc' : 'Fuses discrete components',
+        'group' : ['g'],
+        'ref' : 'F',
+        },
+    {
+        'name': 'Resistors',
+        'desc' : 'Resistor components',
+        'group' : ['RN', 'R_G'],
+        'ref' : 'R',
+        },
+    {
+      'name' : 'Capacitors',
+      'desc' : 'C  Capacitors',
+      'group': [],
+      'ref': 'C',
+      },
+    {
+      'name' : 'Diode',
+      'desc' : 'Diodes, Zener, Schottky, LED, Transil',
+      'group': ['DZ'],
+      'ref': 'D',
+      },
+    {
+      'name' : 'Inductors',
+      'desc' : 'L  Inductors, chokes',
+      'group': [],
+      'ref': 'L',
+      },
+    {
+      'name' : 'Transistor',
+      'desc' : 'Q Transistors, MOSFET',
+      'group': [],
+      'ref': 'Q',
+      },
+    {
+      'name' : 'Transformes',
+      'desc' : 'TR Transformers',
+      'group': ['T'],
+      'ref': 'TR',
+      },
+    {
+      'name' : 'Cristal',
+      'desc' : 'Y  Cristal, quarz, oscillator',
+      'group': [],
+      'ref': 'C',
+      },
+    {
+      'name' : 'IC',
+      'desc' : 'U Integrates and chips',
+      'group': [],
+      'ref': 'U',
+      },
+    {
+      'name' : 'DISCARD',
+      'desc' : 'Reference to discard, to not put in BOM',
+      'group': ['TP'],
+      'ref': '',
+      },
+]
 
 
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
+
+
+import toml
+import sys
+
+def cfg_checkGroup(group_key):
+    if not group_key:
+        return group_key
+
+    for item in CATEGORY_NAMES_DEFAULT:
+        if group_key in item['group'] or group_key == item['ref']:
+            return item['ref']
+
+    return None
+
+def cfg_getCategories():
+    categories = []
+    for item in CATEGORY_NAMES_DEFAULT:
+        if item['ref']:
+            categories.append(item['ref'])
+
+    return categories
+
+def cfg_get(category, key):
+    for item in CATEGORY_NAMES_DEFAULT:
+        if item['ref'] == category:
+            return item[key]
+
+    return None
+
+
+if __name__  == "__main__":
+    if len(sys.argv) < 2:
+        print "Usage %s <cfg filename>"  % sys.argv[0]
+        sys.exit(1)
+
+    config = "Vuoto"
+    with open(sys.argv[1]) as configfile:
+        config  = toml.loads(configfile.read())
+
+
+    print type(config), len(config)
+    print  config.keys()
+
+

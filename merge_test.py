@@ -61,14 +61,12 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'J1', 'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD', u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm']
             ],
             'D': [
+                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
                 [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
                 [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
                 [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red'],
                 [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
-            ],
-            'DZ': [
-                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
             ],
           }
 
@@ -335,9 +333,10 @@ class TestMergeBom(unittest.TestCase):
         m.merge()
         stats = m.statistics()
         warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
+        categories = cfg_getCategories()
         for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                info(CATEGORY_NAMES[i], sys.stdout, terminal=True, prefix="- ")
+            if i in categories:
+                info(cfg_get(i,'desc'), sys.stdout, terminal=True, prefix="- ")
                 info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
         warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
@@ -354,9 +353,10 @@ class TestMergeBom(unittest.TestCase):
         d = m.merge()
         stats = m.statistics()
         st = []
+        categories = cfg_getCategories()
         for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                st.append((stats[i], CATEGORY_NAMES[i]))
+            if i in categories:
+                st.append((stats[i], cfg_get(i,'desc')))
         st.append((stats['total'], "Total"))
 
         file_list = map(os.path.basename, file_list)
