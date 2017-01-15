@@ -76,13 +76,13 @@ EXTRA_KEYS = [
 CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Connectors',
-        'desc' : '* J Connectors  *',
+        'desc' : 'Connectors and holders',
         'group' : ['X', 'P', 'SIM'],
         'ref' : 'J',
         },
     {
         'name': 'Mechanicals',
-        'desc' : '* S  Mechanical parts and buttons *',
+        'desc' : 'Mechanical parts and buttons',
         'group' : [
                 'SCR',
                 'SPA',
@@ -111,7 +111,7 @@ CATEGORY_NAMES_DEFAULT = [
         },
     {
       'name' : 'Capacitors',
-      'desc' : 'C  Capacitors',
+      'desc' : 'Capacitors',
       'group': [],
       'ref': 'C',
       },
@@ -141,13 +141,13 @@ CATEGORY_NAMES_DEFAULT = [
       },
     {
       'name' : 'Cristal',
-      'desc' : 'Y  Cristal, quarz, oscillator',
+      'desc' : 'Cristal, quarz, oscillator',
       'group': [],
       'ref': 'C',
       },
     {
       'name' : 'IC',
-      'desc' : 'U Integrates and chips',
+      'desc' : 'Integrates and chips',
       'group': [],
       'ref': 'U',
       },
@@ -192,6 +192,12 @@ def cfg_get(category, key):
 
     return None
 
+def cfg_load(filename):
+    config = None
+    with open(filename) as configfile:
+        config  = toml.loads(configfile.read())
+
+    return config
 
 if __name__  == "__main__":
     if len(sys.argv) < 2:
