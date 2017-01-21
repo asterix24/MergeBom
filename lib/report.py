@@ -27,6 +27,70 @@ import datetime
 
 from lib import *
 
+class Report(object):
+    def __init__(self, directory, logo=None):
+
+        self.src_bom = None
+
+        self.report_file = os.path.join(directory, "mergebom_report.txt")
+        self.f = open(self.report_file,'w+')
+
+        if logo is not None:
+            self.f.write(logo)
+            self.f.write("\n")
+
+        self.f.write("Report file.\n")
+        self.f.write("MergeBom Version: %s\n" % MERGEBOM_VER)
+        dt = datetime.datetime.now()
+        self.f.write("Date: %s\n" % dt.strftime("%A, %d %B %Y %X"))
+        self.f.write("." * 80)
+        self.f.write("\n")
+
+    def __del__(self):
+        self.f.flush()
+        self.f.close()
+
+    def write_header(self, d, file_list):
+        self.f.write("\n")
+        self.f.write(":" * 80)
+        self.f.write("Date: %s\n" %              d['date'])
+        self.f.write("Project Name: %s\n" %      d['name'])
+        self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
+        self.f.write("PCB Revision: %s\n" %      d['pcb_ver'])
+        self.f.write("\n")
+
+        self.f.write("Bom Files:\n")
+        for i in file_list:
+            self.f.write(" - %s\n" % i)
+
+        self.f.write("\n== Check Merged items: ==\n")
+        self.f.write("-" * 80)
+        self.f.write("\n")
+
+    def write_stats(self, stats):
+        self.f.write("\n\n")
+        self.f.write("=" * 80)
+        self.f.write("\n")
+
+        self.f.write("File num: %s\n" % stats['file_num'])
+        for i in stats.keys():
+            if i in CATEGORY_NAMES:
+                self.f.write(CATEGORY_NAMES[i] + "\n")
+                self.f.write("%5.5s %5.5s\n" % (i, stats[i]))
+
+        self.f.write("\n")
+        self.f.write("~" * 80)
+        self.f.write("\n")
+        self.f.write("Total: %s\n" % stats['total'])
+
+    def error(self, msg):
+        self.f.write("Error:")
+        self.f.write("%s", msg)
+        self.f.write("\n")
+
+    def handler(self):
+        return self.f
+
 def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject",
               diff=False, extra_data=[], statistics=[]):
     STR_ROW = 1
