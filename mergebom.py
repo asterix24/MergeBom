@@ -365,52 +365,72 @@ if __name__ == "__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
+    parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
     parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
-    parser.add_option("-p", "--dirname", dest="dir_name", default='.', help="BOM directory's")
-    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="BOM directory's")
-    parser.add_option("-r", "--revision", dest="rev", default='0', help="HW Revision")
+    parser.add_option("-p", "--search-dir", dest="search_dir", default='./', help="BOM to merge search path.")
+    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="Generate diff from BOMs")
+    parser.add_option("-r", "--revision", dest="rev", default='0', help="Hardware BOM revision")
     parser.add_option("-w", "--pcb-revision", dest="pcb_ver", default='0', help="PCB Revision")
-    parser.add_option("-n", "--prj-name", type="string", dest="prj_name", default='MyProject', help="Project names")
+    parser.add_option("-n", "--prj-name", dest="prj_name", default='MyProject', help="Project names.")
+    parser.add_option("-t", "--date", dest="prj_date", default=datetime.datetime.today().strftime("%d/%m/%Y"), help="Project date.")
+
     (options, args) = parser.parse_args()
-    print args
-
-    if len(sys.argv) < 2:
-        print sys.argv[0], " <xls file name1> <xls file name2> .."
-        exit (1)
-
-    file_list = args
-    if options.dir_name and not args:
-        file_list = glob.glob(os.path.join(options.dir_name, '*.xls'))
-        file_list += glob.glob(os.path.join(options.dir_name, '*.xlsx'))
 
     info(logo, sys.stdout, terminal=True, prefix="")
+
+    # The user specify file to merge
+    file_list = args
+    info("Merge BOM file..", sys.stdout, terminal=True, prefix="")
+    if args:
+        info("Merge Files:", sys.stdout, terminal=True, prefix="")
+        info("%s" % args, sys.stdout, terminal=True, prefix="")
+
+        cfg = CfgMergeBom()
+        m = MergeBom(file_list, cfg)
+        file_list = map(os.path.basename, file_list)
+
+        if options.diff:
+            d = m.diff()
+            l = m.extra_data()
+            write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
+        else:
+            d = m.merge()
+            stats = m.statistics()
+            write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.rev, \
+                      pcb_ver=options.pcb_ver, project=options.prj_name, statistics=stats)
+
+        sys.exit(0)
+
+
+    if not file_list:
+        warning("No BOM specified to merge..", sys.stdout, terminal=True, prefix="")
+        # First merge all xlsx file in search directory
+        info("Find in search_dir[%s] all bom files:" % options.search_dir, \
+                sys.stdout, terminal=True, prefix="")
+        file_list = glob.glob(os.path.join(options.search_dir, '*.xls'))
+        file_list += glob.glob(os.path.join(options.search_dir, '*.xlsx'))
+
+        sys.exit(0)
+
+    if not file_list:
+        warning("BOM file not found..", sys.stdout, terminal=True, prefix="")
+
+        # search version file
+        info("Search version file [%s] in [%s]:" % (options.version_file, options.search_dir),\
+                sys.stdout, terminal=True, prefix="")
+        file_list = glob.glob(os.path.join(options.search_dir, options.version_file))
+
+        # Get bom file list from version.txt
+        bom_info = cfg_version(file_list[0])
+
+    if not file_list:
+        warning("No version file found..\n", sys.stdout, terminal=True, prefix="")
+        parser.print_help()
+        sys.exit(1)
+
     cfg = CfgMergeBom()
     m = MergeBom(file_list, cfg)
-    file_list = map(os.path.basename, file_list)
+    d = m.extra_data()
+    print d
 
-    if options.diff:
-        d = m.diff()
-        l = m.extra_data()
-        write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
-    else:
-        d = m.merge()
-        stats = m.statistics()
-        st = []
-        for i in stats.keys():
-            if i in self.categories:
-                st.append((stats[i], self.cfg.get(i,'desc')))
-        st.append((stats['total'], "Total"))
-
-        write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.rev,
-                  pcb_ver=options.pcb_ver, project=options.prj_name, statistics=st)
-
-
-        stats = m.statistics()
-        warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
-        for i in stats.keys():
-            if i in self.categories:
-                info(i, sys.stdout, terminal=True, prefix="- ")
-                info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
-
-        warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
 

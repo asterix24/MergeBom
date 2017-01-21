@@ -20,6 +20,7 @@
 
 import unittest
 import sys
+import subprocess
 from mergebom import *
 
 
@@ -395,6 +396,18 @@ class TestMergeBom(unittest.TestCase):
         for i in ["name", "hw_ver", "pcb_ver"]:
             self.assertEqual(d[i], check[i])
 
+    def test_cliMerge(self):
+        outfilename = "cli-merged.xlxs"
+        out = subprocess.check_output(["python", "mergebom.py", \
+            "-o", outfilename, \
+            "test/cli-merge0.xlsx",  "test/cli-merge1.xlsx"], \
+            stderr=subprocess.STDOUT)
+
+        print out
+        self.assertTrue(os.path.isfile("./" +outfilename), "Merged File not generated")
+        os.remove(outfilename)
+
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
@@ -417,5 +430,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_floatToValue"))
     suite.addTest(TestMergeBom("test_version"))
     suite.addTest(TestMergeBom("test_notPopulate"))
+    suite.addTest(TestMergeBom("test_cliMerge"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=options.verbose).run(suite)
 
