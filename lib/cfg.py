@@ -205,6 +205,13 @@ class CfgMergeBom(object):
 
         return None
 
+def cfg_version(filename):
+    config = {}
+    with open(filename) as configfile:
+        config  = toml.loads(configfile.read())
+
+    return config
+
 
 if __name__  == "__main__":
     if len(sys.argv) < 2:
