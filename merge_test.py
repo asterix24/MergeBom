@@ -397,7 +397,7 @@ class TestMergeBom(unittest.TestCase):
             self.assertEqual(d[i], check[i])
 
     def test_cliMerge(self):
-        outfilename = "cli-merged.xlxs"
+        outfilename = "cli-merged.xlsx"
         out = subprocess.check_output(["python", "mergebom.py", \
             "-o", outfilename, \
             "test/cli-merge0.xlsx",  "test/cli-merge1.xlsx"], \
@@ -405,6 +405,17 @@ class TestMergeBom(unittest.TestCase):
 
         print out
         self.assertTrue(os.path.isfile("./" +outfilename), "Merged File not generated")
+        os.remove(outfilename)
+
+    def test_cliMergeDiff(self):
+        outfilename = "cli-diff-merged.xlsx"
+        out = subprocess.check_output(["python", "mergebom.py", \
+            "-o", outfilename, "-d", \
+            "test/cli-merge-diff0.xlsx",  "test/cli-merge-diff1.xlsx"], \
+            stderr=subprocess.STDOUT)
+
+        print out
+        self.assertTrue(os.path.isfile("./" +outfilename), "Merged diff File not generated")
         os.remove(outfilename)
 
 
@@ -431,5 +442,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_version"))
     suite.addTest(TestMergeBom("test_notPopulate"))
     suite.addTest(TestMergeBom("test_cliMerge"))
+    suite.addTest(TestMergeBom("test_cliMergeDiff"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=options.verbose).run(suite)
 

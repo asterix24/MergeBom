@@ -100,6 +100,11 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
     A_BOM= "OLD << "
     B_BOM= "NEW >> "
 
+    if diff:
+        for item in extra_data:
+            if not item:
+                item['revision']="0"
+
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
     worksheet = workbook.add_worksheet()
@@ -193,9 +198,9 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
 
 
 
-        # Compute colum len to merge for header
-        #stop_col = 'F'
-        stop_col = chr(ord('A') + len(file_list+VALID_KEYS))
+    # Compute colum len to merge for header
+    #stop_col = 'F'
+    stop_col = chr(ord('A') + len(file_list+VALID_KEYS))
 
     row = STR_ROW
     for i in info:
@@ -249,9 +254,9 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
             worksheet.merge_range('A%s:J%s' % (row, row), "%s" % row, diff_sep_fmt)
             A = [i, A_BOM, extra_data[0]['revision'].upper()] + items[i][0][2:]
             B = [i, B_BOM, extra_data[1]['revision'].upper()] + items[i][1][2:]
-            error("%s %s %s" % (i, A_BOM, A), self.handler, terminal=self.terminal)
-            warning("%s %s %s" % (i, B_BOM, B), self.handler, terminal=self.terminal)
-            info("~" * 80, self.handler, terminal=self.terminal, prefix="")
+            #error("%s %s %s" % (i, A_BOM, A), handler, terminal=False)
+            #warning("%s %s %s" % (i, B_BOM, B), handler, terminal=False)
+            #info("~" * 80, handler, terminal=False, prefix="")
 
             for n, a in enumerate(A):
                 worksheet.write(row,  n, a, diffa_fmt)

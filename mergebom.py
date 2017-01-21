@@ -392,7 +392,7 @@ if __name__ == "__main__":
         if options.diff:
             d = m.diff()
             l = m.extra_data()
-            write_xls(d, file_list, options.out_filename, diff=True, extra_data=l)
+            write_xls(d, file_list, cfg, options.out_filename, diff=True, extra_data=l)
         else:
             d = m.merge()
             stats = m.statistics()
