@@ -364,6 +364,7 @@ if __name__ == "__main__":
     import glob
     from optparse import OptionParser
 
+    file_list = []
     parser = OptionParser()
     parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
     parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
@@ -383,10 +384,9 @@ if __name__ == "__main__":
     # The user specify file to merge
     file_list = args
     info("Merge BOM file..", sys.stdout, terminal=True, prefix="")
-    if args:
+    if file_list:
         info("Merge Files:", sys.stdout, terminal=True, prefix="")
         info("%s" % args, sys.stdout, terminal=True, prefix="")
-
 
     if not file_list:
         warning("No BOM specified to merge..", sys.stdout, terminal=True, prefix="")

@@ -431,6 +431,16 @@ class TestMergeBom(unittest.TestCase):
 
         self.assertEqual(retcode, 1)
 
+    def test_cliMergeGlob(self):
+        outfilename = "/tmp/cli-mergedGlob.xlsx"
+        out = subprocess.check_output(["python", "mergebom.py", \
+            "-o", outfilename, "-p", "test/glob/"], \
+            stderr=subprocess.STDOUT)
+
+        print out
+        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        os.remove(outfilename)
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
@@ -455,5 +465,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_notPopulate"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
+    suite.addTest(TestMergeBom("test_cliMergeGlob"))
     unittest.TextTestRunner(stream=sys.stdout, verbosity=options.verbose).run(suite)
 
