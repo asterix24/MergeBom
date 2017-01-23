@@ -368,7 +368,7 @@ if __name__ == "__main__":
     parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
     parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
     parser.add_option("-p", "--search-dir", dest="search_dir", default='./', help="BOM to merge search path.")
-    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="Generate diff from BOMs")
+    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="Generate diff from two specified BOMs")
     parser.add_option("-r", "--revision", dest="rev", default='0', help="Hardware BOM revision")
     parser.add_option("-w", "--pcb-revision", dest="pcb_ver", default='0', help="PCB Revision")
     parser.add_option("-n", "--prj-name", dest="prj_name", default='MyProject', help="Project names.")
@@ -378,28 +378,14 @@ if __name__ == "__main__":
 
     info(logo, sys.stdout, terminal=True, prefix="")
 
+
+
     # The user specify file to merge
     file_list = args
     info("Merge BOM file..", sys.stdout, terminal=True, prefix="")
     if args:
         info("Merge Files:", sys.stdout, terminal=True, prefix="")
         info("%s" % args, sys.stdout, terminal=True, prefix="")
-
-        cfg = CfgMergeBom()
-        m = MergeBom(file_list, cfg)
-        file_list = map(os.path.basename, file_list)
-
-        if options.diff:
-            d = m.diff()
-            l = m.extra_data()
-            write_xls(d, file_list, cfg, options.out_filename, diff=True, extra_data=l)
-        else:
-            d = m.merge()
-            stats = m.statistics()
-            write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.rev, \
-                      pcb_ver=options.pcb_ver, project=options.prj_name, statistics=stats)
-
-        sys.exit(0)
 
 
     if not file_list:
@@ -409,8 +395,6 @@ if __name__ == "__main__":
                 sys.stdout, terminal=True, prefix="")
         file_list = glob.glob(os.path.join(options.search_dir, '*.xls'))
         file_list += glob.glob(os.path.join(options.search_dir, '*.xlsx'))
-
-        sys.exit(0)
 
     if not file_list:
         warning("BOM file not found..", sys.stdout, terminal=True, prefix="")
@@ -428,9 +412,25 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
+    if options.diff and len(file_list) != 2:
+        error("In diff mode you should specify only 2 BOMs [%s].\n" % len(file_list), \
+                sys.stdout, terminal=True, prefix="")
+        parser.print_help()
+        sys.exit(1)
+
+
     cfg = CfgMergeBom()
     m = MergeBom(file_list, cfg)
-    d = m.extra_data()
-    print d
+    file_list = map(os.path.basename, file_list)
 
+    if options.diff:
+        d = m.diff()
+        l = m.extra_data()
+        write_xls(d, file_list, cfg, options.out_filename, diff=True, extra_data=l)
+        sys.exit(0)
+
+    d = m.merge()
+    stats = m.statistics()
+    write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.rev, \
+              pcb_ver=options.pcb_ver, project=options.prj_name, statistics=stats)
 
