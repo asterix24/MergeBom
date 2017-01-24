@@ -165,6 +165,7 @@ NP_REGEXP = r"^NP\s"
 
 
 import toml
+import ConfigParser
 import sys
 
 class CfgMergeBom(object):
@@ -206,12 +207,18 @@ class CfgMergeBom(object):
         return None
 
 def cfg_version(filename):
-    config = {}
-    with open(filename) as configfile:
-        config  = toml.loads(configfile.read())
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(filename))
 
-    return config
-
+    cfg = {}
+    for section in config.sections():
+        d = {}
+        d['name' ] = config.get(section, 'name')
+        d['hw_ver'   ] = config.get(section, 'hw_ver')
+        d['pcb_ver'  ] = config.get(section, 'pcb_ver')
+        d['date'     ] = config.get(section, 'date')
+        cfg[section] = d
+    return cfg
 
 if __name__  == "__main__":
     if len(sys.argv) < 2:
