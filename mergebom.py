@@ -264,7 +264,8 @@ class MergeBom (object):
                         tmp[key][self.TABLE_TOTALQTY] += item[QUANTITY]
                         tmp[key][curr_file_index] += item[QUANTITY]
                         tmp[key][self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                        tmp[key][self.TABLE_DESIGNATOR] = order_designator(tmp[key][self.TABLE_DESIGNATOR])
+                        tmp[key][self.TABLE_DESIGNATOR] = \
+                            order_designator(tmp[key][self.TABLE_DESIGNATOR])
                     else:
                         row = [item[QUANTITY]] + \
                               [0] * len(self.files) + \
@@ -332,17 +333,19 @@ class MergeBom (object):
                 if c is not None:
                     category = c.group().upper()
 
-                if category  == 'J':
-                    la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
-                    lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
+                if category == 'J':
+                    la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
+                    lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, terminal=self.terminal)
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), \
+                        self.handler, terminal=self.terminal)
 
-                if category  == 'D' and "LED" in A[k][FOOTPRINT]:
-                    la = [ A[k][DESIGNATOR], A[k][FOOTPRINT] ]
-                    lb = [ B[k][DESIGNATOR], B[k][FOOTPRINT] ]
+                if category == 'D' and "LED" in A[k][FOOTPRINT]:
+                    la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
+                    lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), self.handler, terminal=self.terminal)
+                    warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), \
+                        self.handler, terminal=self.terminal)
                 else:
                     la = A[k][1:]
                     lb = B[k][1:]
@@ -367,18 +370,30 @@ if __name__ == "__main__":
 
     file_list = []
     parser = OptionParser()
-    parser.add_option("-c", "--merge-cfg", dest="merge_cfg", default=None, help="MergeBOM configuration file.")
-    parser.add_option("-p", "--search-dir", dest="search_dir", default='./', help="BOM to merge search path.")
-    parser.add_option("-o", "--out-filename", dest="out_filename", default='merged_bom.xlsx', help="Out file name")
-    parser.add_option("-v", "--version-file", dest="version_file", default='version.txt', help="Version file.")
-    parser.add_option("-l", "--list-version-prj", dest="list_version_prj", default=False, action="store_true", help="List all project name from version file.")
-    parser.add_option("-s", "--sub_search_dir", dest="sub_search_dir", default="Assembly", help="Default name for BOM store directory in version file mode.")
-    parser.add_option("-d", "--diff", dest="diff", action="store_true", default=False, help="Generate diff from two specified BOMs")
-    parser.add_option("-m", "--replace-merged", dest="replace_merged", action="store_false", default=True, help="Remove all boms files after merge (only when using version file)")
-    parser.add_option("-r", "--bom-revision", dest="bom_rev", default='0', help="Hardware BOM revision")
-    parser.add_option("-w", "--bom-pcb-revision", dest="bom_pcb_ver", default='0', help="PCB Revision")
-    parser.add_option("-n", "--bom-prj-name", dest="bom_prj_name", default='MyProject', help="Project names.")
-    parser.add_option("-t", "--bom-date", dest="bom_prj_date", default=datetime.datetime.today().strftime("%d/%m/%Y"), help="Project date.")
+    parser.add_option("-c", "--merge-cfg", dest="merge_cfg", \
+        default=None, help="MergeBOM configuration file.")
+    parser.add_option("-p", "--search-dir", dest="search_dir", \
+        default='./', help="BOM to merge search path.")
+    parser.add_option("-o", "--out-filename", dest="out_filename", \
+        default='merged_bom.xlsx', help="Out file name")
+    parser.add_option("-v", "--version-file", dest="version_file", \
+        default='version.txt', help="Version file.")
+    parser.add_option("-l", "--list-version-prj", dest="list_version_prj", \
+        default=False, action="store_true", help="List all project name from version file.")
+    parser.add_option("-s", "--sub_search_dir", dest="sub_search_dir", \
+        default="Assembly", help="Default name for BOM store directory in version file mode.")
+    parser.add_option("-d", "--diff", dest="diff", action="store_true", \
+        default=False, help="Generate diff from two specified BOMs")
+    parser.add_option("-m", "--replace-merged", dest="replace_merged", action="store_false", \
+        default=True, help="Remove all boms files after merge (only when using version file)")
+    parser.add_option("-r", "--bom-revision", dest="bom_rev", \
+        default='0', help="Hardware BOM revision")
+    parser.add_option("-w", "--bom-pcb-revision", dest="bom_pcb_ver", \
+    default='0', help="PCB Revision")
+    parser.add_option("-n", "--bom-prj-name", dest="bom_prj_name", \
+        default='MyProject', help="Project names.")
+    parser.add_option("-t", "--bom-date", dest="bom_prj_date", \
+    default=datetime.datetime.today().strftime("%d/%m/%Y"), help="Project date.")
 
     (options, args) = parser.parse_args()
 
@@ -450,7 +465,8 @@ if __name__ == "__main__":
                         os.remove(i)
 
                 shutil.copy(outfilename, dstfilename)
-                info("Generated %s Merged BOM file." % dstfilename, sys.stdout, terminal=True, prefix="")
+                info("Generated %s Merged BOM file." % dstfilename, \
+                    sys.stdout, terminal=True, prefix="")
 
         sys.exit(0)
 
