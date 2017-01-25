@@ -373,29 +373,6 @@ class TestMergeBom(unittest.TestCase):
         write_xls(d, file_list, cfg, "/tmp/uno.xlsx", hw_ver="13",
                   pcb_ver="C", project="TEST", statistics=st)
 
-    def test_version(self):
-        import subprocess
-        import mergebom_altium
-        import ConfigParser
-
-        subprocess.call(["python", "./mergebom_altium.py", "-i",
-                         "-v", "prova.txt", "-d", "/tmp"])
-
-        check = {
-            'name': "MyProject",
-            'hw_ver': "<hwver>",
-            'pcb_ver': "<pcbver>",
-            'date': "",
-        }
-
-        config = ConfigParser.ConfigParser()
-        config.readfp(open("/tmp/prova.txt"))
-        d = mergebom_altium.read_ini(config, "MyProject")
-
-        self.assertTrue("date" in d)
-        for i in ["name", "hw_ver", "pcb_ver"]:
-            self.assertEqual(d[i], check[i])
-
     def test_cliMerge(self):
         outfilename = "/tmp/cli-merged.xlsx"
         out = subprocess.check_output(["python", "mergebom.py", \
@@ -461,7 +438,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_valueToFloat"))
     suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_version"))
     suite.addTest(TestMergeBom("test_notPopulate"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
