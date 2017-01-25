@@ -211,15 +211,15 @@ class MergeBom (object):
                     for rexp in NOT_POPULATE_KEY:
                         item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
 
-                    if category  == 'J':
+                    if category == 'J':
                         # Avoid merging for NP componets
                         skip_merge = False
                         m = re.findall(NP_REGEXP, item[COMMENT])
                         if m:
                             skip_merge = True
-                            error("Not Populate connector, leave unmerged..[%s] [%s] match%s" %
-                                   (item[COMMENT], item[DESIGNATOR], m),
-                                   self.handler, terminal=self.terminal)
+                            error("Not Populate connector, leave unmerged..[%s] [%s] match%s" % \
+                                (item[COMMENT], item[DESIGNATOR], m), \
+                                self.handler, terminal=self.terminal)
                             item[COMMENT] = "NP Connector"
 
                         if skip_merge:
@@ -231,24 +231,23 @@ class MergeBom (object):
                         warning("Merged key: %s (%s)" % (key, item[COMMENT]),
                                 self.handler, terminal=self.terminal)
 
-                    if category  == 'D' and "LED" in item[FOOTPRINT]:
-                            key = item[DESCRIPTION] + item[FOOTPRINT]
-                            item[COMMENT] = "LED"
-                            warning("Merged key: %s (%s)" % (key, item[COMMENT]),
-                                    self.handler, terminal=self.terminal)
+                    if category == 'D' and "LED" in item[FOOTPRINT]:
+                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        item[COMMENT] = "LED"
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
+                            self.handler, terminal=self.terminal)
 
-                    if category  == 'S' and "TACTILE" in item[FOOTPRINT]:
-                            key = item[DESCRIPTION] + item[FOOTPRINT]
-                            item[COMMENT] = "Tactile Switch"
-                            warning("Merged key: %s (%s)" % (key, item[COMMENT]),
-                                    self.handler, terminal=self.terminal)
+                    if category == 'S' and "TACTILE" in item[FOOTPRINT]:
+                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        item[COMMENT] = "Tactile Switch"
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
+                            self.handler, terminal=self.terminal)
 
-                    elif category  == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
+                    elif category == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
-                        warning("Merged key: %s (%s)" % (key, item[COMMENT]),
-                                self.handler, terminal=self.terminal)
-
+                        warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
+                            self.handler, terminal=self.terminal)
                     else:
                         key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
 
@@ -270,10 +269,10 @@ class MergeBom (object):
                         row = [item[QUANTITY]] + \
                               [0] * len(self.files) + \
                               [
-                                item[DESIGNATOR],
-                                item[COMMENT],
-                                item[FOOTPRINT],
-                                item[DESCRIPTION]
+                                  item[DESIGNATOR],
+                                  item[COMMENT],
+                                  item[FOOTPRINT],
+                                  item[DESCRIPTION]
                               ]
 
                         row[curr_file_index] = item[QUANTITY]
