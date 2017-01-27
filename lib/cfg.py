@@ -167,10 +167,12 @@ NP_REGEXP = r"^NP\s"
 import toml
 import ConfigParser
 import sys
+import lib
 
 class CfgMergeBom(object):
     def __init__(self, cfgfile_name=None, handler=sys.stdout, terminal=True):
         self.handler = handler
+        self.terminal = terminal
         self.category_names = CATEGORY_NAMES_DEFAULT
 
         if cfgfile_name is not None:
@@ -179,7 +181,7 @@ class CfgMergeBom(object):
                     config  = toml.loads(configfile.read())
                     self.category_names = config
             except:
-                warning("No Valid Configuration file! Use Default", self.handler, terminal=self.terminal)
+                lib.warning("No Valid Configuration file! Use Default", self.handler, terminal=self.terminal)
 
     def checkGroup(self, group_key):
         if not group_key:
