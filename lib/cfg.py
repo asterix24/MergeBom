@@ -18,7 +18,17 @@
 # Copyright 2017 Daniele Basile <asterix24@gmail.com>
 #
 
-MERGEBOM_VER="1.0.0"
+"""
+MergeBOM Default configuration
+"""
+
+
+import sys
+import ConfigParser
+import toml
+import lib
+
+MERGEBOM_VER = "1.0.0"
 
 logo_simple = """
 
@@ -43,12 +53,12 @@ logo = """
 """
 
 ENG_LETTER = {
-    'G': (1e9,     1e8),
-    'M': (1e6,     1e5),
-    'k': (1e3,     1e2),
-    'R': (1,       0.1),
-    'u': (1e-6,   1e-7),
-    'n': (1e-9,  1e-10),
+    'G': (1e9, 1e8),
+    'M': (1e6, 1e5),
+    'k': (1e3, 1e2),
+    'R': (1, 0.1),
+    'u': (1e-6, 1e-7),
+    'n': (1e-9, 1e-10),
     'p': (1e-12, 1e-13),
 }
 
@@ -79,97 +89,94 @@ CATEGORY_NAMES_DEFAULT = [
         'desc' : 'Connectors and holders',
         'group' : ['X', 'P', 'SIM'],
         'ref' : 'J',
-        },
+    },
     {
         'name': 'Mechanicals',
         'desc' : 'Mechanical parts and buttons',
         'group' : [
-                'SCR',
-                'SPA',
-                # Battery
-                'BAT',
-                # Buzzer
-                'BUZ',
-                # Buttons
-                'BT',
-                'B',
-                'SW',
-                'K'],
+            'SCR',
+            'SPA',
+            # Battery
+            'BAT',
+            # Buzzer
+            'BUZ',
+            # Buttons
+            'BT',
+            'B',
+            'SW',
+            'K'],
         'ref' : 'S',
-        },
+    },
     {
         'name':'Fuses',
         'desc' : 'Fuses discrete components',
         'group' : ['g'],
         'ref' : 'F',
-        },
+    },
     {
         'name': 'Resistors',
         'desc' : 'Resistor components',
         'group' : ['RN', 'R_G'],
         'ref' : 'R',
-        },
+    },
     {
-      'name' : 'Capacitors',
-      'desc' : 'Capacitors',
-      'group': [],
-      'ref': 'C',
-      },
+        'name' : 'Capacitors',
+        'desc' : 'Capacitors',
+        'group': [],
+        'ref': 'C',
+    },
     {
-      'name' : 'Diode',
-      'desc' : 'Diodes, Zener, Schottky, LED, Transil',
-      'group': ['DZ'],
-      'ref': 'D',
-      },
+        'name' : 'Diode',
+        'desc' : 'Diodes, Zener, Schottky, LED, Transil',
+        'group': ['DZ'],
+        'ref': 'D',
+    },
     {
-      'name' : 'Inductors',
-      'desc' : 'L  Inductors, chokes',
-      'group': [],
-      'ref': 'L',
-      },
+        'name' : 'Inductors',
+        'desc' : 'L  Inductors, chokes',
+        'group': [],
+        'ref': 'L',
+    },
     {
-      'name' : 'Transistor',
-      'desc' : 'Q Transistors, MOSFET',
-      'group': [],
-      'ref': 'Q',
-      },
+        'name' : 'Transistor',
+        'desc' : 'Q Transistors, MOSFET',
+        'group': [],
+        'ref': 'Q',
+    },
     {
-      'name' : 'Transformes',
-      'desc' : 'TR Transformers',
-      'group': ['T'],
-      'ref': 'TR',
-      },
+        'name' : 'Transformes',
+        'desc' : 'TR Transformers',
+        'group': ['T'],
+        'ref': 'TR',
+    },
     {
-      'name' : 'Cristal',
-      'desc' : 'Cristal, quarz, oscillator',
-      'group': [],
-      'ref': 'C',
-      },
+        'name' : 'Cristal',
+        'desc' : 'Cristal, quarz, oscillator',
+        'group': [],
+        'ref': 'C',
+    },
     {
-      'name' : 'IC',
-      'desc' : 'Integrates and chips',
-      'group': [],
-      'ref': 'U',
-      },
+        'name' : 'IC',
+        'desc' : 'Integrates and chips',
+        'group': [],
+        'ref': 'U',
+    },
     {
-      'name' : 'DISCARD',
-      'desc' : 'Reference to discard, to not put in BOM',
-      'group': ['TP'],
-      'ref': '',
-      },
+        'name' : 'DISCARD',
+        'desc' : 'Reference to discard, to not put in BOM',
+        'group': ['TP'],
+        'ref': '',
+    },
 ]
 
 
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
-
-import toml
-import ConfigParser
-import sys
-import lib
-
 class CfgMergeBom(object):
+    """
+    MergeBOM Configuration
+    """
     def __init__(self, cfgfile_name=None, handler=sys.stdout, terminal=True):
         self.handler = handler
         self.terminal = terminal
@@ -177,11 +184,15 @@ class CfgMergeBom(object):
 
         if cfgfile_name is not None:
             try:
-                with open(filename) as configfile:
-                    config  = toml.loads(configfile.read())
+                with open(cfgfile_name) as configfile:
+                    config = toml.loads(configfile.read())
                     self.category_names = config
-            except:
-                lib.warning("No Valid Configuration file! Use Default", self.handler, terminal=self.terminal)
+
+            except IOError, e:
+                lib.lib.error("Configuration: %s" % e, \
+                    self.handler, terminal=self.terminal)
+                lib.lib.warning("No Valid Configuration file! Use Default", \
+                    self.handler, terminal=self.terminal)
 
     def checkGroup(self, group_key):
         if not group_key:
@@ -202,6 +213,9 @@ class CfgMergeBom(object):
         return categories
 
     def get(self, category, key):
+        """
+        By category and key get all related info
+        """
         for item in self.category_names:
             if item['ref'] == category:
                 return item[key]
@@ -234,5 +248,3 @@ if __name__  == "__main__":
 
     print type(config), len(config)
     print  config.keys()
-
-
