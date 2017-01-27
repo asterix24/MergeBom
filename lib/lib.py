@@ -110,7 +110,7 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
         value = acc * mult + float(value) * div
     except ValueError, e:
         error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (l, acc, mult, value, div, e),
-               handler, terminal=terminal)
+            handler, terminal=terminal)
         return -2, l, note
 
     return value, CATEGORY_TO_UNIT[unit], note
@@ -133,7 +133,7 @@ def eng_string(x):
     exp = int(math.floor(math.log10(x)))
     exp3 = exp - (exp % 3)
     #x3 = x / (10 ** exp3)
-    x3 = x / math.pow(10,exp3)
+    x3 = x / math.pow(10, exp3)
 
     if exp3 >= -24 and exp3 <= 24 and exp3 != 0:
         exp3_text = 'yzafpnum kMGTPEZY'[(exp3 - (-24)) / 3]
