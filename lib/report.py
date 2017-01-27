@@ -18,92 +18,122 @@
 # Copyright 2017 Daniele Basile <asterix24@gmail.com>
 #
 
-import sys
+"""
+MergeBOM Report module.
+
+Utils to generate and read excel BOM files.
+"""
+
 import os
 import re
+import datetime
 import xlrd
 import xlsxwriter
-import datetime
-
-from lib import *
+import lib
 
 class Report(object):
-    def __init__(self, directory, logo=None):
+    """
+    Merge Bom report generator.
+    """
+    def __init__(self, cfg, directory, logo=None, extra=None):
 
         self.src_bom = None
+        self.cfg = cfg
 
         self.report_file = os.path.join(directory, "mergebom_report.txt")
-        self.f = open(self.report_file,'w+')
+        self.repf = open(self.report_file, 'w+')
 
         if logo is not None:
-            self.f.write(logo)
-            self.f.write("\n")
+            self.repf.write(logo)
+            self.repf.write("\n")
 
-        self.f.write("Report file.\n")
-        self.f.write("MergeBom Version: %s\n" % MERGEBOM_VER)
-        dt = datetime.datetime.now()
-        self.f.write("Date: %s\n" % dt.strftime("%A, %d %B %Y %X"))
-        self.f.write("." * 80)
-        self.f.write("\n")
+        self.repf.write("Report file.\n")
+        if extra is not None and extra.has_key("mergebom_version"):
+            self.repf.write("MergeBom Version: %s\n" % extra["mergebom_version"])
+
+        report_date = datetime.datetime.now()
+        self.repf.write("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
+        self.repf.write("." * 80)
+        self.repf.write("\n")
 
     def __del__(self):
-        self.f.flush()
-        self.f.close()
+        self.repf.flush()
+        self.repf.close()
 
-    def write_header(self, d, file_list):
-        self.f.write("\n")
-        self.f.write(":" * 80)
-        self.f.write("Date: %s\n" %              d['date'])
-        self.f.write("Project Name: %s\n" %      d['name'])
-        self.f.write("Hardware Revision: %s\n" % d['hw_ver'])
-        self.f.write("PCB Revision: %s\n" %      d['pcb_ver'])
-        self.f.write("\n")
+    def write_header(self, conf_key, file_list):
+        """
+        Write BOM Header info in report file.
+        """
+        self.repf.write("\n")
+        self.repf.write(":" * 80)
+        self.repf.write("Date: %s\n" %          conf_key['date'])
+        self.repf.write("Project Name: %s\n" %  conf_key['name'])
+        self.repf.write("Hardware Revision: %s\n" % conf_key['hw_ver'])
+        self.repf.write("PCB Revision: %s\n" %  conf_key['pcb_ver'])
+        self.repf.write("\n")
 
-        self.f.write("Bom Files:\n")
+        self.repf.write("Bom Files:\n")
         for i in file_list:
-            self.f.write(" - %s\n" % i)
+            self.repf.write(" - %s\n" % i)
 
-        self.f.write("\n== Check Merged items: ==\n")
-        self.f.write("-" * 80)
-        self.f.write("\n")
+        self.repf.write("\n== Check Merged items: ==\n")
+        self.repf.write("-" * 80)
+        self.repf.write("\n")
 
     def write_stats(self, stats):
-        self.f.write("\n\n")
-        self.f.write("=" * 80)
-        self.f.write("\n")
+        """
+        Write BOM component Statistics
+        """
+        self.repf.write("\n\n")
+        self.repf.write("=" * 80)
+        self.repf.write("\n")
 
-        self.f.write("File num: %s\n" % stats['file_num'])
-        for i in stats.keys():
-            if i in CATEGORY_NAMES:
-                self.f.write(CATEGORY_NAMES[i] + "\n")
-                self.f.write("%5.5s %5.5s\n" % (i, stats[i]))
+        self.repf.write("File num: %s\n" % stats['file_num'])
+        #categories = self.cfg.getCategories()
+        #for i in stats.keys():
+        #    if i in categories:
+        #        self.repf.write(self.cfg.get(i, ) + "\n")
+        #        self.repf.write("%5.5s %5.5s\n" % (i, stats[i]))
 
-        self.f.write("\n")
-        self.f.write("~" * 80)
-        self.f.write("\n")
-        self.f.write("Total: %s\n" % stats['total'])
+        self.repf.write("ADD STATS")
+        self.repf.write("\n")
+        self.repf.write("~" * 80)
+        self.repf.write("\n")
+        self.repf.write("Total: %s\n" % stats['total'])
 
     def error(self, msg):
-        self.f.write("Error:")
-        self.f.write("%s", msg)
-        self.f.write("\n")
+        """
+        Write Error message in report file.
+        """
+        self.repf.write("Error:")
+        self.repf.write("%s", msg)
+        self.repf.write("\n")
 
     def handler(self):
-        return self.f
+        """
+        Return report file handler
+        """
+        return self.repf
 
-def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_ver="A", project="MyProject",
-              diff=False, extra_data=[], statistics=[]):
+def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="MyProject", \
+        diff=False, extra_data=None, statistics=None):
+    """
+    Write merged BOM in excel file.
+
+    """
+
     STR_ROW = 1
     HDR_ROW = 0
     STR_COL = 0
 
-    A_BOM= "OLD << "
-    B_BOM= "NEW >> "
+    A_BOM = "OLD << "
+    B_BOM = "NEW >> "
 
     if diff:
-        for item in extra_data:
-            if not item:
-                item['revision']="0"
+        if extra_data is not None:
+            for item in extra_data:
+                if not item:
+                    item['revision'] = "0"
 
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
@@ -161,7 +191,7 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
         'fg_color': 'yellow'})
 
     # Header info row
-    dt = datetime.datetime.now()
+    report_date = datetime.datetime.now()
     info = []
     for i in file_list:
         info.append("- %s" % i)
@@ -169,7 +199,7 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
         info = [
             'Component Variation',
             '',
-            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
             '',
             '',
             'Project: %s' % project,
@@ -183,7 +213,7 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
         info = [
             'Bill of Materials',
             '',
-            'Date: %s' % dt.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
             '',
             '',
             'Project: %s' % project,
@@ -200,7 +230,7 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
 
     # Compute colum len to merge for header
     #stop_col = 'F'
-    stop_col = chr(ord('A') + len(file_list+VALID_KEYS))
+    stop_col = chr(ord('A') + len(file_list + lib.lib.VALID_KEYS))
 
     row = STR_ROW
     for i in info:
@@ -209,14 +239,16 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
     row += 1
 
     # Note and statistics
-    worksheet.write('A%s:%s%s' % (row, stop_col, row), "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
+    worksheet.write('A%s:%s%s' % (row, stop_col, row), \
+        "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
     row += 1
 
     worksheet.write('A%s:%s%s' % (row, stop_col, row), "Statistics:", info_fmt)
-    for i in statistics:
-        for c, col in enumerate(i):
-            worksheet.write(row, c, col, info_fmt)
-        row += 1
+    if statistics is not None:
+        for i in statistics:
+            for c, col in enumerate(i):
+                worksheet.write(row, c, col, info_fmt)
+            row += 1
 
     row += 1
 
@@ -241,7 +273,7 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
             worksheet.write(row, col, i, hdr_fmt)
             col += 1
 
-        for i in VALID_KEYS:
+        for i in lib.lib.VALID_KEYS:
             worksheet.write(row, col, i.capitalize(), hdr_fmt)
             col += 1
         row += 1
@@ -259,13 +291,11 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
             #info("~" * 80, handler, terminal=False, prefix="")
 
             for n, a in enumerate(A):
-                worksheet.write(row,  n, a, diffa_fmt)
+                worksheet.write(row, n, a, diffa_fmt)
                 worksheet.write((row + 1), n, B[n], diffb_fmt)
 
             row += 4
     else:
-        l = []
-
         # Start to write components on xlsx
         categories = cfg.getCategories()
         for key in categories:
@@ -281,16 +311,19 @@ def write_xls(items, file_list, cfg, handler, sheetname="BOM", hw_ver="0", pcb_v
                         else:
                             # Mark NP to help user
                             fmt = def_fmt
-                            if type(col) != int and re.findall(NP_REGEXP, col):
-                                    fmt = np_fmt
+                            if not isinstance(col, int) and re.findall(lib.lib.NP_REGEXP, col):
+                                fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
-                            if type(col) != int:
+                            if not isinstance(col, int):
                                 worksheet.set_column(row, c, 50)
                     row += 1
 
     workbook.close()
 
 def read_xls(handler):
+    """
+    Read data from BOM.
+    """
     wb = xlrd.open_workbook(handler)
     data = []
 
@@ -313,5 +346,3 @@ def read_xls(handler):
             data.append(values)
 
         return wb, data
-
-
