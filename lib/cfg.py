@@ -30,7 +30,7 @@ import lib
 
 MERGEBOM_VER = "1.0.0"
 
-logo_simple = """
+LOGO_SIMPLE = """
 
 #     #                             ######
 ##   ## ###### #####   ####  ###### #     #  ####  #    #
@@ -42,7 +42,7 @@ logo_simple = """
 
 """
 
-logo = """
+LOGO = """
 ███╗   ███╗███████╗██████╗  ██████╗ ███████╗██████╗  ██████╗ ███╗   ███╗
 ████╗ ████║██╔════╝██╔══██╗██╔════╝ ██╔════╝██╔══██╗██╔═══██╗████╗ ████║
 ██╔████╔██║█████╗  ██████╔╝██║  ███╗█████╗  ██████╔╝██║   ██║██╔████╔██║
@@ -186,15 +186,19 @@ class CfgMergeBom(object):
 
         if cfgfile_name is not None:
             try:
-                with open(cfgfile_name) as configfile:
-                    config = toml.loads(configfile.read())
-                    self.category_names = config
-
+                config_file = open(cfgfile_name)
+                config = toml.loads(config_file.read())
+                self.category_names = config.get('category_names', None)
             except IOError as e:
-                lib.lib.error("Configuration: %s" % e,
+                lib.error("Configuration: %s" % e,
                               self.handler, terminal=self.terminal)
-                lib.lib.warning("No Valid Configuration file! Use Default",
+                lib.warning("No Valid Configuration file! Use Default",
                                 self.handler, terminal=self.terminal)
+
+        if self.category_names is None:
+            lib.warning("No Valid Configuration file! Use Default",
+                            self.handler, terminal=self.terminal)
+
 
     def checkGroup(self, group_key):
         if not group_key:
@@ -226,6 +230,9 @@ class CfgMergeBom(object):
 
 
 def cfg_version(filename):
+    """
+    Get all field from version file, and put it in a dictionary of dictionary.
+    """
     config = ConfigParser.ConfigParser()
     config.readfp(open(filename))
 
@@ -250,3 +257,4 @@ if __name__ == "__main__":
 
     print type(config), len(config)
     print config.keys()
+    print config['category_names']

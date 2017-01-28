@@ -30,6 +30,7 @@ import datetime
 import xlrd
 import xlsxwriter
 import lib
+import cfg
 
 
 class Report(object):
@@ -37,10 +38,10 @@ class Report(object):
     Merge Bom report generator.
     """
 
-    def __init__(self, cfg, directory, logo=None, extra=None):
+    def __init__(self, config, directory, logo=None, extra=None):
 
         self.src_bom = None
-        self.cfg = cfg
+        self.config = config
 
         self.report_file = os.path.join(directory, "mergebom_report.txt")
         self.repf = open(self.report_file, 'w+')
@@ -93,10 +94,10 @@ class Report(object):
         self.repf.write("\n")
 
         self.repf.write("File num: %s\n" % stats['file_num'])
-        #categories = self.cfg.getCategories()
+        #categories = self.config.getCategories()
         # for i in stats.keys():
         #    if i in categories:
-        #        self.repf.write(self.cfg.get(i, ) + "\n")
+        #        self.repf.write(self.config.get(i, ) + "\n")
         #        self.repf.write("%5.5s %5.5s\n" % (i, stats[i]))
 
         self.repf.write("ADD STATS")
@@ -123,7 +124,7 @@ class Report(object):
 def write_xls(
         items,
         file_list,
-        cfg,
+        config,
         handler,
         hw_ver="0",
         pcb_ver="A",
@@ -242,7 +243,7 @@ def write_xls(
 
     # Compute colum len to merge for header
     #stop_col = 'F'
-    stop_col = chr(ord('A') + len(file_list + lib.lib.VALID_KEYS))
+    stop_col = chr(ord('A') + len(file_list + cfg.VALID_KEYS))
 
     row = STR_ROW
     for i in info:
@@ -285,7 +286,7 @@ def write_xls(
             worksheet.write(row, col, i, hdr_fmt)
             col += 1
 
-        for i in lib.lib.VALID_KEYS:
+        for i in cfg.VALID_KEYS:
             worksheet.write(row, col, i.capitalize(), hdr_fmt)
             col += 1
         row += 1
@@ -310,11 +311,11 @@ def write_xls(
             row += 4
     else:
         # Start to write components on xlsx
-        categories = cfg.getCategories()
+        categories = config.getCategories()
         for key in categories:
             if key in items:
                 row += 1
-                title = "%s * %s *" % (key, cfg.get(key, 'desc'))
+                title = "%s * %s *" % (key, config.get(key, 'desc'))
                 worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
                                       title, merge_fmt)
                 for i in items[key]:
@@ -326,7 +327,7 @@ def write_xls(
                             fmt = def_fmt
                             if not isinstance(
                                     col, int) and re.findall(
-                                    lib.lib.NP_REGEXP, col):
+                                    cfg.NP_REGEXP, col):
                                 fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if not isinstance(col, int):

@@ -23,7 +23,7 @@ import os
 import re
 import datetime
 
-from cfg import *
+import cfg
 from termcolor import colored
 
 
@@ -64,17 +64,17 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
     value = "0"
     mult = 1
     div = 1
-    if unit not in CATEGORY_TO_UNIT:
+    if unit not in cfg.CATEGORY_TO_UNIT:
         error(
             "Unknow category [%s] allowed are[%s]" %
-            (unit, CATEGORY_TO_UNIT.keys()), handler, terminal=terminal)
+            (unit, cfg.CATEGORY_TO_UNIT.keys()), handler, terminal=terminal)
         sys.exit(1)
 
     # K is always chilo .. so fix case
     l = l.replace("K", "k")
 
     # manage correctly NP value
-    for n in NOT_POPULATE_KEY:
+    for n in cfg.NOT_POPULATE_KEY:
         if n in l:
             return -1, l, ""
 
@@ -92,11 +92,11 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
         return -2, l, note
 
     for c in l:
-        if c in ENG_LETTER:
+        if c in cfg.ENG_LETTER:
             try:
                 value = value.replace(',', '.')
                 acc = float(value)
-                mult, div = ENG_LETTER[c]
+                mult, div = cfg.ENG_LETTER[c]
                 value = "0"
                 continue
             except ValueError as e:
@@ -105,7 +105,7 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
                     (l, acc, mult, value, div, e), handler, terminal=terminal)
                 sys.exit(1)
 
-        if c in CATEGORY_TO_UNIT[unit]:
+        if c in cfg.CATEGORY_TO_UNIT[unit]:
             continue
 
         value += c
@@ -118,7 +118,7 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
             l, acc, mult, value, div, e), handler, terminal=terminal)
         return -2, l, note
 
-    return value, CATEGORY_TO_UNIT[unit], note
+    return value, cfg.CATEGORY_TO_UNIT[unit], note
 
 import math
 
