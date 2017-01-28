@@ -27,32 +27,34 @@ import shutil
 import lib
 
 # Exchange data layout after file import
-FILENAME    = 0
-QUANTITY    = 1
-DESIGNATOR  = 2
+FILENAME = 0
+QUANTITY = 1
+DESIGNATOR = 2
 DESCRIPTION = 3
-COMMENT     = 4
-FOOTPRINT   = 5
+COMMENT = 4
+FOOTPRINT = 5
+
 
 class MergeBom (object):
+
     def __init__(self, list_bom_files, cfg, handler=sys.stdout, terminal=True):
         """
         Data structure
 
         [
-            file_name: [
-                designator : [ all ]
-                designator : [ all ]
-                ...
-                designator : [ all ]
-            ],
-            ...
-            file_name: [
-                designator : [ all ]
-                designator : [ all ]
-                ...
-                designator : [ all ]
-            ],
+        file_name: [
+        designator : [ all ]
+        designator : [ all ]
+        ...
+        designator : [ all ]
+        ],
+        ...
+        file_name: [
+        designator : [ all ]
+        designator : [ all ]
+        ...
+        designator : [ all ]
+        ],
         ]
 
         """
@@ -99,14 +101,17 @@ class MergeBom (object):
             self.extra_keys.append(extra_keys)
 
             try:
-                designator  = header['designator']
-                comment     = header['comment']
-                footprint   = header['footprint']
+                designator = header['designator']
+                comment = header['comment']
+                footprint = header['footprint']
                 description = header['description']
-            except KeyError, e:
+            except KeyError as e:
                 lib.lib.error("No key header found! [%s]" % e, self.handler,
-                      terminal=self.terminal)
-                lib.lib.warning("Valid are:", self.handler, terminal=self.terminal)
+                              terminal=self.terminal)
+                lib.lib.warning(
+                    "Valid are:",
+                    self.handler,
+                    terminal=self.terminal)
                 for i in lib.cfg.VALID_KEYS:
                     lib.lib.warning("i", self.handler, terminal=self.terminal)
 
@@ -125,7 +130,8 @@ class MergeBom (object):
                     if re.findall("\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
 
-                   # Explode designator field to have one component for line
+                        # Explode designator field to have one component for
+                        # line
                     d = row[designator].split(',')
                     for reference in d:
                         r = reference.replace(' ', '')
@@ -158,24 +164,38 @@ class MergeBom (object):
                     group_key = self.cfg.checkGroup(c.group().upper())
 
                     if not group_key:
-                        lib.lib.warning("WARNING!! KEY SKIPPED [%s]" % group_key,
-                                self.handler, terminal=self.terminal)
+                        lib.lib.warning(
+                            "WARNING!! KEY SKIPPED [%s]" %
+                            group_key, self.handler, terminal=self.terminal)
                         continue
 
                     if group_key is None:
                         lib.lib.error("GROUP key not FOUND!", self.handler,
-                              terminal=self.terminal)
-                        lib.lib.error("%s, %s, %s" % (c.group(), designator, table_dict[designator]),
-                              self.handler, terminal=self.terminal)
+                                      terminal=self.terminal)
+                        lib.lib.error(
+                            "%s, %s, %s" %
+                            (c.group(),
+                             designator,
+                             table_dict[designator]),
+                            self.handler,
+                            terminal=self.terminal)
                         sys.exit(1)
 
-                    if self.grouped_items.has_key(group_key):
-                        self.grouped_items[group_key].append(table_dict[designator])
+                    if group_key in self.grouped_items:
+                        self.grouped_items[group_key].append(
+                            table_dict[designator])
                     else:
-                        self.grouped_items[group_key] = [table_dict[designator]]
+                        self.grouped_items[group_key] = [
+                            table_dict[designator]]
                 else:
-                    lib.lib.error("GROUP key not FOUND!", self.handler, terminal=self.terminal)
-                    lib.lib.error(designator, self.handler, terminal=self.terminal)
+                    lib.lib.error(
+                        "GROUP key not FOUND!",
+                        self.handler,
+                        terminal=self.terminal)
+                    lib.lib.error(
+                        designator,
+                        self.handler,
+                        terminal=self.terminal)
                     sys.exit(1)
 
     def table_grouped(self):
@@ -193,15 +213,15 @@ class MergeBom (object):
         self.table = {}
 
         # Finally Table layout
-        self.TABLE_TOTALQTY    = 0
-        self.TABLE_DESIGNATOR  = len(self.files) + 1
-        self.TABLE_COMMENT     = self.TABLE_DESIGNATOR + 1
-        self.TABLE_FOOTPRINT   = self.TABLE_COMMENT + 1
+        self.TABLE_TOTALQTY = 0
+        self.TABLE_DESIGNATOR = len(self.files) + 1
+        self.TABLE_COMMENT = self.TABLE_DESIGNATOR + 1
+        self.TABLE_FOOTPRINT = self.TABLE_COMMENT + 1
         self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
 
         self.stats['total'] = 0
         for category in self.categories:
-            if self.grouped_items.has_key(category):
+            if category in self.grouped_items:
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
@@ -216,68 +236,78 @@ class MergeBom (object):
                         m = re.findall(lib.cfg.NP_REGEXP, item[COMMENT])
                         if m:
                             skip_merge = True
-                            lib.lib.error("Not Populate connector, leave unmerged..[%s] [%s] match%s" % \
-                                (item[COMMENT], item[DESIGNATOR], m), \
-                                self.handler, terminal=self.terminal)
+                            lib.lib.error(
+                                "Not Populate connector, leave unmerged..[%s] [%s] match%s" %
+                                (item[COMMENT], item[DESIGNATOR], m), self.handler, terminal=self.terminal)
                             item[COMMENT] = "NP Connector"
 
                         if skip_merge:
-                            key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                            key = item[DESCRIPTION] + \
+                                item[COMMENT] + item[FOOTPRINT]
                         else:
                             key = item[DESCRIPTION] + item[FOOTPRINT]
                             item[COMMENT] = "Connector"
 
-                        lib.lib.warning("Merged key: %s (%s)" % (key, item[COMMENT]),
-                                self.handler, terminal=self.terminal)
+                        lib.lib.warning(
+                            "Merged key: %s (%s)" %
+                            (key, item[COMMENT]), self.handler, terminal=self.terminal)
 
                     if category == 'D' and "LED" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = "LED"
-                        lib.lib.warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
-                            self.handler, terminal=self.terminal)
+                        lib.lib.warning(
+                            "Merged key: %s (%s)" %
+                            (key, item[COMMENT]), self.handler, terminal=self.terminal)
 
                     if category == 'S' and "TACTILE" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = "Tactile Switch"
-                        lib.lib.warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
-                            self.handler, terminal=self.terminal)
+                        lib.lib.warning(
+                            "Merged key: %s (%s)" %
+                            (key, item[COMMENT]), self.handler, terminal=self.terminal)
 
                     elif category == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
-                        lib.lib.warning("Merged key: %s (%s)" % (key, item[COMMENT]), \
-                            self.handler, terminal=self.terminal)
+                        lib.lib.warning(
+                            "Merged key: %s (%s)" %
+                            (key, item[COMMENT]), self.handler, terminal=self.terminal)
                     else:
-                        key = item[DESCRIPTION] + item[COMMENT] + item[FOOTPRINT]
+                        key = item[DESCRIPTION] + \
+                            item[COMMENT] + item[FOOTPRINT]
 
-                    #print key
-                    #print "<<", item[DESIGNATOR]
+                    # print key
+                    # print "<<", item[DESIGNATOR]
                     self.stats[category] += 1
                     self.stats['total'] += 1
 
                     # First colum is total Qty
-                    curr_file_index = self.files[item[FILENAME]] + self.TABLE_TOTALQTY + 1
+                    curr_file_index = self.files[
+                        item[FILENAME]] + self.TABLE_TOTALQTY + 1
 
                     if key in tmp:
-                        #print "UPD", tmp[key], curr_file_index, item[FILENAME]
+                        # print "UPD", tmp[key], curr_file_index,
+                        # item[FILENAME]
                         tmp[key][self.TABLE_TOTALQTY] += item[QUANTITY]
                         tmp[key][curr_file_index] += item[QUANTITY]
-                        tmp[key][self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                        tmp[key][self.TABLE_DESIGNATOR] = \
-                            lib.lib.order_designator(tmp[key][self.TABLE_DESIGNATOR])
+                        tmp[key][
+                            self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
+                        tmp[key][self.TABLE_DESIGNATOR] = lib.lib.order_designator(
+                            tmp[key][self.TABLE_DESIGNATOR])
                     else:
                         row = [item[QUANTITY]] + \
-                              [0] * len(self.files) + \
-                              [
-                                  item[DESIGNATOR],
-                                  item[COMMENT],
-                                  item[FOOTPRINT],
-                                  item[DESCRIPTION]
-                              ]
+                            [0] * len(self.files) + \
+                            [
+                                item[DESIGNATOR],
+                                item[COMMENT],
+                                item[FOOTPRINT],
+                                item[DESCRIPTION]
+                        ]
 
                         row[curr_file_index] = item[QUANTITY]
                         tmp[key] = row
-                        #print "NEW", tmp[key], curr_file_index, item[FILENAME]
+                        # print "NEW", tmp[key], curr_file_index,
+                        # item[FILENAME]
 
                 self.table[category] = tmp.values()
 
@@ -288,32 +318,42 @@ class MergeBom (object):
         self.group()
         self.count()
         for category in self.categories:
-            if self.table.has_key(category):
+            if category in self.table:
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
-                            lib.lib.order_designator(item[self.TABLE_DESIGNATOR])
+                        lib.lib.order_designator(item[self.TABLE_DESIGNATOR])
 
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = lib.lib.value_toFloat(m[self.TABLE_COMMENT], category)
-                        #print m[COMMENT], key
+                        m[self.TABLE_COMMENT] = lib.lib.value_toFloat(
+                            m[self.TABLE_COMMENT], category)
+                        # print m[COMMENT], key
 
-                self.table[category] = sorted(self.table[category],
-                                              key=lambda x: x[self.TABLE_COMMENT])
+                self.table[category] = sorted(
+                    self.table[category], key=lambda x: x[
+                        self.TABLE_COMMENT])
 
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = lib.lib.value_toStr(m[self.TABLE_COMMENT], category)
-                        #print m[self.TABLE_COMMENT], category
+                        m[self.TABLE_COMMENT] = lib.lib.value_toStr(
+                            m[self.TABLE_COMMENT], category)
+                        # print m[self.TABLE_COMMENT], category
 
         return self.table
 
     def diff(self):
         if len(self.table_list) > 2:
-            lib.lib.error("To much file ti compare!", self.handler, terminal=self.terminal)
+            lib.lib.error(
+                "To much file ti compare!",
+                self.handler,
+                terminal=self.terminal)
             sys.exit(1)
         diff = {}
-        lib.lib.warning("%s" % self.files.items(), self.handler, terminal=self.terminal)
+        lib.lib.warning(
+            "%s" %
+            self.files.items(),
+            self.handler,
+            terminal=self.terminal)
         for i in self.files.items():
             if i[1] == 0:
                 fA = i[0]
@@ -322,10 +362,12 @@ class MergeBom (object):
                 fB = i[0]
                 B = self.table_list[1]
 
-        lib.lib.warning("A:%s B:%s" % (fA, fB), self.handler, terminal=self.terminal)
+        lib.lib.warning(
+            "A:%s B:%s" %
+            (fA, fB), self.handler, terminal=self.terminal)
 
         for k in A.keys():
-            if B.has_key(k):
+            if k in B:
 
                 c = re.search('^[a-zA-Z_]{1,3}', A[k][DESIGNATOR])
                 category = ''
@@ -336,15 +378,15 @@ class MergeBom (object):
                     la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
                     lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    lib.lib.warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), \
-                        self.handler, terminal=self.terminal)
+                    lib.lib.warning("Merged key: %s (%s)" % (k, A[k][COMMENT]),
+                                    self.handler, terminal=self.terminal)
 
                 if category == 'D' and "LED" in A[k][FOOTPRINT]:
                     la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
                     lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    lib.lib.warning("Merged key: %s (%s)" % (k, A[k][COMMENT]), \
-                        self.handler, terminal=self.terminal)
+                    lib.lib.warning("Merged key: %s (%s)" % (k, A[k][COMMENT]),
+                                    self.handler, terminal=self.terminal)
                 else:
                     la = A[k][1:]
                     lb = B[k][1:]
@@ -369,30 +411,53 @@ if __name__ == "__main__":
 
     file_list = []
     parser = OptionParser()
-    parser.add_option("-c", "--merge-cfg", dest="merge_cfg", \
-        default=None, help="MergeBOM configuration file.")
-    parser.add_option("-p", "--search-dir", dest="search_dir", \
-        default='./', help="BOM to merge search path.")
-    parser.add_option("-o", "--out-filename", dest="out_filename", \
-        default='merged_bom.xlsx', help="Out file name")
-    parser.add_option("-v", "--version-file", dest="version_file", \
-        default='version.txt', help="Version file.")
-    parser.add_option("-l", "--list-version-prj", dest="list_version_prj", \
-        default=False, action="store_true", help="List all project name from version file.")
-    parser.add_option("-s", "--sub_search_dir", dest="sub_search_dir", \
-        default="Assembly", help="Default name for BOM store directory in version file mode.")
-    parser.add_option("-d", "--diff", dest="diff", action="store_true", \
-        default=False, help="Generate diff from two specified BOMs")
-    parser.add_option("-m", "--replace-merged", dest="replace_merged", action="store_false", \
-        default=True, help="Remove all boms files after merge (only when using version file)")
-    parser.add_option("-r", "--bom-revision", dest="bom_rev", \
-        default='0', help="Hardware BOM revision")
-    parser.add_option("-w", "--bom-pcb-revision", dest="bom_pcb_ver", \
-    default='0', help="PCB Revision")
-    parser.add_option("-n", "--bom-prj-name", dest="bom_prj_name", \
-        default='MyProject', help="Project names.")
-    parser.add_option("-t", "--bom-date", dest="bom_prj_date", \
-    default=datetime.datetime.today().strftime("%d/%m/%Y"), help="Project date.")
+    parser.add_option("-c", "--merge-cfg", dest="merge_cfg",
+                      default=None, help="MergeBOM configuration file.")
+    parser.add_option("-p", "--search-dir", dest="search_dir",
+                      default='./', help="BOM to merge search path.")
+    parser.add_option("-o", "--out-filename", dest="out_filename",
+                      default='merged_bom.xlsx', help="Out file name")
+    parser.add_option("-v", "--version-file", dest="version_file",
+                      default='version.txt', help="Version file.")
+    parser.add_option(
+        "-l",
+        "--list-version-prj",
+        dest="list_version_prj",
+        default=False,
+        action="store_true",
+        help="List all project name from version file.")
+    parser.add_option(
+        "-s",
+        "--sub_search_dir",
+        dest="sub_search_dir",
+        default="Assembly",
+        help="Default name for BOM store directory in version file mode.")
+    parser.add_option(
+        "-d",
+        "--diff",
+        dest="diff",
+        action="store_true",
+        default=False,
+        help="Generate diff from two specified BOMs")
+    parser.add_option(
+        "-m",
+        "--replace-merged",
+        dest="replace_merged",
+        action="store_false",
+        default=True,
+        help="Remove all boms files after merge (only when using version file)")
+    parser.add_option("-r", "--bom-revision", dest="bom_rev",
+                      default='0', help="Hardware BOM revision")
+    parser.add_option("-w", "--bom-pcb-revision", dest="bom_pcb_ver",
+                      default='0', help="PCB Revision")
+    parser.add_option("-n", "--bom-prj-name", dest="bom_prj_name",
+                      default='MyProject', help="Project names.")
+    parser.add_option(
+        "-t",
+        "--bom-date",
+        dest="bom_prj_date",
+        default=datetime.datetime.today().strftime("%d/%m/%Y"),
+        help="Project date.")
 
     (options, args) = parser.parse_args()
 
@@ -409,11 +474,20 @@ if __name__ == "__main__":
         lib.lib.info("%s" % args, sys.stdout, terminal=True, prefix="")
 
     if not file_list and os.path.isfile(options.version_file):
-        lib.lib.warning("BOM file not found..", sys.stdout, terminal=True, prefix="")
+        lib.lib.warning(
+            "BOM file not found..",
+            sys.stdout,
+            terminal=True,
+            prefix="")
 
         # search version file
-        lib.lib.info("Search version file [%s] in [%s]:" % (options.version_file, options.search_dir),\
-                sys.stdout, terminal=True, prefix="")
+        lib.lib.info(
+            "Search version file [%s] in [%s]:" %
+            (options.version_file,
+             options.search_dir),
+            sys.stdout,
+            terminal=True,
+            prefix="")
 
         # Get bom file list from version.txt
         """
@@ -425,17 +499,23 @@ if __name__ == "__main__":
         bom_info = cfg_version(options.version_file)
         for prj in bom_info.keys():
             file_list = []
-            glob_path = os.path.join(options.search_dir, options.sub_search_dir, prj)
+            glob_path = os.path.join(
+                options.search_dir, options.sub_search_dir, prj)
             search_glob = ["*.xls", "*.xlsx"]
             if not os.path.exists(glob_path):
-                glob_path = os.path.join(options.search_dir, options.sub_search_dir)
-                search_glob = ["*"+prj+"*.xls", "*"+prj+"*.xlsx"]
+                glob_path = os.path.join(
+                    options.search_dir, options.sub_search_dir)
+                search_glob = ["*" + prj + "*.xls", "*" + prj + "*.xlsx"]
 
             for i in search_glob:
                 file_list += glob.glob(os.path.join(glob_path, i))
 
             if not file_list:
-                lib.lib.error("No BOM file to merge", sys.stdout, terminal=True, prefix="")
+                lib.lib.error(
+                    "No BOM file to merge",
+                    sys.stdout,
+                    terminal=True,
+                    prefix="")
                 sys.exit(1)
 
             m = MergeBom(file_list, cfg)
@@ -443,9 +523,16 @@ if __name__ == "__main__":
             stats = m.statistics()
 
             tmpdir = tempfile.gettempdir()
-            outfilename = os.path.join(tmpdir, os.path.basename(options.out_filename))
-            dstfilename = os.path.join(os.path.dirname(options.out_filename), \
-                    prj+"_"+os.path.basename(options.out_filename))
+            outfilename = os.path.join(
+                tmpdir, os.path.basename(
+                    options.out_filename))
+            dstfilename = os.path.join(
+                os.path.dirname(
+                    options.out_filename),
+                prj +
+                "_" +
+                os.path.basename(
+                    options.out_filename))
 
             if options.replace_merged:
                 outfilename = os.path.join(tmpdir, "bom-%s.xlsx" % prj)
@@ -455,8 +542,15 @@ if __name__ == "__main__":
             hw_ver = bom_info[prj]["hw_ver"]
             pcb_ver = bom_info[prj]["pcb_ver"]
 
-            lib.report.write_xls(d, map(os.path.basename, file_list), cfg, outfilename, hw_ver=hw_ver, \
-                      pcb_ver=pcb_ver, project=name, statistics=stats)
+            lib.report.write_xls(d,
+                                 map(os.path.basename,
+                                     file_list),
+                                 cfg,
+                                 outfilename,
+                                 hw_ver=hw_ver,
+                                 pcb_ver=pcb_ver,
+                                 project=name,
+                                 statistics=stats)
 
             if os.path.isfile(outfilename):
                 if options.replace_merged:
@@ -464,29 +558,45 @@ if __name__ == "__main__":
                         os.remove(i)
 
                 shutil.copy(outfilename, dstfilename)
-                lib.lib.info("Generated %s Merged BOM file." % dstfilename, \
-                    sys.stdout, terminal=True, prefix="")
+                lib.lib.info("Generated %s Merged BOM file." % dstfilename,
+                             sys.stdout, terminal=True, prefix="")
 
         sys.exit(0)
 
     if not file_list:
-        lib.lib.warning("No BOM specified to merge..", sys.stdout, terminal=True, prefix="")
+        lib.lib.warning(
+            "No BOM specified to merge..",
+            sys.stdout,
+            terminal=True,
+            prefix="")
         # First merge all xlsx file in search directory
-        lib.lib.info("Find in search_dir[%s] all bom files:" % options.search_dir, \
-                sys.stdout, terminal=True, prefix="")
+        lib.lib.info(
+            "Find in search_dir[%s] all bom files:" %
+            options.search_dir,
+            sys.stdout,
+            terminal=True,
+            prefix="")
         file_list = glob.glob(os.path.join(options.search_dir, '*.xls'))
         file_list += glob.glob(os.path.join(options.search_dir, '*.xlsx'))
 
     # File list empty, so there aren't BOM files to merge, raise error to user.
     if not file_list:
-        lib.lib.warning("No version file found..\n", sys.stdout, terminal=True, prefix="")
+        lib.lib.warning(
+            "No version file found..\n",
+            sys.stdout,
+            terminal=True,
+            prefix="")
         parser.print_help()
         sys.exit(1)
 
     # The user set diff mode, but this works only for two bom.
     if options.diff and len(file_list) != 2:
-        lib.lib.error("In diff mode you should specify only 2 BOMs [%s].\n" % len(file_list), \
-                sys.stdout, terminal=True, prefix="")
+        lib.lib.error(
+            "In diff mode you should specify only 2 BOMs [%s].\n" %
+            len(file_list),
+            sys.stdout,
+            terminal=True,
+            prefix="")
         parser.print_help()
         sys.exit(1)
 
@@ -496,11 +606,23 @@ if __name__ == "__main__":
     if options.diff:
         d = m.diff()
         l = m.extra_data()
-        lib.report.write_xls(d, file_list, cfg, options.out_filename, diff=True, extra_data=l)
+        lib.report.write_xls(
+            d,
+            file_list,
+            cfg,
+            options.out_filename,
+            diff=True,
+            extra_data=l)
         sys.exit(0)
 
     d = m.merge()
     stats = m.statistics()
-    lib.report.write_xls(d, file_list, cfg, options.out_filename, hw_ver=options.bom_rev, \
-              pcb_ver=options.bom_pcb_ver, project=options.bom_prj_name, statistics=stats)
-
+    lib.report.write_xls(
+        d,
+        file_list,
+        cfg,
+        options.out_filename,
+        hw_ver=options.bom_rev,
+        pcb_ver=options.bom_pcb_ver,
+        project=options.bom_prj_name,
+        statistics=stats)

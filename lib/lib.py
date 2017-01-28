@@ -26,6 +26,7 @@ import datetime
 from cfg import *
 from termcolor import colored
 
+
 def printout(s, handler, prefix="> ", terminal=True, color='green'):
     s = "%s %s\n" % (prefix, s)
     if terminal:
@@ -57,14 +58,16 @@ def order_designator(ref_str):
         sys.exit(1)
     return ", ".join(d)
 
+
 def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
     acc = 0
     value = "0"
     mult = 1
     div = 1
-    if not unit in CATEGORY_TO_UNIT:
-        error("Unknow category [%s] allowed are[%s]" % (unit, CATEGORY_TO_UNIT.keys()),
-               handler, terminal=terminal)
+    if unit not in CATEGORY_TO_UNIT:
+        error(
+            "Unknow category [%s] allowed are[%s]" %
+            (unit, CATEGORY_TO_UNIT.keys()), handler, terminal=terminal)
         sys.exit(1)
 
     # K is always chilo .. so fix case
@@ -75,13 +78,14 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
         if n in l:
             return -1, l, ""
 
-    # In string value we could find a note or other info, remove it, put for later
+    # In string value we could find a note or other info, remove it, put for
+    # later
     note = ""
     if " " in l:
         ss = l.split(" ")
         l = ss[0]
         note = ss[1:]
-        #print ">", l, note
+        # print ">", l, note
 
     # First character should be a numer
     if re.search("^[0-9]", l) is None:
@@ -95,27 +99,30 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
                 mult, div = ENG_LETTER[c]
                 value = "0"
                 continue
-            except ValueError, e:
-                error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (l, acc, mult, value, div, e),
-                       handler, terminal=terminal)
+            except ValueError as e:
+                error(
+                    "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" %
+                    (l, acc, mult, value, div, e), handler, terminal=terminal)
                 sys.exit(1)
 
         if c in CATEGORY_TO_UNIT[unit]:
             continue
 
         value += c
-        #print "[",c,"<>", value, "]",
+        # print "[",c,"<>", value, "]",
 
     try:
         value = acc * mult + float(value) * div
-    except ValueError, e:
-        error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (l, acc, mult, value, div, e),
-            handler, terminal=terminal)
+    except ValueError as e:
+        error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (
+            l, acc, mult, value, div, e), handler, terminal=terminal)
         return -2, l, note
 
     return value, CATEGORY_TO_UNIT[unit], note
 
 import math
+
+
 def eng_string(x):
     '''
     Returns float/int value <x> formatted in a simplified engineering format -
@@ -142,10 +149,11 @@ def eng_string(x):
 
     return (sign, str(x3), exp3_text)
 
+
 def value_toStr(l, handler=sys.stdout, terminal=True):
     try:
         value, unit, note = l
-    except ValueError, e:
+    except ValueError as e:
         error("Unpack error %s {%s}" % (l, e), handler, terminal=terminal)
         sys.exit(1)
 
@@ -163,14 +171,14 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
             unit = "R"
         number = re.sub(r"\.0+$", '', number)
 
-    elif notation in ["k","M","G","T","P","E","Z","Y"]:
+    elif notation in ["k", "M", "G", "T", "P", "E", "Z", "Y"]:
         number = number.replace(".", notation)
         number = number.rstrip("0")
 
         if unit == "ohm":
             unit = ""
 
-    elif notation in ["y","z","a","f","p","n","u","m"]:
+    elif notation in ["y", "z", "a", "f", "p", "n", "u", "m"]:
         number = number.rstrip("0")
         if notation == "m" and unit == "ohm":
             number = str(value)
@@ -183,4 +191,3 @@ def value_toStr(l, handler=sys.stdout, terminal=True):
     if note:
         space = " "
     return "%s%s%s%s%s" % (sign, number, unit, space, " ".join(note))
-

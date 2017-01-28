@@ -31,10 +31,12 @@ import xlrd
 import xlsxwriter
 import lib
 
+
 class Report(object):
     """
     Merge Bom report generator.
     """
+
     def __init__(self, cfg, directory, logo=None, extra=None):
 
         self.src_bom = None
@@ -48,8 +50,10 @@ class Report(object):
             self.repf.write("\n")
 
         self.repf.write("Report file.\n")
-        if extra is not None and extra.has_key("mergebom_version"):
-            self.repf.write("MergeBom Version: %s\n" % extra["mergebom_version"])
+        if extra is not None and "mergebom_version" in extra:
+            self.repf.write(
+                "MergeBom Version: %s\n" %
+                extra["mergebom_version"])
 
         report_date = datetime.datetime.now()
         self.repf.write("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
@@ -66,10 +70,10 @@ class Report(object):
         """
         self.repf.write("\n")
         self.repf.write(":" * 80)
-        self.repf.write("Date: %s\n" %          conf_key['date'])
-        self.repf.write("Project Name: %s\n" %  conf_key['name'])
+        self.repf.write("Date: %s\n" % conf_key['date'])
+        self.repf.write("Project Name: %s\n" % conf_key['name'])
         self.repf.write("Hardware Revision: %s\n" % conf_key['hw_ver'])
-        self.repf.write("PCB Revision: %s\n" %  conf_key['pcb_ver'])
+        self.repf.write("PCB Revision: %s\n" % conf_key['pcb_ver'])
         self.repf.write("\n")
 
         self.repf.write("Bom Files:\n")
@@ -90,7 +94,7 @@ class Report(object):
 
         self.repf.write("File num: %s\n" % stats['file_num'])
         #categories = self.cfg.getCategories()
-        #for i in stats.keys():
+        # for i in stats.keys():
         #    if i in categories:
         #        self.repf.write(self.cfg.get(i, ) + "\n")
         #        self.repf.write("%5.5s %5.5s\n" % (i, stats[i]))
@@ -115,8 +119,18 @@ class Report(object):
         """
         return self.repf
 
-def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="MyProject", \
-        diff=False, extra_data=None, statistics=None):
+
+def write_xls(
+        items,
+        file_list,
+        cfg,
+        handler,
+        hw_ver="0",
+        pcb_ver="A",
+        project="MyProject",
+        diff=False,
+        extra_data=None,
+        statistics=None):
     """
     Write merged BOM in excel file.
 
@@ -150,16 +164,16 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
 
     info_fmt = workbook.add_format({
         'bold': True,
-        'font_size':11,
+        'font_size': 11,
         'valign': 'vcenter',
-        'align': 'left',})
+        'align': 'left', })
 
     info_fmt_red = workbook.add_format({
         'bold': True,
         'font_color': 'red',
-        'font_size':11,
+        'font_size': 11,
         'valign': 'vcenter',
-        'align': 'left',})
+        'align': 'left', })
 
     np_fmt = workbook.add_format({
         'bold': True,
@@ -181,8 +195,8 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
         'valign': 'vcenter',
         'fg_color': '#DDDDDD'})
 
-
-    hdr_fmt = workbook.add_format({'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
+    hdr_fmt = workbook.add_format(
+        {'font_size': 12, 'bold': True, 'bg_color': 'cyan'})
     merge_fmt = workbook.add_format({
         'bold': 1,
         'border': 1,
@@ -226,8 +240,6 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
         for i in file_list:
             info.append("- %s" % i)
 
-
-
     # Compute colum len to merge for header
     #stop_col = 'F'
     stop_col = chr(ord('A') + len(file_list + lib.lib.VALID_KEYS))
@@ -239,8 +251,8 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
     row += 1
 
     # Note and statistics
-    worksheet.write('A%s:%s%s' % (row, stop_col, row), \
-        "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
+    worksheet.write('A%s:%s%s' % (row, stop_col, row),
+                    "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
     row += 1
 
     worksheet.write('A%s:%s%s' % (row, stop_col, row), "Statistics:", info_fmt)
@@ -278,12 +290,13 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
             col += 1
         row += 1
 
-
-
     row = HDR_ROW + row + 2
     if diff:
         for i in items.keys():
-            worksheet.merge_range('A%s:J%s' % (row, row), "%s" % row, diff_sep_fmt)
+            worksheet.merge_range(
+                'A%s:J%s' %
+                (row, row), "%s" %
+                row, diff_sep_fmt)
             A = [i, A_BOM, extra_data[0]['revision'].upper()] + items[i][0][2:]
             B = [i, B_BOM, extra_data[1]['revision'].upper()] + items[i][1][2:]
             #error("%s %s %s" % (i, A_BOM, A), handler, terminal=False)
@@ -299,7 +312,7 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
         # Start to write components on xlsx
         categories = cfg.getCategories()
         for key in categories:
-            if items.has_key(key):
+            if key in items:
                 row += 1
                 title = "%s * %s *" % (key, cfg.get(key, 'desc'))
                 worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
@@ -311,7 +324,9 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
                         else:
                             # Mark NP to help user
                             fmt = def_fmt
-                            if not isinstance(col, int) and re.findall(lib.lib.NP_REGEXP, col):
+                            if not isinstance(
+                                    col, int) and re.findall(
+                                    lib.lib.NP_REGEXP, col):
                                 fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if not isinstance(col, int):
@@ -319,6 +334,7 @@ def write_xls(items, file_list, cfg, handler, hw_ver="0", pcb_ver="A", project="
                     row += 1
 
     workbook.close()
+
 
 def read_xls(handler):
     """

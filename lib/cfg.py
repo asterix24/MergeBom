@@ -86,14 +86,14 @@ EXTRA_KEYS = [
 CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Connectors',
-        'desc' : 'Connectors and holders',
-        'group' : ['X', 'P', 'SIM'],
-        'ref' : 'J',
+        'desc': 'Connectors and holders',
+        'group': ['X', 'P', 'SIM'],
+        'ref': 'J',
     },
     {
         'name': 'Mechanicals',
-        'desc' : 'Mechanical parts and buttons',
-        'group' : [
+        'desc': 'Mechanical parts and buttons',
+        'group': [
             'SCR',
             'SPA',
             # Battery
@@ -105,65 +105,65 @@ CATEGORY_NAMES_DEFAULT = [
             'B',
             'SW',
             'K'],
-        'ref' : 'S',
+        'ref': 'S',
     },
     {
-        'name':'Fuses',
-        'desc' : 'Fuses discrete components',
-        'group' : ['g'],
-        'ref' : 'F',
+        'name': 'Fuses',
+        'desc': 'Fuses discrete components',
+        'group': ['g'],
+        'ref': 'F',
     },
     {
         'name': 'Resistors',
-        'desc' : 'Resistor components',
-        'group' : ['RN', 'R_G'],
-        'ref' : 'R',
+        'desc': 'Resistor components',
+        'group': ['RN', 'R_G'],
+        'ref': 'R',
     },
     {
-        'name' : 'Capacitors',
-        'desc' : 'Capacitors',
+        'name': 'Capacitors',
+        'desc': 'Capacitors',
         'group': [],
         'ref': 'C',
     },
     {
-        'name' : 'Diode',
-        'desc' : 'Diodes, Zener, Schottky, LED, Transil',
+        'name': 'Diode',
+        'desc': 'Diodes, Zener, Schottky, LED, Transil',
         'group': ['DZ'],
         'ref': 'D',
     },
     {
-        'name' : 'Inductors',
-        'desc' : 'L  Inductors, chokes',
+        'name': 'Inductors',
+        'desc': 'L  Inductors, chokes',
         'group': [],
         'ref': 'L',
     },
     {
-        'name' : 'Transistor',
-        'desc' : 'Q Transistors, MOSFET',
+        'name': 'Transistor',
+        'desc': 'Q Transistors, MOSFET',
         'group': [],
         'ref': 'Q',
     },
     {
-        'name' : 'Transformes',
-        'desc' : 'TR Transformers',
+        'name': 'Transformes',
+        'desc': 'TR Transformers',
         'group': ['T'],
         'ref': 'TR',
     },
     {
-        'name' : 'Cristal',
-        'desc' : 'Cristal, quarz, oscillator',
+        'name': 'Cristal',
+        'desc': 'Cristal, quarz, oscillator',
         'group': [],
         'ref': 'C',
     },
     {
-        'name' : 'IC',
-        'desc' : 'Integrates and chips',
+        'name': 'IC',
+        'desc': 'Integrates and chips',
         'group': [],
         'ref': 'U',
     },
     {
-        'name' : 'DISCARD',
-        'desc' : 'Reference to discard, to not put in BOM',
+        'name': 'DISCARD',
+        'desc': 'Reference to discard, to not put in BOM',
         'group': ['TP'],
         'ref': '',
     },
@@ -173,10 +173,12 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
+
 class CfgMergeBom(object):
     """
     MergeBOM Configuration
     """
+
     def __init__(self, cfgfile_name=None, handler=sys.stdout, terminal=True):
         self.handler = handler
         self.terminal = terminal
@@ -188,11 +190,11 @@ class CfgMergeBom(object):
                     config = toml.loads(configfile.read())
                     self.category_names = config
 
-            except IOError, e:
-                lib.lib.error("Configuration: %s" % e, \
-                    self.handler, terminal=self.terminal)
-                lib.lib.warning("No Valid Configuration file! Use Default", \
-                    self.handler, terminal=self.terminal)
+            except IOError as e:
+                lib.lib.error("Configuration: %s" % e,
+                              self.handler, terminal=self.terminal)
+                lib.lib.warning("No Valid Configuration file! Use Default",
+                                self.handler, terminal=self.terminal)
 
     def checkGroup(self, group_key):
         if not group_key:
@@ -222,6 +224,7 @@ class CfgMergeBom(object):
 
         return None
 
+
 def cfg_version(filename):
     config = ConfigParser.ConfigParser()
     config.readfp(open(filename))
@@ -229,22 +232,21 @@ def cfg_version(filename):
     cfg = {}
     for section in config.sections():
         d = {}
-        d['name' ] = config.get(section, 'name')
-        d['hw_ver'   ] = config.get(section, 'hw_ver')
-        d['pcb_ver'  ] = config.get(section, 'pcb_ver')
-        d['date'     ] = config.get(section, 'date')
+        d['name'] = config.get(section, 'name')
+        d['hw_ver'] = config.get(section, 'hw_ver')
+        d['pcb_ver'] = config.get(section, 'pcb_ver')
+        d['date'] = config.get(section, 'date')
         cfg[section] = d
     return cfg
 
-if __name__  == "__main__":
+if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "Usage %s <cfg filename>"  % sys.argv[0]
+        print "Usage %s <cfg filename>" % sys.argv[0]
         sys.exit(1)
 
     config = "Vuoto"
     with open(sys.argv[1]) as configfile:
-        config  = toml.loads(configfile.read())
-
+        config = toml.loads(configfile.read())
 
     print type(config), len(config)
-    print  config.keys()
+    print config.keys()

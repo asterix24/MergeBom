@@ -18,7 +18,8 @@
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
 
-import sys, os
+import sys
+import os
 import unittest
 import subprocess
 import lib
@@ -26,6 +27,7 @@ from mergebom import MergeBom
 
 
 class TestMergeBom(unittest.TestCase):
+
     def __init__(self, testname):
         super(TestMergeBom, self).__init__(testname)
 
@@ -71,7 +73,7 @@ class TestMergeBom(unittest.TestCase):
                 [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
             ],
-          }
+        }
 
         cfg = lib.cfg.CfgMergeBom()
         m = MergeBom(file_list, cfg)
@@ -122,7 +124,7 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'U30', u'TLV431 SOT23', u'SOT-23', u'TLV431BQDBZT'],
                 [1, 1, u'U40', u'ULN2803', u'SOIC18', u'BJT Darlinton Array'],
                 [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK', u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
-                ],
+            ],
             'D': [
                 [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
                 [4, 4, u'D9, D10, D11, D12', u'BAS70-05', u'SOT-23', u'Schottky Barrier Double Diodes'],
@@ -132,7 +134,7 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'D2', u'S2B', u'DO214AA_12', u'S2B Diode'],
                 [1, 1, u'D3', u'SMBJ28A', u'DO214AA_12', u'TRANSIL (SM6T12A)'],
             ],
-          }
+        }
 
         cfg = lib.cfg.CfgMergeBom()
         m = MergeBom(file_list, cfg)
@@ -154,12 +156,39 @@ class TestMergeBom(unittest.TestCase):
             "test/bom2.xlsx",
         ]
 
-        check = [
-          [6, 2, 2, 2, u'C0, C1, C100, C101, C200, C201', u'33pF',  u'0603_[1608]', u'Ceramic 50V NP0/C0G'],
-          [4, 0, 2, 2, u'C102, C103, C202, C203', u'100nF', u'0603_[1608]', u'Ceramic X7R 10V'],
-          [3, 3, 0, 0, u'C2, C3, C4', u'1uF', u'1206_[3216]', u'Ceramic X5R 35V, 50V'],
-          [2, 2, 0, 0, u'C5, C6', u'2.2uF', u'0603_[1608]', u'Ceramic X7R 10V'],
-        ]
+        check = [[6,
+                  2,
+                  2,
+                  2,
+                  u'C0, C1, C100, C101, C200, C201',
+                  u'33pF',
+                  u'0603_[1608]',
+                  u'Ceramic 50V NP0/C0G'],
+                 [4,
+                  0,
+                  2,
+                  2,
+                  u'C102, C103, C202, C203',
+                  u'100nF',
+                  u'0603_[1608]',
+                  u'Ceramic X7R 10V'],
+                 [3,
+                  3,
+                  0,
+                  0,
+                  u'C2, C3, C4',
+                  u'1uF',
+                  u'1206_[3216]',
+                  u'Ceramic X5R 35V, 50V'],
+                 [2,
+                  2,
+                  0,
+                  0,
+                  u'C5, C6',
+                  u'2.2uF',
+                  u'0603_[1608]',
+                  u'Ceramic X7R 10V'],
+                 ]
 
         cfg = lib.cfg.CfgMergeBom()
         m = MergeBom(file_list, cfg)
@@ -185,30 +214,30 @@ class TestMergeBom(unittest.TestCase):
 
         check = {
             'C45': (
-              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-              ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
+                ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]'],
             ),
             'C1045': (
-              ['bomdiff1.xlsx', 1, u'C1045', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
-              ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
+                ['bomdiff1.xlsx', 1, u'C1045', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C204': (
-              ['bomdiff1.xlsx', 1, u'C204', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
-              ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
+                ['bomdiff1.xlsx', 1, u'C204', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C2046': (
-              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-              ['bomdiff2.xlsx', 1, u'C2046', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
+                ['bomdiff2.xlsx', 1, u'C2046', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
             ),
             'C104': (
-              ['bomdiff1.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
-              ['bomdiff2.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
             ),
             'C1': (
-              ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-              ['bomdiff2.xlsx', 1, u'C1', u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
+                ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
+                ['bomdiff2.xlsx', 1, u'C1', u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
             )
-            }
+        }
 
         cfg = lib.cfg.CfgMergeBom()
         m = MergeBom(file_list, cfg)
@@ -245,8 +274,8 @@ class TestMergeBom(unittest.TestCase):
     def test_valueToFloat(self):
         test = [
             ("C", ("100pF", )),
-            ("R", ("1R1","1R2", "0R3", "1R8")),
-            ("R", ("1.1R","1.2R", "0.3R", "1.8R")),
+            ("R", ("1R1", "1R2", "0R3", "1R8")),
+            ("R", ("1.1R", "1.2R", "0.3R", "1.8R")),
             ("R", ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3")),
             ("C", ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF")),
             ("L", ("1nH", "1H", "10pH", "2.2uH", "47uH")),
@@ -256,10 +285,10 @@ class TestMergeBom(unittest.TestCase):
             ((1e-10, "F"),),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
-            ((0.3, "ohm"), (  1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
+            ((0.3, "ohm"), (1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
             ((10e-12, "F"), (100e-9, "F"), (0.1e-6, "F"), (1e-6, "F"), (2.2e-6, "F"), (47e-6, "F"), (1.0, "F")),
             ((10e-12, "H"), (1e-9, "H"), (2.2e-6, "H"), (47e-6, "H"), (1.0, "H")),
-            ((3.3e-8,"ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm")),
+            ((3.3e-8, "ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm")),
         ]
 
         print
@@ -267,7 +296,7 @@ class TestMergeBom(unittest.TestCase):
             l = []
             for mm in m[1]:
                 a, b, c = lib.lib.value_toFloat(mm, m[0])
-                l.append((a,b))
+                l.append((a, b))
 
             l = sorted(l, key=lambda x: x[0])
             for n, i in enumerate(l):
@@ -280,14 +309,14 @@ class TestMergeBom(unittest.TestCase):
         test = [
             ((1000, "ohm", ""), (1500, "ohm", ""), (2200, "ohm", ""), (2210, "ohm", ""), (4700, "ohm", ""), (47000, "ohm", "")),
             ((1000000, "ohm", ""), (1500000, "ohm", ""), (860000, "ohm", ""), (8600000, "ohm", "")),
-            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (3.3e-8,"ohm", "")),
-            ((0.000010, "F", ""), (1e-3, "F", ""), (10e-3,"H", "")),
+            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (3.3e-8, "ohm", "")),
+            ((0.000010, "F", ""), (1e-3, "F", ""), (10e-3, "H", "")),
             ((1.5e-6, "F", ""), (33e-12, "F", ""), (100e-9, "F", "")),
             ((1, "ohm", ""), (0.1, "ohm", ""), (10, "ohm", ""), (100, "ohm", ""), (12.5, "ohm", "")),
             ((11, "R", ""), (120, "R", ""), (50, "R", "")),
         ]
         check = [
-            ("1k","1k5", "2k2", "2k21", "4k7", "47k"),
+            ("1k", "1k5", "2k2", "2k21", "4k7", "47k"),
             ("1M", "1M5", "860k", "8M6"),
             ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm"),
             ("10uF", "1mF", "10mH"),
@@ -296,7 +325,7 @@ class TestMergeBom(unittest.TestCase):
             ("11R", "120R", "50R"),
         ]
 
-        for k,l in enumerate(test):
+        for k, l in enumerate(test):
             for n, m in enumerate(l):
                 l = lib.lib.value_toStr(m)
                 self.assertTrue(l)
@@ -317,7 +346,14 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, cfg)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        lib.report.write_xls(d, file_list, cfg, "/tmp/uno.xls", hw_ver="13", pcb_ver="C", project="TEST")
+        lib.report.write_xls(
+            d,
+            file_list,
+            cfg,
+            "/tmp/uno.xls",
+            hw_ver="13",
+            pcb_ver="C",
+            project="TEST")
 
     def test_mergedFile(self):
         file_list = [
@@ -342,14 +378,30 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, cfg)
         m.merge()
         stats = m.statistics()
-        lib.lib.warning("File num: %s" % stats['file_num'], sys.stdout, terminal=True)
+        lib.lib.warning(
+            "File num: %s" %
+            stats['file_num'],
+            sys.stdout,
+            terminal=True)
         categories = cfg.getCategories()
         for i in stats.keys():
             if i in categories:
-                lib.lib.info(cfg.get(i,'desc'), sys.stdout, terminal=True, prefix="- ")
-                lib.lib.info("%5.5s %5.5s" % (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
+                lib.lib.info(
+                    cfg.get(
+                        i,
+                        'desc'),
+                    sys.stdout,
+                    terminal=True,
+                    prefix="- ")
+                lib.lib.info(
+                    "%5.5s %5.5s" %
+                    (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
 
-        lib.lib.warning("Total: %s" % stats['total'], sys.stdout, terminal=True)
+        lib.lib.warning(
+            "Total: %s" %
+            stats['total'],
+            sys.stdout,
+            terminal=True)
 
     def test_notPopulate(self):
         """
@@ -367,43 +419,58 @@ class TestMergeBom(unittest.TestCase):
         categories = cfg.getCategories()
         for i in stats.keys():
             if i in categories:
-                st.append((stats[i], cfg.get(i,'desc')))
+                st.append((stats[i], cfg.get(i, 'desc')))
         st.append((stats['total'], "Total"))
 
         file_list = map(os.path.basename, file_list)
         lib.report.write_xls(d, file_list, cfg, "/tmp/uno.xlsx", hw_ver="13",
-                  pcb_ver="C", project="TEST", statistics=st)
+                             pcb_ver="C", project="TEST", statistics=st)
 
     def test_cliMerge(self):
         outfilename = "/tmp/cli-merged.xlsx"
-        out = subprocess.check_output(["python", "mergebom.py", \
-            "-o", outfilename, \
-            "test/cli-merge0.xlsx",  "test/cli-merge1.xlsx"], \
-            stderr=subprocess.STDOUT)
+        out = subprocess.check_output(["python",
+                                       "mergebom.py",
+                                       "-o",
+                                       outfilename,
+                                       "test/cli-merge0.xlsx",
+                                       "test/cli-merge1.xlsx"],
+                                      stderr=subprocess.STDOUT)
 
         print out
-        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged File not generated")
         os.remove(outfilename)
 
     def test_cliMergeDiff(self):
         outfilename = "/tmp/cli-diff-merged.xlsx"
-        out = subprocess.check_output(["python", "mergebom.py", \
-            "-o", outfilename, "-d", \
-            "test/cli-merge-diff0.xlsx",  "test/cli-merge-diff1.xlsx"], \
-            stderr=subprocess.STDOUT)
+        out = subprocess.check_output(["python",
+                                       "mergebom.py",
+                                       "-o",
+                                       outfilename,
+                                       "-d",
+                                       "test/cli-merge-diff0.xlsx",
+                                       "test/cli-merge-diff1.xlsx"],
+                                      stderr=subprocess.STDOUT)
 
         print out
-        self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated")
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged diff File not generated")
         os.remove(outfilename)
 
         retcode = None
         try:
-            out = subprocess.check_call(["python", "mergebom.py", \
-                "-o", outfilename, "-d", \
-                "test/cli-merge-diff0.xlsx",  "test/cli-merge-diff1.xlsx", \
-                "test/cli-merge-diff2.xlsx"], \
-                stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError, e:
+            out = subprocess.check_call(["python",
+                                         "mergebom.py",
+                                         "-o",
+                                         outfilename,
+                                         "-d",
+                                         "test/cli-merge-diff0.xlsx",
+                                         "test/cli-merge-diff1.xlsx",
+                                         "test/cli-merge-diff2.xlsx"],
+                                        stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
             print e
             retcode = e.returncode
 
@@ -411,19 +478,26 @@ class TestMergeBom(unittest.TestCase):
 
     def test_cliMergeGlob(self):
         outfilename = "/tmp/cli-mergedGlob.xlsx"
-        out = subprocess.check_output(["python", "mergebom.py", \
-            "-o", outfilename, "-p", "test/glob/"], \
-            stderr=subprocess.STDOUT)
+        out = subprocess.check_output(["python", "mergebom.py",
+                                       "-o", outfilename, "-p", "test/glob/"],
+                                      stderr=subprocess.STDOUT)
 
         print out
-        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged File not generated")
         os.remove(outfilename)
 
 if __name__ == "__main__":
     from optparse import OptionParser
 
     parser = OptionParser()
-    parser.add_option("-v", "--verbose", dest="verbose", default='2', help="Output verbosity")
+    parser.add_option(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        default='2',
+        help="Output verbosity")
     (options, args) = parser.parse_args()
     print args
 
@@ -443,5 +517,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    unittest.TextTestRunner(stream=sys.stdout, verbosity=options.verbose).run(suite)
-
+    unittest.TextTestRunner(
+        stream=sys.stdout,
+        verbosity=options.verbose).run(suite)
