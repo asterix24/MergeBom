@@ -94,7 +94,7 @@ class Report(object):
         self.repf.write("\n")
 
         self.repf.write("File num: %s\n" % stats['file_num'])
-        #categories = self.config.getCategories()
+        #categories = self.config.categories()
         # for i in stats.keys():
         #    if i in categories:
         #        self.repf.write(self.config.get(i, ) + "\n")
@@ -135,6 +135,15 @@ def write_xls(
     """
     Write merged BOM in excel file.
 
+    Statistics data should be in follow format:
+
+    {'total': 38, 'R': 14, 'file_num': 2, 'C': 12}
+
+    Where:
+
+    - total: sum all of components numeber
+    - file_num: number of merged BOM files
+    - C,R, J, ecc.: Componentes category
     """
 
     STR_ROW = 1
@@ -156,6 +165,41 @@ def write_xls(
 
     def_fmt = workbook.add_format({'valign': 'vcenter'})
     def_fmt.set_text_wrap()
+
+    stat_hdr_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'left',
+        'valign': 'vcenter',
+        'bg_color': '#66B2FF'})
+
+    stat_hdr1_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#00CCCC'})
+
+    stat_num_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': 'silver'})
+
+    stat_desc_fmt = workbook.add_format({
+        'italic': True,
+        'align': 'left',
+        'valign': 'vcenter' })
+
+    stat_ctot_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'center',
+        'valign': 'vcenter',
+        'bg_color': '#4C9900'})
+
+    stat_ltot_fmt = workbook.add_format({
+        'bold': True,
+        'align': 'left',
+        'valign': 'vcenter',
+        'bg_color': '#4C9900'})
 
     tot_fmt = workbook.add_format({
         'bold': True,
@@ -251,20 +295,33 @@ def write_xls(
         row += 1
     row += 1
 
-    # Note and statistics
+    # Statistics
+    worksheet.merge_range('A%s:%s%s' % (row, 'D', row), "Statistics", stat_hdr1_fmt)
+    categories = config.categories()
+    if statistics is not None:
+        # Write description:
+        worksheet.write(row, 0, statistics.get("file_num", "-"), stat_num_fmt)
+        row += 1
+        worksheet.merge_range('B%s:D%s' % (row, row), "Merged Files Number", stat_desc_fmt)
+        row += 1
+        worksheet.merge_range('A%s:D%s' % (row, row), "Components:", stat_hdr_fmt)
+        for cat in categories:
+            if cat in statistics:
+                worksheet.write(row, 0, statistics[cat], stat_num_fmt)
+                row += 1
+                worksheet.merge_range('B%s:D%s' % (row, row),
+                                config.get(cat, "desc"), stat_desc_fmt)
+
+        worksheet.write(row, 0, statistics.get("total", "-"), stat_ctot_fmt)
+        row += 1
+        worksheet.merge_range('B%s:D%s' % (row, row), "Total BOM Componets", stat_ltot_fmt)
+        row += 1
+
+    row += 2
+    # Note
     worksheet.write('A%s:%s%s' % (row, stop_col, row),
                     "NP=NOT POPULATE (NON MONTARE)!", info_fmt_red)
     row += 1
-
-    worksheet.write('A%s:%s%s' % (row, stop_col, row), "Statistics:", info_fmt)
-    if statistics is not None:
-        for i in statistics:
-            for c, col in enumerate(i):
-                worksheet.write(row, c, col, info_fmt)
-            row += 1
-
-    row += 1
-
     col = 0
     worksheet.write(row, col, "T.Qty", hdr_fmt)
     # fisrt colum is for total quantity.
@@ -311,7 +368,7 @@ def write_xls(
             row += 4
     else:
         # Start to write components on xlsx
-        categories = config.getCategories()
+        categories = config.categories()
         for key in categories:
             if key in items:
                 row += 1
@@ -327,7 +384,7 @@ def write_xls(
                             fmt = def_fmt
                             if not isinstance(
                                     col, int) and re.findall(
-                                    cfg.NP_REGEXP, col):
+                                        cfg.NP_REGEXP, col):
                                 fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if not isinstance(col, int):
