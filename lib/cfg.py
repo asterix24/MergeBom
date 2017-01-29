@@ -153,7 +153,7 @@ CATEGORY_NAMES_DEFAULT = [
         'name': 'Cristal',
         'desc': 'Cristal, quarz, oscillator',
         'group': [],
-        'ref': 'C',
+        'ref': 'Y',
     },
     {
         'name': 'IC',
@@ -200,7 +200,7 @@ class CfgMergeBom(object):
                             self.handler, terminal=self.terminal)
 
 
-    def checkGroup(self, group_key):
+    def check_category(self, group_key):
         if not group_key:
             return group_key
 
@@ -210,7 +210,7 @@ class CfgMergeBom(object):
 
         return None
 
-    def getCategories(self):
+    def categories(self):
         categories = []
         for item in self.category_names:
             if item['ref']:

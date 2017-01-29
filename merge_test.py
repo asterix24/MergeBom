@@ -386,7 +386,7 @@ class TestMergeBom(unittest.TestCase):
             stats['file_num'],
             sys.stdout,
             terminal=True)
-        categories = config.getCategories()
+        categories = config.categories()
         for i in stats.keys():
             if i in categories:
                 lib.info(
@@ -418,16 +418,10 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, config)
         d = m.merge()
         stats = m.statistics()
-        st = []
-        categories = config.getCategories()
-        for i in stats.keys():
-            if i in categories:
-                st.append((stats[i], config.get(i, 'desc')))
-        st.append((stats['total'], "Total"))
 
         file_list = map(os.path.basename, file_list)
         report.write_xls(d, file_list, config, "/tmp/uno.xlsx", hw_ver="13",
-                             pcb_ver="C", project="TEST", statistics=st)
+                             pcb_ver="C", project="TEST", statistics=stats)
 
     def test_cliMerge(self):
         outfilename = "/tmp/cli-merged.xlsx"

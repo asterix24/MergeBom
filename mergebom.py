@@ -66,7 +66,7 @@ class MergeBom (object):
         self.terminal = terminal
 
         self.config = config
-        self.categories = self.config.getCategories()
+        self.categories = self.config.categories()
 
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
@@ -161,7 +161,7 @@ class MergeBom (object):
                 c = re.search('^[a-zA-Z_]{1,3}', designator)
                 group_key = ''
                 if c is not None:
-                    group_key = self.config.checkGroup(c.group().upper())
+                    group_key = self.config.check_category(c.group().upper())
 
                     if not group_key:
                         lib.warning(
