@@ -421,8 +421,8 @@ if __name__ == "__main__":
                       default='version.txt', help="Version file.")
     parser.add_option(
         "-l",
-        "--list-version-prj",
-        dest="list_version_prj",
+        "--log-to-file",
+        dest="log_to_file",
         default=False,
         action="store_true",
         help="List all project name from version file.")
@@ -460,6 +460,10 @@ if __name__ == "__main__":
         help="Project date.")
 
     (options, args) = parser.parse_args()
+
+    log_handler = sys.stdout
+    if options.log_to_file:
+        log_handler = 
 
     lib.info(cfg.LOGO, sys.stdout, terminal=True, prefix="")
 

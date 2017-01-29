@@ -24,29 +24,6 @@ import re
 import datetime
 
 import cfg
-from termcolor import colored
-
-
-def printout(s, handler, prefix="> ", terminal=True, color='green'):
-    s = "%s %s\n" % (prefix, s)
-    if terminal:
-        s = colored(s, color)
-
-    handler.write(s)
-    handler.flush()
-
-
-def warning(s, handler, prefix=">> ", terminal=True):
-    printout(s, handler, prefix=prefix, terminal=terminal, color='yellow')
-
-
-def error(s, handler, prefix="!! ", terminal=True):
-    printout(s, handler, prefix=prefix, terminal=terminal, color='red')
-
-
-def info(s, handler, prefix="> ", terminal=True):
-    printout(s, handler, prefix=prefix, terminal=terminal, color='green')
-
 
 def order_designator(ref_str):
     ref_str = ref_str.replace(" ", "")

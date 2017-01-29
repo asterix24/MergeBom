@@ -25,12 +25,15 @@ Utils to generate and read excel BOM files.
 """
 
 import os
+import sys
 import re
 import datetime
 import xlrd
 import xlsxwriter
 import lib
 import cfg
+from termcolor import colored
+
 
 
 class Report(object):
@@ -38,87 +41,83 @@ class Report(object):
     Merge Bom report generator.
     """
 
-    def __init__(self, config, directory, logo=None, extra=None):
-
-        self.src_bom = None
-        self.config = config
-
-        self.report_file = os.path.join(directory, "mergebom_report.txt")
-        self.repf = open(self.report_file, 'w+')
-
-        if logo is not None:
-            self.repf.write(logo)
-            self.repf.write("\n")
-
-        self.repf.write("Report file.\n")
-        if extra is not None and "mergebom_version" in extra:
-            self.repf.write(
-                "MergeBom Version: %s\n" %
-                extra["mergebom_version"])
-
-        report_date = datetime.datetime.now()
-        self.repf.write("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
-        self.repf.write("." * 80)
-        self.repf.write("\n")
+    def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
+                 terminal=True):
+        self.terminal = terminal
+        self.report = None
+        self.log_on_file = log_on_file
+        if self.log_on_file:
+            self.report = open(logfile, 'w+')
 
     def __del__(self):
-        self.repf.flush()
-        self.repf.close()
+        if self.log_on_file:
+            self.report.flush()
+            self.report.close()
+
+    def __printout(self, s, prefix="", color=""):
+        s = "%s%s" % (prefix, s)
+        if self.terminal:
+            out = s
+            if color:
+                out = colored(out, color)
+            sys.stdout.write(out)
+            sys.stdout.flush()
+
+        if self.log_on_file:
+            self.report.write(s)
+            self.report.flush()
+
+    def write_logo(self):
+        logo = cfg.LOGO_SIMPLE
+        if self.terminal and not self.log_on_file:
+            logo = cfg.LOGO
+        self.__printout(logo, color='green')
 
     def write_header(self, conf_key, file_list):
         """
         Write BOM Header info in report file.
         """
-        self.repf.write("\n")
-        self.repf.write(":" * 80)
-        self.repf.write("Date: %s\n" % conf_key['date'])
-        self.repf.write("Project Name: %s\n" % conf_key['name'])
-        self.repf.write("Hardware Revision: %s\n" % conf_key['hw_ver'])
-        self.repf.write("PCB Revision: %s\n" % conf_key['pcb_ver'])
-        self.repf.write("\n")
 
-        self.repf.write("Bom Files:\n")
+        self.__printout("Report file.\n")
+        self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
+
+        report_date = datetime.datetime.now()
+        self.__printout("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
+        self.__printout("." * 80)
+        self.__printout("\n")
+        self.__printout("\n")
+        self.__printout(":" * 80)
+        self.__printout("Date: %s\n" % conf_key.get('date', '-'))
+        self.__printout("Project Name: %s\n" % conf_key.get('name','-'))
+        self.__printout("Hardware Revision: %s\n" % conf_key.get('hw_ver','-'))
+        self.__printout("PCB Revision: %s\n" % conf_key.get('pcb_ver','-'))
+        self.__printout("\n")
+
+        self.__printout("Bom Files:\n")
         for i in file_list:
-            self.repf.write(" - %s\n" % i)
+            self.__printout(" - %s\n" % i)
 
-        self.repf.write("\n== Check Merged items: ==\n")
-        self.repf.write("-" * 80)
-        self.repf.write("\n")
+        self.__printout("\n== Check Merged items: ==\n")
+        self.__printout("-" * 80)
+        self.__printout("\n")
 
     def write_stats(self, stats):
         """
         Write BOM component Statistics
         """
-        self.repf.write("\n\n")
-        self.repf.write("=" * 80)
-        self.repf.write("\n")
+        self.__printout("Total: %s\n" % stats['total'])
 
-        self.repf.write("File num: %s\n" % stats['file_num'])
-        #categories = self.config.categories()
-        # for i in stats.keys():
-        #    if i in categories:
-        #        self.repf.write(self.config.get(i, ) + "\n")
-        #        self.repf.write("%5.5s %5.5s\n" % (i, stats[i]))
+    def warning(self, s, prefix=">> "):
+        self.__printout(s, prefix=prefix, color='yellow')
 
-        self.repf.write("ADD STATS")
-        self.repf.write("\n")
-        self.repf.write("~" * 80)
-        self.repf.write("\n")
-        self.repf.write("Total: %s\n" % stats['total'])
 
-    def error(self, msg):
-        """
-        Write Error message in report file.
-        """
-        self.repf.write("Error:")
-        self.repf.write("%s", msg)
-        self.repf.write("\n")
+    def error(self, s, prefix="!! "):
+        self.__printout(s, prefix=prefix, color='red')
 
-    def handler(self):
-        """
-        Return report file handler
-        """
-        return self.repf
+
+    def info(self, s, prefix="> "):
+        self.__printout(s, prefix=prefix, color='green')
+
 
 
 def write_xls(
@@ -420,3 +419,14 @@ def read_xls(handler):
             data.append(values)
 
         return wb, data
+
+if __name__ == "__main__":
+
+    config = cfg.CfgMergeBom()
+    rep = Report(log_on_file=True)
+    rep.write_logo()
+    rep.write_header({},[])
+    rep.error("Errore..\n")
+    rep.info("Info..\n")
+    rep.warning("Warning..\n")
+
