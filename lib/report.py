@@ -295,25 +295,25 @@ def write_xls(
     row += 1
 
     # Statistics
-    worksheet.merge_range('A%s:%s%s' % (row, 'D', row), "Statistics", stat_hdr1_fmt)
+    worksheet.merge_range('A%s:%s%s' % (row, 'C', row), "Statistics", stat_hdr1_fmt)
     categories = config.categories()
     if statistics is not None:
         # Write description:
         worksheet.write(row, 0, statistics.get("file_num", "-"), stat_num_fmt)
         row += 1
-        worksheet.merge_range('B%s:D%s' % (row, row), "Merged Files Number", stat_desc_fmt)
+        worksheet.merge_range('B%s:C%s' % (row, row), "Merged Files Number", stat_desc_fmt)
         row += 1
-        worksheet.merge_range('A%s:D%s' % (row, row), "Components:", stat_hdr_fmt)
+        worksheet.merge_range('A%s:C%s' % (row, row), "Components:", stat_hdr_fmt)
         for cat in categories:
             if cat in statistics:
                 worksheet.write(row, 0, statistics[cat], stat_num_fmt)
                 row += 1
-                worksheet.merge_range('B%s:D%s' % (row, row),
+                worksheet.merge_range('B%s:C%s' % (row, row),
                                 config.get(cat, "desc"), stat_desc_fmt)
 
         worksheet.write(row, 0, statistics.get("total", "-"), stat_ctot_fmt)
         row += 1
-        worksheet.merge_range('B%s:D%s' % (row, row), "Total BOM Componets", stat_ltot_fmt)
+        worksheet.merge_range('B%s:C%s' % (row, row), "Total BOM Componets", stat_ltot_fmt)
         row += 1
 
     row += 2
