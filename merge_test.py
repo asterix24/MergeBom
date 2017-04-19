@@ -33,9 +33,12 @@ class TestMergeBom(unittest.TestCase):
 
     def __init__(self, testname):
         super(TestMergeBom, self).__init__(testname)
+        self.logger = None
+        self.config = None
 
     def setUp(self):
-        pass
+        self.logger = report.Report(log_on_file=True, terminal=True)
+        self.config = cfg.CfgMergeBom()
 
     def tearDown(self):
         pass
@@ -52,8 +55,7 @@ class TestMergeBom(unittest.TestCase):
             (4,),
         ]
 
-        config = cfg.CfgMergeBom()
-        l = MergeBom(file_list, config)
+        l = MergeBom(file_list, self.config, logger=self.logger)
         data = l.table_data()
         self.assertEqual(len(data), 3)
         for n, i in enumerate(data):
@@ -78,8 +80,7 @@ class TestMergeBom(unittest.TestCase):
             ],
         }
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -139,8 +140,7 @@ class TestMergeBom(unittest.TestCase):
             ],
         }
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -193,8 +193,7 @@ class TestMergeBom(unittest.TestCase):
                   u'Ceramic X7R 10V'],
                  ]
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
 
         # file_list = map(os.path.basename, file_list)
@@ -242,8 +241,7 @@ class TestMergeBom(unittest.TestCase):
             )
         }
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         k = m.diff()
 
         print
@@ -345,14 +343,13 @@ class TestMergeBom(unittest.TestCase):
             "test/bom_quattro.xls",
         ]
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
         report.write_xls(
             d,
             file_list,
-            config,
+            self.config,
             "/tmp/uno.xls",
             hw_ver="13",
             pcb_ver="C",
@@ -363,8 +360,7 @@ class TestMergeBom(unittest.TestCase):
             "test/bom-merged.xls",
         ]
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.extra_data()
         print d
         self.assertEqual(len(d), 1)
@@ -376,35 +372,18 @@ class TestMergeBom(unittest.TestCase):
             "test/bom-merged.xls",
         ]
 
-        lib.info(cfg.LOGO, sys.stdout, terminal=True, prefix="")
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        self.logger.info(cfg.LOGO)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         m.merge()
         stats = m.statistics()
-        lib.warning(
-            "File num: %s" %
-            stats['file_num'],
-            sys.stdout,
-            terminal=True)
-        categories = config.categories()
+        self.logger.warning("File num: %s" % stats['file_num'])
+        categories = self.config.categories()
         for i in stats.keys():
             if i in categories:
-                lib.info(
-                    config.get(
-                        i,
-                        'desc'),
-                    sys.stdout,
-                    terminal=True,
-                    prefix="- ")
-                lib.info(
-                    "%5.5s %5.5s" %
-                    (i, stats[i]), sys.stdout, terminal=True, prefix="  ")
+                self.logger.info(self.config.get(i, 'desc'))
+                self.logger.info("%5.5s %5.5s" % (i, stats[i]))
 
-        lib.warning(
-            "Total: %s" %
-            stats['total'],
-            sys.stdout,
-            terminal=True)
+        self.logger.warning("Total: %s" % stats['total'])
 
     def test_notPopulate(self):
         """
@@ -414,13 +393,12 @@ class TestMergeBom(unittest.TestCase):
             "test/bom-np.xls",
         ]
 
-        config = cfg.CfgMergeBom()
-        m = MergeBom(file_list, config)
+        m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
         stats = m.statistics()
 
         file_list = map(os.path.basename, file_list)
-        report.write_xls(d, file_list, config, "/tmp/uno.xlsx", hw_ver="13",
+        report.write_xls(d, file_list, self.config, "/tmp/uno.xlsx", hw_ver="13",
                              pcb_ver="C", project="TEST", statistics=stats)
 
     def test_cliMerge(self):
