@@ -25,26 +25,26 @@ import datetime
 
 import cfg
 
-def order_designator(ref_str):
+def order_designator(ref_str, logger):
     ref_str = ref_str.replace(" ", "")
     l = ref_str.split(",")
     try:
         d = sorted(l, key=lambda x: int(re.search('[0-9]+', x).group()))
     except TypeError:
-        error("Could not order Designators [%s]" % l)
+        logger.error("Could not order Designators [%s]\n" % l)
         sys.exit(1)
     return ", ".join(d)
 
 
-def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
+def value_toFloat(l, unit, logger):
     acc = 0
     value = "0"
     mult = 1
     div = 1
     if unit not in cfg.CATEGORY_TO_UNIT:
-        error(
-            "Unknow category [%s] allowed are[%s]" %
-            (unit, cfg.CATEGORY_TO_UNIT.keys()), handler, terminal=terminal)
+        logger.error(
+            "Unknow category [%s] allowed are[%s]\n" %
+            (unit, cfg.CATEGORY_TO_UNIT.keys()))
         sys.exit(1)
 
     # K is always chilo .. so fix case
@@ -77,9 +77,9 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
                 value = "0"
                 continue
             except ValueError as e:
-                error(
-                    "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" %
-                    (l, acc, mult, value, div, e), handler, terminal=terminal)
+                logger.error(
+                    "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" %
+                    (l, acc, mult, value, div, e))
                 sys.exit(1)
 
         if c in cfg.CATEGORY_TO_UNIT[unit]:
@@ -91,8 +91,8 @@ def value_toFloat(l, unit, handler=sys.stdout, terminal=True):
     try:
         value = acc * mult + float(value) * div
     except ValueError as e:
-        error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}" % (
-            l, acc, mult, value, div, e), handler, terminal=terminal)
+        logger.error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
+            l, acc, mult, value, div, e))
         return -2, l, note
 
     return value, cfg.CATEGORY_TO_UNIT[unit], note
@@ -127,11 +127,11 @@ def eng_string(x):
     return (sign, str(x3), exp3_text)
 
 
-def value_toStr(l, handler=sys.stdout, terminal=True):
+def value_toStr(l, logger):
     try:
         value, unit, note = l
     except ValueError as e:
-        error("Unpack error %s {%s}" % (l, e), handler, terminal=terminal)
+        logger.error("Unpack error %s {%s}\n" % (l, e))
         sys.exit(1)
 
     if value in [-1, -2]:

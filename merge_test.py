@@ -208,6 +208,83 @@ class TestMergeBom(unittest.TestCase):
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
 
+    def test_groupFmt(self):
+        file_list = [
+            "test/bom-fmt.xls",
+        ]
+
+        check = {
+            "10k" : (1, 9),
+            "fpf2124": (1, 1),
+            "txs0108e": (1, 1),
+            "1uf": (1, 3),
+            "tactile switch": (1, 1),
+            "100k": (1, 7),
+            "sp2526a-1en-l": (1, 1),
+            "b340a": (1, 1),
+            "wl1831mod": (1, 1),
+            "bridge diode": (1, 1),
+            "smbj28a": (1, 1),
+            "mbr120vlsft1g": (1, 2),
+            "np  (1k)": (1, 1),
+            "68k": (1, 31),
+            "np connector": (1, 1),
+            "connector": (11, 12),
+            "tvs array (we 82400152)": (1, 2),
+            "10uf": (1, 10),
+            "10nf": (1, 4),
+            "np": (1, 15),
+            "txb0108pw": (1, 1),
+            "np  (irlml6402)": (1, 1),
+            "led": (1, 5),
+            "develboard": (1, 1),
+            "ld29150dt33r": (1, 1),
+            "220h ohm @ 100mhz": (1, 14),
+            "100nf": (1, 30),
+            "6.8r": (1, 3),
+            "ft232rq": (1, 1),
+            "line filter (we 744232090)": (1, 2),
+            "np  (220 ohm @ 100mhz)": (1, 1),
+            "100uf": (2, 2),
+            "lm22670mre-5.0/nopb": (1, 1),
+            "0r": (1, 1),
+            "4.7uf": (2, 2),
+            "np  (100nf)": (1, 1),
+            "180h @ 100mhz": (1, 3),
+            "470r": (1, 3),
+            "lm1117-18": (1, 1),
+            "np  (10k)": (1, 1),
+            "10uh  we 74437334100": (1, 1),
+            "32.768khz oscillator": (1, 1),
+        }
+
+        m = MergeBom(file_list, self.config, logger=self.logger)
+        d = m.merge()
+
+        test_dict = {}
+        row_count = 0
+        count = 0
+        for i in d.keys():
+            for n, j in enumerate(d[i]):
+                key = j[3].lower().strip()
+                if key in test_dict:
+                    row_count, count = test_dict[key]
+                    row_count += 1
+                    count += j[0]
+                    test_dict[key] = (row_count, count)
+                else:
+                    test_dict[key] = (1, j[0])
+
+        for k in test_dict.keys():
+            #print "\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1])
+            print "T > %20.20s | row count %5.5s | count %5.5s |" % (k, test_dict[k][0], test_dict[k][1])
+            print "C < %20.20s | row count %5.5s | count %5.5s |" % (k, check[k][0], check[k][1])
+
+            self.assertEqual(check[k][0], test_dict[k][0], \
+                             "Unable to merge row whit differt componet value. [%s]" % k)
+            self.assertEqual(check[k][1], test_dict[k][1], \
+                             "Unable to merge row whit differt componet value. [%s]" % k)
+
     def test_diff(self):
         file_list = [
             "test/bomdiff1.xlsx",
@@ -269,7 +346,7 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         for n, i in enumerate(test):
-            l = lib.order_designator(i)
+            l = lib.order_designator(i, self.logger)
             self.assertEqual(l, check[n])
 
     def test_valueToFloat(self):
@@ -296,7 +373,7 @@ class TestMergeBom(unittest.TestCase):
         for k, m in enumerate(test):
             l = []
             for mm in m[1]:
-                a, b, c = lib.value_toFloat(mm, m[0])
+                a, b, c = lib.value_toFloat(mm, m[0], self.logger)
                 l.append((a, b))
 
             l = sorted(l, key=lambda x: x[0])
@@ -328,7 +405,7 @@ class TestMergeBom(unittest.TestCase):
 
         for k, l in enumerate(test):
             for n, m in enumerate(l):
-                l = lib.value_toStr(m)
+                l = lib.value_toStr(m, self.logger)
                 self.assertTrue(l)
 
                 print l, "->", check[k][n]
@@ -492,6 +569,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
+    suite.addTest(TestMergeBom("test_groupFmt"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)

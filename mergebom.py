@@ -214,6 +214,11 @@ class MergeBom (object):
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
 
+                    # Fix Designator
+                    if category in ["R", "C", "L", "Y"]:
+                        tmp_comment = lib.value_toFloat(item[COMMENT], category, self.logger)
+                        item[COMMENT] = lib.value_toStr(tmp_comment, self.logger)
+
                     # Fix Not poluate string in list
                     for rexp in cfg.NOT_POPULATE_KEY:
                         item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
@@ -273,7 +278,8 @@ class MergeBom (object):
                         tmp[key][curr_file_index] += item[QUANTITY]
                         tmp[key][
                             self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                        tmp[key][self.TABLE_DESIGNATOR] = lib.order_designator(tmp[key][self.TABLE_DESIGNATOR])
+                        tmp[key][self.TABLE_DESIGNATOR] = lib.order_designator(
+                            tmp[key][self.TABLE_DESIGNATOR], self.logger)
                     else:
                         row = [item[QUANTITY]] + \
                             [0] * len(self.files) + \
@@ -301,22 +307,24 @@ class MergeBom (object):
             if category in self.table:
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
-                        lib.order_designator(item[self.TABLE_DESIGNATOR])
+                        lib.order_designator(item[self.TABLE_DESIGNATOR], self.logger)
 
+                # Convert all designator in a number to be ordered
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
                         m[self.TABLE_COMMENT] = lib.value_toFloat(
-                            m[self.TABLE_COMMENT], category)
+                            m[self.TABLE_COMMENT], category, self.logger)
                         # print m[COMMENT], key
 
                 self.table[category] = sorted(
                     self.table[category], key=lambda x: x[
                         self.TABLE_COMMENT])
 
+                # Convert all ORDERED designator in a numeric format
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
                         m[self.TABLE_COMMENT] = lib.value_toStr(
-                            m[self.TABLE_COMMENT], category)
+                            m[self.TABLE_COMMENT], self.logger)
                         # print m[self.TABLE_COMMENT], category
 
         return self.table
