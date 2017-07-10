@@ -484,6 +484,9 @@ class TestMergeBom(unittest.TestCase):
                                        "mergebom.py",
                                        "-o",
                                        outfilename,
+                                       "-r", "0",
+                                       "-w", "S",
+                                       "-n", "Test project",
                                        "test/cli-merge0.xlsx",
                                        "test/cli-merge1.xlsx"],
                                       stderr=subprocess.STDOUT)
@@ -500,6 +503,9 @@ class TestMergeBom(unittest.TestCase):
                                        "mergebom.py",
                                        "-o",
                                        outfilename,
+                                       "-r", "23",
+                                       "-w", "T",
+                                       "-n", "Test project diff",
                                        "-d",
                                        "test/cli-merge-diff0.xlsx",
                                        "test/cli-merge-diff1.xlsx"],
@@ -531,6 +537,9 @@ class TestMergeBom(unittest.TestCase):
     def test_cliMergeGlob(self):
         outfilename = "/tmp/cli-mergedGlob.xlsx"
         out = subprocess.check_output(["python", "mergebom.py",
+                                       "-r", "53",
+                                       "-w", "O",
+                                       "-n", "Test project glob",
                                        "-o", outfilename, "-p", "test/glob/"],
                                       stderr=subprocess.STDOUT)
 

@@ -424,11 +424,11 @@ if __name__ == "__main__":
         default=True,
         help="Remove all boms files after merge (only when using version file)")
     parser.add_option("-r", "--bom-revision", dest="bom_rev",
-                      default='0', help="Hardware BOM revision")
+                      default=None, help="Hardware BOM revision")
     parser.add_option("-w", "--bom-pcb-revision", dest="bom_pcb_ver",
-                      default='0', help="PCB Revision")
+                      default=None, help="PCB Revision")
     parser.add_option("-n", "--bom-prj-name", dest="bom_prj_name",
-                      default='MyProject', help="Project names.")
+                      default=None, help="Project names.")
     parser.add_option(
         "-t",
         "--bom-date",
@@ -510,14 +510,13 @@ if __name__ == "__main__":
             pcb_ver = bom_info[prj]["pcb_ver"]
 
             report.write_xls(d,
-                                 map(os.path.basename,
-                                     file_list),
-                                 config,
-                                 outfilename,
-                                 hw_ver=hw_ver,
-                                 pcb_ver=pcb_ver,
-                                 project=name,
-                                 statistics=stats)
+                             map(os.path.basename, file_list),
+                             config,
+                             outfilename,
+                             hw_ver=hw_ver,
+                             pcb_ver=pcb_ver,
+                             project=name,
+                             statistics=stats)
 
             if os.path.isfile(outfilename):
                 if options.replace_merged:
@@ -566,6 +565,17 @@ if __name__ == "__main__":
 
     d = m.merge()
     stats = m.statistics()
+
+    if options.bom_rev is None \
+            or options.bom_pcb_ver is None \
+            or options.bom_prj_name is None:
+        logger.error("\nYou should specify some missing parameter:\n")
+        logger.error("- project name: %s\n" % options.bom_prj_name)
+        logger.error("- hw verion: %s\n" % options.bom_rev)
+        logger.error("- pcb version: %s\n" % options.bom_pcb_ver)
+        sys.exit(1)
+
+
     report.write_xls(
         d,
         file_list,
