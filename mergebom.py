@@ -33,6 +33,7 @@ DESIGNATOR = 2
 DESCRIPTION = 3
 COMMENT = 4
 FOOTPRINT = 5
+FARNELL = 6
 
 
 class MergeBom (object):
@@ -111,6 +112,7 @@ class MergeBom (object):
                 comment = header['comment']
                 footprint = header['footprint']
                 description = header['description']
+                farnell = header['farnell']
             except KeyError as e:
                 self.logger.error("No key header found! [%s]\n" % e)
                 self.logger.warning("Valid are:")
@@ -144,7 +146,8 @@ class MergeBom (object):
                                 r,  # designator
                                 row[description],
                                 row[comment],
-                                row[footprint]
+                                row[footprint],
+                                row[farnell]
                             ]
 
             self.table_list.append(table_dict)
@@ -206,6 +209,7 @@ class MergeBom (object):
         self.TABLE_COMMENT = self.TABLE_DESIGNATOR + 1
         self.TABLE_FOOTPRINT = self.TABLE_COMMENT + 1
         self.TABLE_DESCRIPTION = self.TABLE_FOOTPRINT + 1
+        self.TABLE_FARNELL = self.TABLE_DESCRIPTION + 1
 
         self.stats['total'] = 0
         for category in self.categories:
@@ -213,7 +217,6 @@ class MergeBom (object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
-
                     # Fix Designator
                     if category in ["R", "C", "L", "Y"]:
                         tmp_comment = lib.value_toFloat(item[COMMENT], category, self.logger)
@@ -245,12 +248,12 @@ class MergeBom (object):
                             (key, item[COMMENT]))
 
                     if category == 'D' and "LED" in item[FOOTPRINT]:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        key = item[DESCRIPTION] + item[FOOTPRINT] 
                         item[COMMENT] = "LED"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
-
+                    
                     if category == 'S' and "TACTILE" in item[FOOTPRINT]:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        key = item[DESCRIPTION] + item[FOOTPRINT] 
                         item[COMMENT] = "Tactile Switch"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
@@ -258,9 +261,10 @@ class MergeBom (object):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
+
                     else:
                         key = item[DESCRIPTION] + \
-                            item[COMMENT] + item[FOOTPRINT]
+                            item[COMMENT] + item[FOOTPRINT] + item[FARNELL]
 
                     # print key
                     # print "<<", item[DESIGNATOR]
@@ -287,8 +291,9 @@ class MergeBom (object):
                                 item[DESIGNATOR],
                                 item[COMMENT],
                                 item[FOOTPRINT],
-                                item[DESCRIPTION]
-                        ]
+                                item[DESCRIPTION],
+                                item[FARNELL],
+                            ]
 
                         row[curr_file_index] = item[QUANTITY]
                         tmp[key] = row
