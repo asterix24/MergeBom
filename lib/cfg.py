@@ -75,6 +75,7 @@ VALID_KEYS = [
     u'comment',
     u'footprint',
     u'description',
+    u'farnell',
 ]
 
 EXTRA_KEYS = [

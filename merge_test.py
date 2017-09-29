@@ -61,6 +61,37 @@ class TestMergeBom(unittest.TestCase):
         for n, i in enumerate(data):
             self.assertEqual(len(i), check[n][0])
 
+    def test_farnell(self):
+        file_list = [
+            "test/bom_farnell.xls"
+        ]
+        check = {
+            'J': [
+                [1, 1, u'J1', u'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD', u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm', u'refSocket']
+            ],
+            'D': [
+                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)', u'refSchkotty2'],
+                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier', u'refSchkotty'],
+                [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual', u'refDiodeDual'],
+                [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red', u'refRed'],
+                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green', u"refGreen"],
+                [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single', u"refDiodeSingle"],
+            ],
+        }
+
+        m = MergeBom(file_list, self.config, logger=self.logger)
+        d = m.merge()
+
+        # file_list = map(os.path.basename, file_list)
+        # stats = report.write_xls(h, d, file_list, "/tmp/uno.xls")
+
+        for category in d.keys():
+            for n, i in enumerate(d[category]):
+                print "T >", i
+                print "C <", check[category][n]
+                self.assertEqual(i, check[category][n])
+
+
     def test_led(self):
         file_list = [
             "test/bomled.xls",
@@ -579,6 +610,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
     suite.addTest(TestMergeBom("test_groupFmt"))
+    suite.addTest(TestMergeBom("test_farnell"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
