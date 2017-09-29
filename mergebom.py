@@ -217,7 +217,6 @@ class MergeBom (object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
-
                     # Fix Designator
                     if category in ["R", "C", "L", "Y"]:
                         tmp_comment = lib.value_toFloat(item[COMMENT], category, self.logger)
@@ -249,14 +248,12 @@ class MergeBom (object):
                             (key, item[COMMENT]))
 
                     if category == 'D' and "LED" in item[FOOTPRINT]:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        key = item[DESCRIPTION] + item[FOOTPRINT] 
                         item[COMMENT] = "LED"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
                     
-                    
-
                     if category == 'S' and "TACTILE" in item[FOOTPRINT]:
-                        key = item[DESCRIPTION] + item[FOOTPRINT]
+                        key = item[DESCRIPTION] + item[FOOTPRINT] 
                         item[COMMENT] = "Tactile Switch"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
@@ -264,9 +261,10 @@ class MergeBom (object):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
                         self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
+
                     else:
                         key = item[DESCRIPTION] + \
-                            item[COMMENT] + item[FOOTPRINT]
+                            item[COMMENT] + item[FOOTPRINT] + item[FARNELL]
 
                     # print key
                     # print "<<", item[DESIGNATOR]
