@@ -549,6 +549,25 @@ class TestMergeBom(unittest.TestCase):
             "Merged File not generated")
         os.remove(outfilename)
 
+    def test_categoryGroup(self):
+        file_list = [
+            "test/category_sysexit.xls",
+        ]
+
+        with self.assertRaises(SystemExit):
+            print "Test should make sys Exit for not founded key."
+            m = MergeBom(file_list, self.config, logger=self.logger)
+            d = m.merge()
+
+        file_list = [
+            "test/category.xls",
+        ]
+
+        m = MergeBom(file_list, self.config, logger=self.logger)
+        d = m.merge()
+        key = d.get('F', None)
+        self.assertIsNotNone(key, "Check Category non found..")
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
@@ -579,6 +598,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
     suite.addTest(TestMergeBom("test_groupFmt"))
+    suite.addTest(TestMergeBom("test_categoryGroup"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)

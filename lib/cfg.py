@@ -111,7 +111,7 @@ CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Fuses',
         'desc': 'Fuses discrete components',
-        'group': ['g'],
+        'group': ['FU'],
         'ref': 'F',
     },
     {

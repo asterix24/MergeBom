@@ -165,15 +165,15 @@ class MergeBom (object):
                 if c is not None:
                     group_key = self.config.check_category(c.group().upper())
 
-                    if not group_key:
-                        self.logger.warning("WARNING!! KEY SKIPPED [%s]\n" % group_key)
-                        continue
-
                     if group_key is None:
                         self.logger.error("GROUP key not FOUND!\n")
                         self.logger.error( "%s, %s, %s\n" % (c.group(), designator,
                              table_dict[designator]))
                         sys.exit(1)
+
+                    if group_key == '':
+                        self.logger.warning("WARNING!! KEY SKIPPED [%s]\n" % group_key)
+                        continue
 
                     if group_key in self.grouped_items:
                         self.grouped_items[group_key].append(
