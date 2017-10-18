@@ -49,6 +49,9 @@ def value_toFloat(l, unit, logger):
 
     # K is always chilo .. so fix case
     l = l.replace("K", "k")
+    # herz
+    l = l.replace("HZ", "Hz")
+    l = l.replace("hz", "Hz")
 
     # manage correctly NP value
     for n in cfg.NOT_POPULATE_KEY:
@@ -149,8 +152,12 @@ def value_toStr(l, logger):
         number = re.sub(r"\.0+$", '', number)
 
     elif notation in ["k", "M", "G", "T", "P", "E", "Z", "Y"]:
-        number = number.replace(".", notation)
-        number = number.rstrip("0")
+        if unit in ['Hz']:
+            number = number.rstrip(".0")
+            number += notation
+        else:
+            number = number.replace(".", notation)
+            number = number.rstrip("0")
 
         if unit == "ohm":
             unit = ""
