@@ -538,6 +538,18 @@ class TestMergeBom(unittest.TestCase):
 
         self.assertEqual(retcode, 1)
 
+        out = subprocess.check_call(["python",
+                                     "mergebom.py",
+                                     "-o",
+                                     outfilename,
+                                     "-d",
+                                     "test/diff_test_old.xlsx",
+                                     "test/diff_test_new.xlsx"],
+                                    stderr=subprocess.STDOUT)
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged diff File not generated")
+
     def test_cliMergeGlob(self):
         outfilename = "/tmp/cli-mergedGlob.xlsx"
         out = subprocess.check_output(["python", "mergebom.py",

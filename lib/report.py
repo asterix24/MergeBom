@@ -149,15 +149,21 @@ def write_xls(
     HDR_ROW = 0
     STR_COL = 0
 
-    A_BOM = "OLD << "
-    B_BOM = "NEW >> "
+    A_BOM = "FILE A << "
+    B_BOM = "FILE B >> "
 
     if diff:
         if extra_data is not None:
-            print extra_data
-            for item in extra_data:
-                if not item:
-                    item['revision'] = "0"
+            A_hw_diff = "file-a"
+            B_hw_diff = "file-b"
+            A_pcb_diff = "file-a"
+            B_pcb_diff = "file-b"
+
+            if len(extra_data) > 1:
+                A_hw_diff = extra_data[0].get("hardware_version", "-")
+                B_hw_diff = extra_data[1].get("hardware_version", "-")
+                A_pcb_diff = extra_data[0].get("pcb_version", "-")
+                B_pcb_diff = extra_data[1].get("pcb_version", "-")
 
     # Create a workbook and add a worksheet.
     workbook = xlsxwriter.Workbook(handler)
@@ -263,8 +269,12 @@ def write_xls(
             '',
             'Project: %s' % project,
             '',
-            'Old Revision: %s' % extra_data[0]['hardware_version'],
-            'New Revision: %s' % extra_data[1]['hardware_version'],
+            'File A:',
+            '   Hw_rev:  %s' % A_hw_diff,
+            '   PCB_rev: %s' % A_pcb_diff,
+            'File B:',
+            '   Hw_rev:  %s' % B_hw_diff,
+            '   PCB_rev: %s' % B_pcb_diff,
             '',
             'BOM files:',
         ]
@@ -355,11 +365,8 @@ def write_xls(
                 'A%s:J%s' %
                 (row, row), "%s" %
                 row, diff_sep_fmt)
-            A = [i, A_BOM, extra_data[0]['hardware_version'].upper()] + items[i][0][2:]
-            B = [i, B_BOM, extra_data[1]['hardware_version'].upper()] + items[i][1][2:]
-            #error("%s %s %s" % (i, A_BOM, A), handler, terminal=False)
-            #warning("%s %s %s" % (i, B_BOM, B), handler, terminal=False)
-            #info("~" * 80, handler, terminal=False, prefix="")
+            A = [i, A_BOM, A_hw_diff.upper()] + items[i][0][2:]
+            B = [i, B_BOM, A_hw_diff.upper()] + items[i][1][2:]
 
             for n, a in enumerate(A):
                 worksheet.write(row, n, a, diffa_fmt)
