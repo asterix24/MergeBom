@@ -154,6 +154,7 @@ def write_xls(
 
     if diff:
         if extra_data is not None:
+            print extra_data
             for item in extra_data:
                 if not item:
                     item['revision'] = "0"
@@ -262,8 +263,8 @@ def write_xls(
             '',
             'Project: %s' % project,
             '',
-            'Old Revision: %s' % extra_data[0]['revision'],
-            'New Revision: %s' % extra_data[1]['revision'],
+            'Old Revision: %s' % extra_data[0]['hardware_version'],
+            'New Revision: %s' % extra_data[1]['hardware_version'],
             '',
             'BOM files:',
         ]
@@ -354,8 +355,8 @@ def write_xls(
                 'A%s:J%s' %
                 (row, row), "%s" %
                 row, diff_sep_fmt)
-            A = [i, A_BOM, extra_data[0]['revision'].upper()] + items[i][0][2:]
-            B = [i, B_BOM, extra_data[1]['revision'].upper()] + items[i][1][2:]
+            A = [i, A_BOM, extra_data[0]['hardware_version'].upper()] + items[i][0][2:]
+            B = [i, B_BOM, extra_data[1]['hardware_version'].upper()] + items[i][1][2:]
             #error("%s %s %s" % (i, A_BOM, A), handler, terminal=False)
             #warning("%s %s %s" % (i, B_BOM, B), handler, terminal=False)
             #info("~" * 80, handler, terminal=False, prefix="")
