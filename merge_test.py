@@ -25,6 +25,13 @@ import subprocess
 from lib import cfg, report, lib
 from mergebom import MergeBom
 
+def dump(d):
+    for i in d:
+        print "Key: %s" % i
+        print "Rows [%d]:" % len(d[i])
+        for j in d[i]:
+            print j
+        print "-" * 80
 
 class TestMergeBom(unittest.TestCase):
     """
@@ -584,6 +591,38 @@ class TestMergeBom(unittest.TestCase):
         key = d.get('F', None)
         self.assertIsNotNone(key, "Check Category non found..")
 
+    def test_otherColumn(self):
+        file_list = [
+            "test/column.xlsx",
+        ]
+
+        check = {'C': [
+                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
+                    [1, 1, u'C2', '100nF', '805', u'x5r'],
+                    [10, 10, u'C3, C4, C5, C6, C7, C8, C9, C10, C11, C12', '100nF',
+                     '805', u'x7r'],
+                ],
+                'U': [
+                    [1, 1, u'u1', u'lm75', u'soic', u'temp']
+                 ]
+        }
+        m = MergeBom(file_list, self.config, logger=self.logger)
+        d = m.merge()
+
+        # file_list = map(os.path.basename, file_list)
+        # stats = report.write_xls(h, d, file_list, "/tmp/uno.xls")
+
+        print
+        dump(d)
+        for i in d.keys():
+            for n, j in enumerate(d[i]):
+                print "T >", j
+                print "C <", check[i][n]
+                for m, c in enumerate(check[i][n]):
+                    print "T >", c
+                    print "C <", j[m]
+                    self.assertEqual(c, j[m])
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
@@ -598,23 +637,24 @@ if __name__ == "__main__":
     print args
 
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_rele"))
-    suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
-    suite.addTest(TestMergeBom("test_outFile"))
-    suite.addTest(TestMergeBom("test_mergedFile"))
-    suite.addTest(TestMergeBom("test_stats"))
-    suite.addTest(TestMergeBom("test_valueToFloat"))
-    suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_notPopulate"))
-    suite.addTest(TestMergeBom("test_cliMerge"))
-    suite.addTest(TestMergeBom("test_cliMergeDiff"))
-    suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    suite.addTest(TestMergeBom("test_groupFmt"))
-    suite.addTest(TestMergeBom("test_categoryGroup"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_group"))
+    #suite.addTest(TestMergeBom("test_led"))
+    #suite.addTest(TestMergeBom("test_rele"))
+    #suite.addTest(TestMergeBom("test_diff"))
+    #suite.addTest(TestMergeBom("test_orderRef"))
+    #suite.addTest(TestMergeBom("test_outFile"))
+    #suite.addTest(TestMergeBom("test_mergedFile"))
+    #suite.addTest(TestMergeBom("test_stats"))
+    #suite.addTest(TestMergeBom("test_valueToFloat"))
+    #suite.addTest(TestMergeBom("test_floatToValue"))
+    #suite.addTest(TestMergeBom("test_notPopulate"))
+    #suite.addTest(TestMergeBom("test_cliMerge"))
+    #suite.addTest(TestMergeBom("test_cliMergeDiff"))
+    #suite.addTest(TestMergeBom("test_cliMergeGlob"))
+    #suite.addTest(TestMergeBom("test_groupFmt"))
+    #suite.addTest(TestMergeBom("test_categoryGroup"))
+    suite.addTest(TestMergeBom("test_otherColumn"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)

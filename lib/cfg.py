@@ -77,6 +77,11 @@ VALID_KEYS = [
     u'description',
 ]
 
+VALID_KEYS_CODES = [
+    u'_note_',
+    u'_code_',
+]
+
 EXTRA_KEYS = [
     u'date',
     u'project',
@@ -98,9 +103,7 @@ CATEGORY_NAMES_DEFAULT = [
             'SCR',
             'SPA',
             # Battery
-            'BAT',
-            # Buzzer
-            'BUZ',
+            'BAT', # Buzzer 'BUZ',
             # Buttons
             'BT',
             'B',
