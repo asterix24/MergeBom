@@ -598,12 +598,15 @@ class TestMergeBom(unittest.TestCase):
 
         check = {'C': [
                     [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
-                    [1, 1, u'C2', '100nF', '805', u'x5r'],
+                    [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
                     [10, 10, u'C3, C4, C5, C6, C7, C8, C9, C10, C11, C12', '100nF',
-                     '805', u'x7r'],
+                     '805', u'x7r', u'123; 456', u'altro', u'abc', u'code abc'],
                 ],
                 'U': [
-                    [1, 1, u'u1', u'lm75', u'soic', u'temp']
+                    [2, 2, u'u2, u3', u'lm2902', u'soic', u'Op-amp', u'aa',
+                     u'Aa-bb; bb', u'cc', u'dd'],
+                    [1, 1, u'u1', u'lm75', u'soic', u'temp', u'uno', u'due',
+                     u'tre', u'quattro']
                  ]
         }
         m = MergeBom(file_list, self.config, logger=self.logger)
@@ -618,6 +621,7 @@ class TestMergeBom(unittest.TestCase):
             for n, j in enumerate(d[i]):
                 print "T >", j
                 print "C <", check[i][n]
+                self.assertEqual(len(j), len(check[i][n]))
                 for m, c in enumerate(check[i][n]):
                     print "T >", c
                     print "C <", j[m]

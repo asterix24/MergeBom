@@ -34,6 +34,14 @@ DESCRIPTION = 3
 COMMENT = 4
 FOOTPRINT = 5
 
+def dump(d):
+    for i in d:
+        print "Key: %s" % i
+        print "Rows [%d]:" % len(d[i])
+        for j in d[i]:
+            print j
+        print "-" * 80
+
 
 class MergeBom (object):
     def __init__(self, list_bom_files, config, logger=None, terminal=True):
@@ -60,6 +68,7 @@ class MergeBom (object):
         self.files = {}
         self.table_list = []
         self.extra_keys = []
+        self.extra_column = []
         self.stats = {}
         self.terminal = terminal
 
@@ -94,6 +103,15 @@ class MergeBom (object):
                     # search header to import corretly all data
                     if item.lower() in cfg.VALID_KEYS:
                         header[item.lower()] = n
+
+                    # Search others marked columns to add to BOM
+                    words = re.findall(r'\b\S+\b', item)
+                    for w in cfg.VALID_KEYS_CODES:
+                        if w in words:
+                            item = item.replace(w, '')
+                            item = "%s %s" % (w.capitalize(), item.strip())
+                            self.extra_column.append((w, n))
+                            #print "%s %s" % (item, n)
 
                     # search extra data, like project name and revision
                     k = ""
@@ -132,9 +150,10 @@ class MergeBom (object):
                     if re.findall("\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
 
-                        # Explode designator field to have one component for
-                        # line
+                    # Explode designator field to have one component for
+                    # line
                     d = row[designator].split(',')
+
                     for reference in d:
                         r = reference.replace(' ', '')
                         if r:
@@ -146,6 +165,8 @@ class MergeBom (object):
                                 row[comment],
                                 row[footprint]
                             ]
+                            for ex in self.extra_column:
+                                table_dict[r].append(row[ex[1]])
 
             self.table_list.append(table_dict)
 
@@ -159,7 +180,7 @@ class MergeBom (object):
         self.grouped_items = {}
         for table_dict in self.table_list:
             for designator in table_dict.keys():
-                # Grop found designator componets by its category
+                # Group found designator componets by its category
                 c = re.search('^[a-zA-Z_]{1,3}', designator)
                 group_key = ''
                 if c is not None:
@@ -168,7 +189,7 @@ class MergeBom (object):
                     if group_key is None:
                         self.logger.error("GROUP key not FOUND!\n")
                         self.logger.error( "%s, %s, %s\n" % (c.group(), designator,
-                             table_dict[designator]))
+                                                             table_dict[designator]))
                         sys.exit(1)
 
                     if group_key == '':
@@ -242,7 +263,7 @@ class MergeBom (object):
                             item[COMMENT] = "Connector"
 
                         self.logger.warning("Merged key: %s (%s)\n" %
-                            (key, item[COMMENT]))
+                                            (key, item[COMMENT]))
 
                     if category == 'D' and "LED" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
@@ -272,14 +293,31 @@ class MergeBom (object):
                         item[FILENAME]] + self.TABLE_TOTALQTY + 1
 
                     if key in tmp:
-                        # print "UPD", tmp[key], curr_file_index,
-                        # item[FILENAME]
                         tmp[key][self.TABLE_TOTALQTY] += item[QUANTITY]
                         tmp[key][curr_file_index] += item[QUANTITY]
                         tmp[key][
                             self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
                         tmp[key][self.TABLE_DESIGNATOR] = lib.order_designator(
                             tmp[key][self.TABLE_DESIGNATOR], self.logger)
+
+                        for ex in self.extra_column:
+                            # We add 1 because the table now contain also the
+                            # file name, see init function in code that import
+                            # data.
+                            col_id = ex[1] + 1
+                            try:
+                                raw_value = item[col_id].strip()
+                                if tmp[key][col_id] == "":
+                                    tmp[key][col_id] = raw_value
+                                else:
+                                    if raw_value != "":
+                                        words = re.findall(r'\b\S+\b', tmp[key][col_id])
+                                        if not raw_value in words:
+                                            tmp[key][col_id] += "; " + raw_value
+
+                            except IndexError:
+                                print "Error! Impossible to update extra column. This as bug!"
+                                sys.exit(1)
                     else:
                         row = [item[QUANTITY]] + \
                             [0] * len(self.files) + \
@@ -288,9 +326,19 @@ class MergeBom (object):
                                 item[COMMENT],
                                 item[FOOTPRINT],
                                 item[DESCRIPTION]
-                        ]
+                            ]
 
                         row[curr_file_index] = item[QUANTITY]
+
+                        # Add extra column to row if they are present in source
+                        # file
+                        for ex in self.extra_column:
+                            # We add 1 because the table now contain also the
+                            # file name, see init function in code that import
+                            # data.
+                            row.append(item[ex[1] + 1])
+
+
                         tmp[key] = row
                         # print "NEW", tmp[key], curr_file_index,
                         # item[FILENAME]
@@ -457,8 +505,8 @@ if __name__ == "__main__":
 
         # search version file
         logger.info("Search version file [%s] in [%s]:\n" %
-            (options.version_file,
-             options.search_dir))
+                    (options.version_file,
+                     options.search_dir))
 
         # Get bom file list from version.txt
         """

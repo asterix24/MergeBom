@@ -78,8 +78,8 @@ VALID_KEYS = [
 ]
 
 VALID_KEYS_CODES = [
-    u'_note_',
-    u'_code_',
+    u'CODE',
+    u'NOTE',
 ]
 
 EXTRA_KEYS = [
