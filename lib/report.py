@@ -366,7 +366,7 @@ def write_xls(
                 (row, row), "%s" %
                 row, diff_sep_fmt)
             A = [i, A_BOM, A_hw_diff.upper()] + items[i][0][2:]
-            B = [i, B_BOM, A_hw_diff.upper()] + items[i][1][2:]
+            B = [i, B_BOM, B_hw_diff.upper()] + items[i][1][2:]
 
             for n, a in enumerate(A):
                 worksheet.write(row, n, a, diffa_fmt)
