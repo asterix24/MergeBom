@@ -110,7 +110,7 @@ class MergeBom (object):
                         if w in words:
                             item = item.replace(w, '')
                             item = "%s %s" % (w.capitalize(), item.strip())
-                            self.extra_column.append((w, n))
+                            self.extra_column.append((item, n))
                             #print "%s %s" % (item, n)
 
                     # search extra data, like project name and revision
@@ -175,6 +175,9 @@ class MergeBom (object):
 
     def extra_data(self):
         return self.extra_keys
+
+    def header_data(self):
+        return cfg.VALID_KEYS + [k for k, _ in self.extra_column ]
 
     def group(self):
         self.grouped_items = {}
@@ -564,7 +567,8 @@ if __name__ == "__main__":
                              hw_ver=hw_ver,
                              pcb_ver=pcb_ver,
                              project=name,
-                             statistics=stats)
+                             statistics=stats,
+                             headers= m.header_data())
 
             if os.path.isfile(outfilename):
                 if options.replace_merged:
@@ -608,7 +612,8 @@ if __name__ == "__main__":
             config,
             options.out_filename,
             diff=True,
-            extra_data=l)
+            extra_data=l,
+            headers=m.header_data())
         sys.exit(0)
 
     d = m.merge()
@@ -632,4 +637,6 @@ if __name__ == "__main__":
         hw_ver=options.bom_rev,
         pcb_ver=options.bom_pcb_ver,
         project=options.bom_prj_name,
-        statistics=stats)
+        statistics=stats,
+        headers=m.header_data())
+

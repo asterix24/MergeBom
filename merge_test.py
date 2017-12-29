@@ -627,6 +627,23 @@ class TestMergeBom(unittest.TestCase):
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
 
+        outfilename = "/tmp/extra_column.xlsx"
+        out = subprocess.check_output(["python",
+                                       "mergebom.py",
+                                       "-o",
+                                       outfilename,
+                                       "-r", "0",
+                                       "-w", "S",
+                                       "-n", "Test project",
+                                       "test/column.xlsx"],
+                                       stderr=subprocess.STDOUT)
+
+        print out
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged File not generated")
+        os.remove(outfilename)
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
