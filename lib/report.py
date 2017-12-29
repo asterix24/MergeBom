@@ -130,7 +130,8 @@ def write_xls(
         project="MyProject",
         diff=False,
         extra_data=None,
-        statistics=None):
+        statistics=None,
+        headers=cfg.VALID_KEYS):
     """
     Write merged BOM in excel file.
 
@@ -297,7 +298,7 @@ def write_xls(
 
     # Compute colum len to merge for header
     #stop_col = 'F'
-    stop_col = chr(ord('A') + len(file_list + cfg.VALID_KEYS))
+    stop_col = chr(ord('A') + len(file_list + headers))
 
     row = STR_ROW
     for i in info:
@@ -353,7 +354,7 @@ def write_xls(
             worksheet.write(row, col, i, hdr_fmt)
             col += 1
 
-        for i in cfg.VALID_KEYS:
+        for i in headers:
             worksheet.write(row, col, i.capitalize(), hdr_fmt)
             col += 1
         row += 1
