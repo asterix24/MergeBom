@@ -103,7 +103,8 @@ CATEGORY_NAMES_DEFAULT = [
             'SCR',
             'SPA',
             # Battery
-            'BAT', # Buzzer 'BUZ',
+            'BAT',
+            'BUZ', # Buzzer
             # Buttons
             'BT',
             'B',
