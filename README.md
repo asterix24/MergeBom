@@ -2,4 +2,8 @@
 
 Generate fancy bom, or merge more one bom.
 
+![Raw BOM](/doc/bom_raw.png)
+
+
+![Converted BOM](/doc/bom_done.png)
 
