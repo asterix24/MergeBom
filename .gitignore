@@ -7,3 +7,5 @@ __Previews/
 History/
 .DS_Store
 venv/
+.vscode/
+mergebom_report.txt
