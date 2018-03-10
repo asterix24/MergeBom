@@ -43,8 +43,8 @@ def dump(d):
         print "-" * 80
 
 
-class MergeBom (object):
-    def __init__(self, list_bom_files, config, logger=None, terminal=True):
+class MergeBom(object):
+    def __init__(self, list_bom_files, config, is_csv=False, logger=None, terminal=True):
         """
         Data structure
 
@@ -86,10 +86,14 @@ class MergeBom (object):
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
             self.stats['file_num'] += 1
-            self.logger.warning(file_name)
-            wb, data = report.read_xls(file_name)
-            n = os.path.basename(file_name)
+            self.logger.warning("File name %s" % file_name)
 
+            # Get all data from select data that could be CSV or xls
+            reader = report.DataReader(file_name, is_csv=is_csv)
+            data = reader.read()
+
+            # Create filename label for report file
+            n = os.path.basename(file_name)
             if n in self.files:
                 n = "%s-%s" % (index_file, n)
             self.files[n] = index_file
@@ -99,7 +103,6 @@ class MergeBom (object):
             extra_keys = {}
             for row in data:
                 for n, item in enumerate(row):
-
                     # search header to import corretly all data
                     if item.lower() in cfg.VALID_KEYS:
                         header[item.lower()] = n
@@ -129,6 +132,7 @@ class MergeBom (object):
                 comment = header['comment']
                 footprint = header['footprint']
                 description = header['description']
+
             except KeyError as e:
                 self.logger.error("No key header found! [%s]\n" % e)
                 self.logger.warning("Valid are:")
@@ -439,6 +443,8 @@ if __name__ == "__main__":
 
     file_list = []
     parser = OptionParser()
+    parser.add_option("-a", "--csv", dest="csv_file", action="store_true",
+                      default=False, help="Find and merge CSV files, by defaul are excel files.")
     parser.add_option("-c", "--merge-cfg", dest="merge_cfg",
                       default=None, help="MergeBOM configuration file.")
     parser.add_option("-p", "--search-dir", dest="search_dir",
@@ -523,11 +529,18 @@ if __name__ == "__main__":
             file_list = []
             glob_path = os.path.join(
                 options.search_dir, options.sub_search_dir, prj)
+
             search_glob = ["*.xls", "*.xlsx"]
+            if options.csv_file:
+                search_glob = ["*.csv"]
+
             if not os.path.exists(glob_path):
                 glob_path = os.path.join(
                     options.search_dir, options.sub_search_dir)
+
                 search_glob = ["*" + prj + "*.xls", "*" + prj + "*.xlsx"]
+                if options.csv_file:
+                    search_glob = ["*" + prj + "*.csv"]
 
             for i in search_glob:
                 file_list += glob.glob(os.path.join(glob_path, i))
@@ -535,8 +548,7 @@ if __name__ == "__main__":
             if not file_list:
                 logger.error("No BOM file to merge\n")
                 sys.exit(1)
-
-            m = MergeBom(file_list, config, logger=logger)
+            m = MergeBom(file_list, config, is_csv=options.csv_file, logger=logger)
             d = m.merge()
             stats = m.statistics()
 
@@ -600,7 +612,7 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    m = MergeBom(file_list, config, logger=logger)
+    m = MergeBom(file_list, config, is_csv=options.csv_file, logger=logger)
     file_list = map(os.path.basename, file_list)
 
     if options.diff:

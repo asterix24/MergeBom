@@ -32,6 +32,7 @@ import xlrd
 import xlsxwriter
 import lib
 import cfg
+import csv
 from termcolor import colored
 
 
@@ -402,32 +403,50 @@ def write_xls(
     workbook.close()
 
 
-def read_xls(handler):
+class DataReader(object):
     """
     Read data from BOM.
     """
-    wb = xlrd.open_workbook(handler)
-    data = []
+    def __init__(self, file_name, is_csv=False):
+        self.is_csv = is_csv
+        self.file_name = file_name
 
-    for s in wb.sheets():
-        for row in range(s.nrows):
-            values = []
-            for col in range(s.ncols):
-                try:
-                    curr = s.cell(row, col)
-                except IndexError:
-                    continue
+    def __xls_reader(self):
+        wb = xlrd.open_workbook(self.file_name)
+        data = []
+        for s in wb.sheets():
+            for row in range(s.nrows):
+                values = []
+                for col in range(s.ncols):
+                    try:
+                        curr = s.cell(row, col)
+                    except IndexError:
+                        continue
 
-                value = ""
-                try:
-                    value = str(int(curr.value))
-                except (TypeError, ValueError):
-                    value = unicode(curr.value)
+                    value = ""
+                    try:
+                        value = str(int(curr.value))
+                    except (TypeError, ValueError):
+                        value = unicode(curr.value)
 
-                values.append(value)
-            data.append(values)
+                    values.append(value)
+                data.append(values)
 
-        return wb, data
+            return data
+
+    def __csv_reader(self):
+        data = []
+        rd = csv.reader(open(self.file_name, 'rb'), delimiter=',', quotechar='\"')
+        for item in rd:
+            if item:
+                data.append(item)
+        return data
+
+    def read(self):
+        if self.is_csv:
+            return self.__csv_reader()
+        else:
+            return self.__xls_reader()
 
 if __name__ == "__main__":
 

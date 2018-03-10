@@ -644,6 +644,23 @@ class TestMergeBom(unittest.TestCase):
             "Merged File not generated")
         os.remove(outfilename)
 
+    def test_cliCSV(self):
+        outfilename = "/tmp/csv_test.xlsx"
+        out = subprocess.check_output(["python", "mergebom.py",
+                                       "--csv",
+                                       "-r", "77",
+                                       "-w", "X",
+                                       "-n", "Test project CVS",
+                                       "-o", outfilename, "test/test.csv"],
+                                      stderr=subprocess.STDOUT)
+
+        print out
+        self.assertTrue(
+            os.path.isfile(outfilename),
+            "Merged File not generated")
+        os.remove(outfilename)
+
+
 if __name__ == "__main__":
     from optparse import OptionParser
 
@@ -676,6 +693,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_groupFmt"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_cliCSV"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
