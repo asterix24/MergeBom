@@ -129,8 +129,9 @@ if __name__ == "__main__":
                 file_list += glob.glob(os.path.join(glob_path, i))
 
             if not file_list:
-                logger.error("No BOM file to merge\n")
-                sys.exit(1)
+                logger.error("%s: No BOM file to merge\n" % glob_path)
+                continue
+
             m = MergeBom(file_list, config, is_csv=options.csv_file, logger=logger)
             d = m.merge()
             stats = m.statistics()
