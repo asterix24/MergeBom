@@ -402,6 +402,21 @@ def write_xls(
 
     workbook.close()
 
+import csv, codecs
+
+class UTF8Recoder:
+    """
+    Iterator that reads an encoded stream and reencodes the input to UTF-8
+    """
+    def __init__(self, f, encoding):
+        self.reader = codecs.getreader(encoding)(f)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.reader.next().encode("utf-8")
+
 
 class DataReader(object):
     """
@@ -436,10 +451,11 @@ class DataReader(object):
 
     def __csv_reader(self):
         data = []
-        rd = csv.reader(open(self.file_name, 'rb'), delimiter=',', quotechar='\"')
+        f = UTF8Recoder(open(self.file_name, 'rb'), "cp1252")
+        rd = csv.reader(f, delimiter=',', quotechar='\"')
         for item in rd:
             if item:
-                data.append(item)
+                data.append([unicode(s, "cp1252") for s in item])
         return data
 
     def read(self):
