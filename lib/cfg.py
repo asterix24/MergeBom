@@ -27,6 +27,9 @@ import sys
 import ConfigParser
 import toml
 import lib
+import glob
+import os
+import re
 
 MERGEBOM_VER = "1.0.0"
 
@@ -232,7 +235,7 @@ class CfgMergeBom(object):
                 return item[key]
 
         return None
-
+    
 
 def cfg_version(filename):
     """
@@ -250,6 +253,91 @@ def cfg_version(filename):
         d['date'] = config.get(section, 'date')
         cfg[section] = d
     return cfg
+
+def calc_projects(projectpath):
+    valuesDict = {}
+
+    if len(glob.glob(os.path.join(projectpath, '*.DsnWrk'))) == 1:
+        work = glob.glob(os.path.join(projectpath, '*.DsnWrk'))
+
+        config = ConfigParser.RawConfigParser()
+        config.read(work)
+
+        for i in config.sections():
+            try:
+                temp = config.get(i, 'ProjectPath')
+                temp = temp.split('/')
+                k = []
+                p = []
+
+                if len(temp) > 1:
+                    k = os.path.splitext(temp[1])[0]
+                    p = os.path.join(*temp)
+                else:
+                    k = os.path.splitext(temp[0])[0]
+                    p = os.path.join("./", *temp)
+
+                if len(k) == 0 or len(p) == 0:
+                    print ("Errore nel parsing del workspace")
+                    sys.exit(1)
+
+                k = k.lower()
+                valuesDict[k] = p
+
+            except ConfigParser.NoOptionError:
+                pass
+
+        return True, valuesDict
+    else:
+        return False, 'None'
+
+def ricerca_parametri(file, pathproject):
+    parametri_dict={}
+
+    parametri=['prj_date','prj_hw_ver','prj_license', 'prj_name', 'prj_name_long', 'prj_pcb', 'prj_pn', 'prj_status']
+
+    prj=os.path.join(pathproject,file)
+    f=open(prj,'r')
+    config=ConfigParser.RawConfigParser()
+    config.read(prj)
+
+    for i in config.sections():
+        line = re.findall(r'Parameter[0-9]', i)
+
+        if line:
+            parametro=config.get(i,'Name')
+            val=config.get(i,'Value')
+            parametri_dict[parametro]=val
+
+    return parametri_dict
+
+def ricerca_e_verifica(options, path_dict):
+    nProgetti=0 #ricerca parametri per ogni progetto e creazione dizionario con {nome progetto: {parametro: valore}}
+    progetti_dict={}
+    for k, v in path_dict.items():
+        parametri_dict={}
+        parametri_dict=ricerca_parametri(v, options.ws)
+        progetti_dict[k]=parametri_dict
+        nProgetti+=1
+    print(progetti_dict)
+
+    #verifica esistenza file per il merge
+    pathBOM=os.path.join(options.ws ,  "Assembly")
+    file_BOM={}
+    for k, v in path_dict.items():
+        path=os.path.join(pathBOM,k)
+        if options.csv_file:
+            filecsv = os.path.join(path, k)+'.csv'
+            if os.path.exists(filecsv):
+                file_BOM[k]=filecsv
+        else:
+            filexlsx = os.path.join(path, k) +'.xlsx'
+            print(filexlsx)
+            if os.path.exists(filexlsx):
+                file_BOM[k]=filexlsx
+    print(file_BOM)
+    return file_BOM, progetti_dict
+    
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
