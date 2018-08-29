@@ -258,55 +258,55 @@ def cfg_altiumWorkspace(options):
     ricerca del nome di tutti i progetti all'interno del file Workspace
     """
     risultato=True
-    if len(glob.glob(os.path.join(options.ws, '*.DsnWrk'))) == 1:
-        work = glob.glob(os.path.join(options.ws, '*.DsnWrk'))
-        path_dict = {}
-        config = ConfigParser.RawConfigParser()
-        config.read(work)
+    path_dict = {}
+    config = ConfigParser.RawConfigParser()
+    config.read(options.ws)
 
-        for i in config.sections():
-            try:
-                temp = config.get(i, 'ProjectPath')
-                temp = temp.split('/')
-                k = []
-                p = []
+    for i in config.sections():
+        try:
+            temp = config.get(i, 'ProjectPath')
+            temp = temp.split('/')
+            k = []
+            p = []
 
-                if len(temp) > 1:
-                    k = os.path.splitext(temp[1])[0]
-                    p = os.path.join(*temp)
-                else:
-                    k = os.path.splitext(temp[0])[0]
-                    p = os.path.join("./", *temp)
+            if len(temp) > 1:
+                k = os.path.splitext(temp[1])[0]
+                p = os.path.join(*temp)
+            else:
+                k = os.path.splitext(temp[0])[0]
+                p = os.path.join("./", *temp)
 
-                if len(k) == 0 or len(p) == 0:
-                    lib.error("Errore nel parsing del workspace: %s" % e,
-                              self.handler, terminal=self.terminal)
-                    risultato =False
+            if len(k) == 0 or len(p) == 0:
+                lib.error("Errore nel parsing del workspace: %s" % e,
+                            self.handler, terminal=self.terminal)
+                risultato =False
 
-                k = k.lower()
-                path_dict[k] = p
+            k = k.lower()
+            path_dict[k] = p
 
-            except ConfigParser.NoOptionError:
-                pass
-    else:
-        risultato=False
+        except ConfigParser.NoOptionError:
+            pass
+    path=''
+    ws=options.ws.split('/')
+    for i in range(0, (len(ws)-1)):
+        path=os.path.join(path, ws[i])
 
     """
-    ricerca parametri per ogni progetto e creazione dizionario con {nome progetto: {parametro: valore}}
+    ricerca parametri per ogni progetto e creazione dizionario con {parametro: valore}
+    ricerca e verifica esistenza file a cui fare il mergebom e messi in una lista
     """
-
+    parametri_dict={}
+    file_BOM=[]
     if risultato:
-        nProgetti=0 
-        progetti_dict={}
+        nprogetti=0 
         for k, v in path_dict.items():
-            parametri_dict={}
-            parametri=['prj_date','prj_hw_ver','prj_license', 'prj_name', 'prj_name_long', 'prj_pcb', 'prj_pn', 'prj_status']
 
-            prj=os.path.join(options.ws,v)
+            prj=os.path.join(path,v)
             f=open(prj,'r')
             config=ConfigParser.RawConfigParser()
             config.read(prj)
 
+            path_filemerge=os.path.join(path,  "Assembly")
             for i in config.sections():
                 line = re.findall(r'Parameter[0-9]', i)
 
@@ -314,31 +314,20 @@ def cfg_altiumWorkspace(options):
                     parametro=config.get(i,'Name')
                     val=config.get(i,'Value')
                     parametri_dict[parametro]=val
-                
-            progetti_dict[k]=parametri_dict
-            nProgetti+=1
-        """
-        verifica esistenza dei file per il merge
-        """
-        pathBOM=os.path.join(options.ws ,  "Assembly")
-        file_BOM={}
-        for k, v in path_dict.items():
-            path=os.path.join(pathBOM,k)
+            pathfile=os.path.join(path_filemerge,k)
             if options.csv_file:
-                filecsv = os.path.join(path, k)+'.csv'
+                filecsv = os.path.join(pathfile, k)+'.csv'
                 if os.path.exists(filecsv):
-                    file_BOM[k]=filecsv
+                    file_BOM.append(filecsv)
             else:
-                filexlsx = os.path.join(path, k) +'.xlsx'
+                filexlsx = os.path.join(pathfile, k) +'.xlsx'
                 if os.path.exists(filexlsx):
-                    file_BOM[k]=filexlsx
-    else:
-        lib.error("il file workspace è sbagliato: %s" % e,
-                              self.handler, terminal=self.terminal)
-    
-    #invece di ritornare due dizionari, tornare delle liste concatenate che contengono tutte le info:
-    # nome progetti, file da mergiare, parametri    
-    return file_BOM, progetti_dict
+                    file_BOM.append(filexlsx)
+                
+            nprogetti+=1
+    file=(file_BOM, parametri_dict)
+            
+    return risultato, file
     
 
 if __name__ == "__main__":
