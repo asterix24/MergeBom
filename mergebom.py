@@ -36,8 +36,8 @@ if __name__ == "__main__":
                         help='Dove si trova il file WorkSpace', default='./test/utils.DsnWrk')
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
-    options=parser.parse_args()
-    file_BOM, progetti_dict=cfg.cfg_altiumWorkspace(options)
+    options = parser.parse_args()
+    file_BOM = cfg.cfg_altiumWorkspace(options) 
     if not file_BOM:
         print("i file non sono stati trovati")
 
