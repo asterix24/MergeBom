@@ -296,16 +296,18 @@ def cfg_altiumWorkspace(path_ws, csv_file):
     """
     ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
     """
-    parametri_dict = {}
-    file_BOM = []
     ret = []
     path_filemerge = os.path.join(path_proj,  "Assembly")
 
     for k, v in path_dict.items():
+        parametri_dict = {}
+        file_BOM = []
         #ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
         prj = os.path.join(path_proj,v)
 
-        if os.path.exists(prj) :
+        if not os.path.exists(prj) :
+            continue
+        else:
             f = open(prj,'r')
             config = ConfigParser.RawConfigParser()
             config.read(prj)
@@ -318,21 +320,12 @@ def cfg_altiumWorkspace(path_ws, csv_file):
 
             #ricerca file del progetto a cui fare il merge e messi in una lista
             pathfile = os.path.join(path_filemerge,k)
-            filexlsx = os.path.join(pathfile, k) +'.xlsx'
-            filecsv = os.path.join(pathfile, k)+'.csv'
-            if csv_file:
-                if os.path.exists(filecsv):
-                    file_BOM.append(filecsv)
-                else:
-                    if os.path.exists(filexlsx):
-                        file_BOM.append(filexlsx)
-            else:
-                filexlsx = os.path.join(pathfile, k) +'.xlsx'
-                if os.path.exists(filexlsx):
-                    file_BOM.append(filexlsx)
-                else:
-                    if os.path.exists(filecsv):
-                        file_BOM.append(filecsv)
+
+            init = os.path.join(pathfile, k)+'.csv'
+            if not csv_file:
+                init = os.path.join(pathfile, k) +'.xlsx'
+            if os.path.exists(init):            
+                file_BOM.append(init)
 
             #creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
             #ret[
@@ -340,10 +333,9 @@ def cfg_altiumWorkspace(path_ws, csv_file):
             #   ([file1.csv, file2.csv], {nomeparametro : parametro})
             # ]
             ret.append((file_BOM, parametri_dict))
-            parametri_dict = {}
-            file_BOM = []
+            
         
-    return ret, path_proj
+    return ret
     
 
 if __name__ == "__main__":
