@@ -509,8 +509,8 @@ class TestMergeBom(unittest.TestCase):
             self.config,
             ft,
             hw_ver="13",
-            pcb_ver="C",
-            project="TEST")
+            pcb="C",
+            name="TEST")
 
     def test_mergedFile(self):
         file_list = [

@@ -20,7 +20,6 @@
 
 """
 MergeBOM Report module.
-
 Utils to generate and read excel BOM files.
 """
 
@@ -127,21 +126,17 @@ def write_xls(
         config,
         handler,
         hw_ver="0",
-        pcb_ver="A",
-        project="MyProject",
+        pcb="A",
+        name="MyProject",
         diff=False,
         extra_data=None,
         statistics=None,
         headers=cfg.VALID_KEYS):
     """
     Write merged BOM in excel file.
-
     Statistics data should be in follow format:
-
     {'total': 38, 'R': 14, 'file_num': 2, 'C': 12}
-
     Where:
-
     - total: sum all of components numeber
     - file_num: number of merged BOM files
     - C,R, J, ecc.: Componentes category
@@ -287,9 +282,9 @@ def write_xls(
             'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
             '',
             '',
-            'Project: %s' % project,
+            'Project: %s' % name,
             'Hardware_version: %s' % hw_ver,
-            'PCB_version: %s' % pcb_ver,
+            'PCB_version: %s' % pcb,
             '',
             'BOM files:',
         ]

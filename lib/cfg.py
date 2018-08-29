@@ -278,9 +278,9 @@ def cfg_altiumWorkspace(path_ws, csv_file):
             #es. temp='nomeprogetto/nomeprogetto.txt' 
             temp = config.get(i, 'ProjectPath')
             p = temp
-            temp = temp.split('/')
+            temp = temp.split('\\')
             k = ''
-            k = os.path.join(k, *temp[:len(temp)-1])
+            k = os.path.join(k, *temp[:-1])
 
             #es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
             path_dict[k] = p
@@ -291,7 +291,7 @@ def cfg_altiumWorkspace(path_ws, csv_file):
     #calcolo path dove si trovano i progetti
     ws = path_ws.split('/')
     path_proj = ''
-    path_proj = os.path.join(path_proj, *ws[:len(ws)-1])
+    path_proj = os.path.join(path_proj, *ws[:-1])
 
     """
     ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
