@@ -24,6 +24,7 @@ import argparse
 import ConfigParser
 import re
 from lib import cfg
+from mergebom_class import *
    
 if __name__ == "__main__":
 
@@ -33,9 +34,42 @@ if __name__ == "__main__":
                         help='Dove si trova il file WorkSpace', default='./test/utils.DsnWrk')
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
+    parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
+                      default=None, help="MergeBOM configuration file.")
+    parser.add_argument("-o", "--out-filename", dest="out_filename",
+                      default='merged_bom.xlsx', help="Out file name")
+    parser.add_argument("-p", "--working-dir", dest="working_dir",
+                      default='./', help="BOM to merge working path.")                  
+    parser.add_argument(
+        "-l",
+        "--log-on-file",
+        dest="log_on_file",
+        default=True,
+        action="store_true",
+        help="List all project name from version file.")
     options = parser.parse_args()
     file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 
-    print path_prj
     if not file_BOM:
         print("i file non sono stati trovati")
+    else:
+        config = cfg.CfgMergeBom(options.merge_cfg)
+        logger = report.Report(log_on_file=options.log_on_file, terminal=True)
+        logger.write_logo()
+
+        appo = []
+        file_list = []
+        for i in range(0,len(file_BOM)):
+            appo = file_BOM[i][0]
+            for j in range(0,len(appo)):
+                file_list.append(appo[j])
+
+        m = MergeBom(file_list, config, logger=logger)
+        d = m.merge()
+        file_list = map(os.path.basename, file_list)
+        ft = os.path.join(options.working_dir, options.out_filename)
+        report.write_xls(
+            d,
+            file_list,
+            config,
+            ft)
 
