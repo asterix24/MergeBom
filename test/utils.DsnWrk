@@ -1,0 +1,6 @@
+[ProjectGroup]
+Version=1.0
+[Project1]
+ProjectPath=progettotest1/progettotest1.txt
+[Project2]
+ProjectPath=progettotest2/progettotest2.txt
