@@ -320,7 +320,7 @@ def cfg_altiumWorkspace(path_ws, csv_file):
 
             #ricerca file del progetto a cui fare il merge e messi in una lista
             pathfile = os.path.join(path_filemerge,k)
-
+            
             init = os.path.join(pathfile, k)+'.csv'
             if not csv_file:
                 init = os.path.join(pathfile, k) +'.xlsx'
