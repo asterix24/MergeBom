@@ -253,17 +253,26 @@ def cfg_version(filename):
         cfg[section] = d
     return cfg
 
-def cfg_altiumWorkspace(options):
+def cfg_altiumWorkspace(path_ws, csv_file):
     """
-    options è una variabile di tipo <class 'argparse.Namespace' che contiene:
+    alla funzione vengono passati due parametri:
         1. il path del file Workspace
-        2. se i file da mergiare sono di tipo csv o xlsx
-    
+        2. se i file da mergiare sono di tipo csv o xlsx 
+
     ricerca del nome di tutti i progetti all'interno del file Workspace
+    esempio di file Wprkspace:
+        $ cat schemes.DsnWrk 
+        [ProjectGroup]
+        Version=1.0
+
+        [Project1]
+        ProjectPath=camera-tbd\camera-tbd.PrjPcb
+        [Project2]
+        ProjectPath=usb-serial\usb-serial.PrjPcb
     """
     path_dict = {}
     config = ConfigParser.RawConfigParser()
-    config.read(options.ws)
+    config.read(path_ws)
     for i in config.sections():
         try:
             #es. temp='nomeprogetto/nomeprogetto.txt' 
@@ -280,7 +289,7 @@ def cfg_altiumWorkspace(options):
             pass
     
     #calcolo path dove si trovano i progetti
-    ws = options.ws.split('/')
+    ws = path_ws.split('/')
     path_proj = ''
     path_proj = os.path.join(path_proj, *ws[:len(ws)-1])
 
@@ -296,7 +305,7 @@ def cfg_altiumWorkspace(options):
         #ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
         prj = os.path.join(path_proj,v)
 
-        if os.path.exists(prj) and os.path.exists(path_filemerge):
+        if os.path.exists(prj) :
             f = open(prj,'r')
             config = ConfigParser.RawConfigParser()
             config.read(prj)
@@ -306,16 +315,25 @@ def cfg_altiumWorkspace(options):
                     parametro = config.get(i,'Name')
                     val = config.get(i,'Value')
                     parametri_dict[parametro] = val
+
             #ricerca file del progetto a cui fare il merge e messi in una lista
             pathfile = os.path.join(path_filemerge,k)
-            if options.csv_file:
-                filecsv = os.path.join(pathfile, k)+'.csv'
+            filexlsx = os.path.join(pathfile, k) +'.xlsx'
+            filecsv = os.path.join(pathfile, k)+'.csv'
+            if csv_file:
                 if os.path.exists(filecsv):
                     file_BOM.append(filecsv)
+                else:
+                    if os.path.exists(filexlsx):
+                        file_BOM.append(filexlsx)
             else:
                 filexlsx = os.path.join(pathfile, k) +'.xlsx'
                 if os.path.exists(filexlsx):
                     file_BOM.append(filexlsx)
+                else:
+                    if os.path.exists(filecsv):
+                        file_BOM.append(filecsv)
+
             #creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
             #ret[
             #   ([file1.csv, file2.csv], {nomeparametro : parametro})
@@ -325,7 +343,7 @@ def cfg_altiumWorkspace(options):
             parametri_dict = {}
             file_BOM = []
         
-    return ret
+    return ret, path_proj
     
 
 if __name__ == "__main__":

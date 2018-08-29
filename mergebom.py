@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
     options = parser.parse_args()
-    file_BOM = cfg.cfg_altiumWorkspace(options) 
+    file_BOM, path_prj = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 
     if not file_BOM:
         print("i file non sono stati trovati")
 
