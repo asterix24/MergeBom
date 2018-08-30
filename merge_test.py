@@ -56,15 +56,16 @@ class TestMergeBom(unittest.TestCase):
 
     def test_altiumWorkspace(self):
         file_BOM=[(['./test/Assembly/progettotest1/progettotest1.xlsx'], 
-                    {'prj_status': 'status', 'prj_pcb': 'A', 'prj_name': 'Adapter-imx8', 
-                    'prj_date': '28/05/2018', 'prj_pn': 'pn', 
-                    'prj_name_long': 'CMOS Sensor adapter iMX8', 'prj_license': '-', 
-                    'prj_hw_ver': '0'}), 
-                (['./test/Assembly/progettotest2/progettotest2.xlsx'], 
-                {'prj_status': 'status', 'prj_pcb': 'A', 
-                'prj_name': 'Adapter-imx8', 'prj_date': '28/05/2018', 
-                'prj_pn': 'pn', 'prj_name_long': 'CMOS Sensor adapter iMX8',
-                'prj_license': '-', 'prj_hw_ver': '0'})]
+                {'prj_status': 'status', 'prj_pcb': 'C', 'prj_name': 'TEST',
+                 'prj_date': '28/05/2018', 'prj_pn': 'pn',
+                  'prj_name_long': 'CMOS Sensor adapter iMX8', 
+                  'prj_license': '-', 'prj_hw_ver': '13'}), 
+                  (['./test/Assembly/progettotest2/progettotest2.xlsx'], 
+                  {'prj_status': 'status', 'prj_pcb': 'A', 'prj_name': 'Adapter-imx8', 
+                  'prj_date': '28/05/2018', 'prj_pn': 'pn',
+                   'prj_name_long': 'CMOS Sensor adapter iMX8',
+                   'prj_license': '-', 'prj_hw_ver': '0'})]
+
 
         self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace('./test/utils.DsnWrk', False))
         
@@ -443,19 +444,23 @@ class TestMergeBom(unittest.TestCase):
 
     def test_altiumMergexlsx(self):
         out = subprocess.check_output(["python", "mergebom.py",
-                                       "-w", "./test/utils.DsnWrk"],
+                                       "-w", "./test/utils.DsnWrk", '-o', 'merged_xlsx.xlsx'],
                                       stderr=subprocess.STDOUT)
+        self.assertTrue(os.path.exists('merged_xlsx.xlsx'))
         
 
     def test_altiumMergecsv(self):
         out = subprocess.check_output(["python", "mergebom.py", "--csv",
-                                      "-w", "./test/utils.DsnWrk"],
+                                      "-w", "./test/utils.DsnWrk", '-o', 'merged_csv.xlsx'],
                                       stderr=subprocess.STDOUT)
+        self.assertTrue(os.path.exists('merged_csv.xlsx'))
     
     def test_mergeFileCommandLine(self):
         out = subprocess.check_output(["python", "mergebom.py", 
-                                      "-m", "./test/Assembly/programmatest1/programmatest1.xlsx"],
+                                      "-m", "./test/Assembly/programmatest1/programmatest1.xlsx", '-o', 'merged_line.xlsx'],
                                       stderr=subprocess.STDOUT)
+        
+        self.assertTrue(os.path.exists('merged_line.xlsx'))
         
     def test_outFile(self):
         file_list = [
@@ -477,7 +482,36 @@ class TestMergeBom(unittest.TestCase):
             hw_ver="13",
             pcb="C",
             name="TEST")
+        
+    def test_parametri(self):
+        file_list = [
+            "./test/Assembly/progettotest1/progettotest1.xlsx"
+        ]
 
+        m = MergeBom(file_list, self.config, logger=self.logger)
+        d = m.merge()
+        file_list = map(os.path.basename, file_list)
+        ft = os.path.join('./test/', 'uno.xlsx')
+        report.write_xls(
+            d,
+            file_list,
+            self.config,
+            ft,
+            hw_ver="13",
+            pcb="C",
+            name="TEST")
+
+        out = subprocess.check_output(["python", "mergebom.py", 
+                                      "-m", "./test/Assembly/programmatest1/programmatest1.xlsx", 
+                                      "-p", "./test",
+                                      "--prj_hw_ver", "13",
+                                      "--prj_name", "TEST",
+                                      "--prj_pcb", "C"],
+                                      stderr=subprocess.STDOUT)
+        
+        self.assertTrue(os.path.exists("./test/merged_bom.xlsx"))
+        #self.assertEqual("./test/uno.xlsx","./test/merged_bom.xlsx")
+        
     def test_mergedFile(self):
         file_list = [
             "test/bom-merged.xls",
@@ -714,22 +748,23 @@ if __name__ == "__main__":
     print args
 
     suite = unittest.TestSuite()
-    # suite.addTest(TestMergeBom("test_altiumWorkspace"))
-    # suite.addTest(TestMergeBom("test_import"))
-    # suite.addTest(TestMergeBom("test_group"))
-    # suite.addTest(TestMergeBom("test_led"))
-    # suite.addTest(TestMergeBom("test_rele"))
-    # suite.addTest(TestMergeBom("test_groupFmt"))
-    # suite.addTest(TestMergeBom("test_diff"))
-    # suite.addTest(TestMergeBom("test_orderRef"))
-    # suite.addTest(TestMergeBom("test_valueToFloat"))
-    # suite.addTest(TestMergeBom("test_floatToValue"))
+    suite.addTest(TestMergeBom("test_altiumWorkspace"))
+    suite.addTest(TestMergeBom("test_import"))
+    suite.addTest(TestMergeBom("test_group"))
+    suite.addTest(TestMergeBom("test_led"))
+    suite.addTest(TestMergeBom("test_rele"))
+    suite.addTest(TestMergeBom("test_groupFmt"))
+    suite.addTest(TestMergeBom("test_diff"))
+    suite.addTest(TestMergeBom("test_orderRef"))
+    suite.addTest(TestMergeBom("test_valueToFloat"))
+    suite.addTest(TestMergeBom("test_floatToValue"))
     suite.addTest(TestMergeBom("test_altiumMergexlsx"))
     suite.addTest(TestMergeBom("test_altiumMergecsv"))
-    # suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
-    # suite.addTest(TestMergeBom("test_outFile"))
-    # suite.addTest(TestMergeBom("test_mergedFile"))
-    # suite.addTest(TestMergeBom("test_stats"))
+    suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
+    suite.addTest(TestMergeBom("test_outFile"))
+    suite.addTest(TestMergeBom("test_parametri"))
+    suite.addTest(TestMergeBom("test_mergedFile"))
+    suite.addTest(TestMergeBom("test_stats"))
     # suite.addTest(TestMergeBom("test_notPopulate"))
     # suite.addTest(TestMergeBom("test_cliMerge"))
     # suite.addTest(TestMergeBom("test_cliMergeDiff"))

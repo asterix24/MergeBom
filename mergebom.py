@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     f_list= []
     if not options.ws == None:
-        file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 	      
+        file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 	 
         if len(file_BOM)>0:
             appo = []
             for i,v in enumerate(file_BOM):
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         else:
             sys.exit
     else:
-        if not options.ms ==None and os.path.exists(options.ms):
+        if not options.ms == None and os.path.exists(options.ms):
             f_list.append(options.ms)
         else:
             sys.exit
@@ -109,5 +109,5 @@ if __name__ == "__main__":
                     ft,
                     hw_ver=options.prj_hw_ver,
                     name=options.prj_name,
-                    pcb=options.prj_pcb,)
+                    pcb=options.prj_pcb)
 
