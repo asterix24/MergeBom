@@ -277,11 +277,10 @@ def cfg_altiumWorkspace(path_ws, csv_file):
         try:
             #es. temp='nomeprogetto/nomeprogetto.txt' 
             temp = config.get(i, 'ProjectPath')
-            p = temp
             temp = temp.split('\\')
             k = ''
             k = os.path.join(k, *temp[:-1])
-
+            p=os.path.join(*temp)
             #es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
             path_dict[k] = p
 
@@ -304,7 +303,6 @@ def cfg_altiumWorkspace(path_ws, csv_file):
         file_BOM = []
         #ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
         prj = os.path.join(path_proj,v)
-
         if not os.path.exists(prj) :
             continue
         else:
@@ -326,7 +324,6 @@ def cfg_altiumWorkspace(path_ws, csv_file):
                 init = os.path.join(pathfile, k) +'.xlsx'
             if os.path.exists(init):            
                 file_BOM.append(init)
-
             #creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
             #ret[
             #   ([file1.csv, file2.csv], {nomeparametro : parametro})

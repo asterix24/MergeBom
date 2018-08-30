@@ -70,10 +70,8 @@ if __name__ == "__main__":
 
     f_list= []
     if not options.ws == None:
-        file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 	        
-        if len(file_BOM)==0:
-            sys.exit
-        else:
+        file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 	      
+        if len(file_BOM)>0:
             appo = []
             for i,v in enumerate(file_BOM):
                 parametri_dict={}
@@ -89,6 +87,8 @@ if __name__ == "__main__":
                 options.prj_status=parametri_dict.get('prj_status', None)
                 for j,v in enumerate(appo):
                     f_list.append(appo[j])
+        else:
+            sys.exit
     else:
         if not options.ms ==None and os.path.exists(options.ms):
             f_list.append(options.ms)

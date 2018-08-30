@@ -67,8 +67,7 @@ class TestMergeBom(unittest.TestCase):
                 'prj_license': '-', 'prj_hw_ver': '0'})]
 
         self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace('./test/utils.DsnWrk', False))
-
-
+        
     def test_import(self):
         file_list = [
             "test/bom0.xlsx",
@@ -446,51 +445,18 @@ class TestMergeBom(unittest.TestCase):
         out = subprocess.check_output(["python", "mergebom.py",
                                        "-w", "./test/utils.DsnWrk"],
                                       stderr=subprocess.STDOUT)
-
-        appo = []
-        file_list = []
-        for i in range(0,len(out)):
-            appo = out[i][0]
-            for j in range(0,len(appo)):
-                file_list.append(appo[j])
-
-        m = MergeBom(file_list, self.config, logger=self.logger)
-        d = m.merge()
-        file_list = map(os.path.basename, file_list)
-        ft = os.path.join(self.temp_dir, 'uno.xlsx')
-        report.write_xls(
-            d,
-            file_list,
-            self.config,
-            ft,
-            hw_ver="13",
-            pcb_ver="C",
-            project="TEST")
+        
 
     def test_altiumMergecsv(self):
         out = subprocess.check_output(["python", "mergebom.py", "--csv",
                                       "-w", "./test/utils.DsnWrk"],
                                       stderr=subprocess.STDOUT)
-        appo = []
-        file_list = []
-        for i in range(0,len(out)):
-            appo = out[i][0]
-            for j in range(0,len(appo)):
-                file_list.append(appo[j])
-
-        m = MergeBom(file_list, self.config, logger=self.logger)
-        d = m.merge()
-        file_list = map(os.path.basename, file_list)
-        ft = os.path.join(self.temp_dir, 'uno.xlsx')
-        report.write_xls(
-            d,
-            file_list,
-            self.config,
-            ft,
-            hw_ver="13",
-            pcb_ver="C",
-            project="TEST")
-
+    
+    def test_mergeFileCommandLine(self):
+        out = subprocess.check_output(["python", "mergebom.py", 
+                                      "-m", "./test/Assembly/programmatest1/programmatest1.xlsx"],
+                                      stderr=subprocess.STDOUT)
+        
     def test_outFile(self):
         file_list = [
             "test/bom_uno.xls",
@@ -748,24 +714,27 @@ if __name__ == "__main__":
     print args
 
     suite = unittest.TestSuite()
-    suite.addTest(TestMergeBom("test_altiumWorkspace"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_rele"))
-    suite.addTest(TestMergeBom("test_groupFmt"))
-    suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
-    suite.addTest(TestMergeBom("test_valueToFloat"))
-    suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_outFile"))
-    suite.addTest(TestMergeBom("test_mergedFile"))
-    suite.addTest(TestMergeBom("test_stats"))
-    suite.addTest(TestMergeBom("test_notPopulate"))
+    # suite.addTest(TestMergeBom("test_altiumWorkspace"))
+    # suite.addTest(TestMergeBom("test_import"))
+    # suite.addTest(TestMergeBom("test_group"))
+    # suite.addTest(TestMergeBom("test_led"))
+    # suite.addTest(TestMergeBom("test_rele"))
+    # suite.addTest(TestMergeBom("test_groupFmt"))
+    # suite.addTest(TestMergeBom("test_diff"))
+    # suite.addTest(TestMergeBom("test_orderRef"))
+    # suite.addTest(TestMergeBom("test_valueToFloat"))
+    # suite.addTest(TestMergeBom("test_floatToValue"))
+    suite.addTest(TestMergeBom("test_altiumMergexlsx"))
+    suite.addTest(TestMergeBom("test_altiumMergecsv"))
+    # suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
+    # suite.addTest(TestMergeBom("test_outFile"))
+    # suite.addTest(TestMergeBom("test_mergedFile"))
+    # suite.addTest(TestMergeBom("test_stats"))
+    # suite.addTest(TestMergeBom("test_notPopulate"))
     # suite.addTest(TestMergeBom("test_cliMerge"))
     # suite.addTest(TestMergeBom("test_cliMergeDiff"))
     # suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    suite.addTest(TestMergeBom("test_categoryGroup"))
+    # suite.addTest(TestMergeBom("test_categoryGroup"))
     # suite.addTest(TestMergeBom("test_otherColumn"))
     # suite.addTest(TestMergeBom("test_cliCSV"))
     unittest.TextTestRunner(
