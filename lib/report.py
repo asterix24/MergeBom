@@ -42,10 +42,13 @@ class Report(object):
     """
 
     def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
-                 terminal=True):
+                 terminal=True, report_date=None):
         self.terminal = terminal
         self.report = None
         self.log_on_file = log_on_file
+        self.report_date=report_date
+        if report_date is None:
+            self.report_date = datetime.datetime.now()
         if self.log_on_file:
             self.report = open(logfile, 'w+')
 
@@ -81,8 +84,8 @@ class Report(object):
         self.__printout("Report file.\n")
         self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
 
-        report_date = datetime.datetime.now()
-        self.__printout("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
+        
+        self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
         self.__printout("." * 80)
         self.__printout("\n")
         self.__printout("\n")
@@ -261,7 +264,7 @@ def write_xls(
         info = [
             'Component Variation',
             '',
-            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
             'Project: %s' % project,
@@ -279,7 +282,7 @@ def write_xls(
         info = [
             'Bill of Materials',
             '',
-            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
             'Project: %s' % name,
