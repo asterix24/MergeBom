@@ -5,7 +5,7 @@ Value=28/05/2018
 
 [Parameter2]
 Name=prj_hw_ver
-Value=0
+Value=13
 
 [Parameter3]
 Name=prj_license
@@ -13,7 +13,7 @@ Value=-
 
 [Parameter4]
 Name=prj_name
-Value=Adapter-imx8
+Value=TEST
 
 [Parameter5]
 Name=prj_name_long
@@ -21,7 +21,7 @@ Value=CMOS Sensor adapter iMX8
 
 [Parameter6]
 Name=prj_pcb
-Value=A
+Value=C
 
 [Parameter7]
 Name=prj_pn
