@@ -272,7 +272,7 @@ def cfg_altiumWorkspace(path_ws, csv_file, bom_name):
         ProjectPath=usb-serial\usb-serial.PrjPcb
     """
 
-    lib.info("Ricerca progetti all'interno del file .DsnWrk",
+    lib.warning("Ricerca progetti all'interno del file .DsnWrk",
                                 self.handler, terminal=self.terminal)
     path_dict = {}
     config = ConfigParser.RawConfigParser()
@@ -297,7 +297,7 @@ def cfg_altiumWorkspace(path_ws, csv_file, bom_name):
     """
     ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
     """
-    lib.info("ricerca parametri di progetto e file mergebom",
+    lib.warning("ricerca parametri di progetto e file mergebom",
                                 self.handler, terminal=self.terminal)
     ret = []
     path_filemerge = os.path.join(path_proj,  "Assembly")

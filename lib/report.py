@@ -267,7 +267,7 @@ def write_xls(
             'Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
-            'Project: %s' % project,
+            'Project: %s' % name,
             '',
             'File A:',
             '   Hw_rev:  %s' % A_hw_diff,

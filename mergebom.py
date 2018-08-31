@@ -24,11 +24,12 @@ import getopt
 import argparse
 import ConfigParser
 import re
-from lib import cfg
+from lib import cfg,lib,report
 from mergebom_class import *
 from datetime import datetime
    
 if __name__ == "__main__":
+    rep = report.Report(log_on_file=True, terminal=True, report_date=None)
 
     file_list = []
     parser = argparse.ArgumentParser()
@@ -56,14 +57,11 @@ if __name__ == "__main__":
                       default=None, help="Project names.")
     parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
                       default=False, help="delete file")                  
-    parser.add_argument(
-        "-l",
-        "--log-on-file",
-        dest="log_on_file",
-        default=True,
-        action="store_true",
-        help="List all project name from version file.")
-        
+    parser.add_argument("-l","--log-on-file",dest="log_on_file",
+                      default=True,action="store_true",help="List all project name from version file.")
+    parser.add_argument( "-diff","--diff",dest="diff",action="store_true",
+                      default=False, help="Generate diff from two specified BOMs")
+
     parser.add_argument('--prj_date', '-date', dest='prj_date', 
                         help='prj_date', default=None)
     parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver', 
@@ -116,12 +114,11 @@ if __name__ == "__main__":
                     f_list.append(appo[j])
                 
         else:
-            lib.error("Non è stato trovato nessun file.xlsx o file.csv",
+            rep.error("Non è stato trovato nessun file.xlsx o file.csv",
                                 self.handler, terminal=self.terminal)
             sys.exit(1)
     else:
-        lib.info("Ricerca file mergebom richiesti",
-                                self.handler, terminal=self.terminal)
+        rep.info("Ricerca file mergebom richiesti")
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
@@ -141,8 +138,7 @@ if __name__ == "__main__":
     if options.report_time is not None:
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
     
-    lib.info("Inizio operazione di merge",
-                                self.handler, terminal=self.terminal)
+    
      
     logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
     logger.write_logo()
@@ -151,17 +147,36 @@ if __name__ == "__main__":
     d = m.merge()
     file_list = map(os.path.basename, f_list)
     ft = os.path.join(options.working_dir, options.out_filename+'.xlsx')
-    report.write_xls(
-                    d,
-                    file_list,
-                    config,
-                    ft,
-                    hw_ver=options.prj_hw_ver,
-                    name=options.prj_name,
-                    pcb=options.prj_pcb)
+
+    if options.diff:
+        if len(f_list) != 2:
+            logger.error("E' possibile usare la modalità diff solo con 2 file.")
+            sys.exit(1)
+        d = m.diff()
+        l = m.extra_data()
+        report.write_xls(
+            d,
+            file_list,
+            config,
+            ft,
+            diff=True,
+            extra_data=l,
+            headers=m.header_data())      
+    else:    
+        rep.info("Inizio operazione di merge")
+        report.write_xls(
+                        d,
+                        file_list,
+                        config,
+                        ft,
+                        hw_ver=options.prj_hw_ver,
+                        name=options.prj_name,
+                        pcb=options.prj_pcb)
+
     if options.delete:
-        lib.info("Cancellazione vecchio file",
-                                self.handler, terminal=self.terminal)
+        rep.info("Cancellazione vecchio file")
         for i,v in enumerate(f_list):
             os.remove(f_list[i])
+
+
 
