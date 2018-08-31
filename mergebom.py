@@ -64,11 +64,15 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
                       default=False, help="delete file")                  
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Import diff feature and its test.
     parser.add_argument("-l","--log-on-file",dest="log_on_file",
                       default=True,action="store_true",help="List all project name from version file.")
     parser.add_argument( "-diff","--diff",dest="diff",action="store_true",
                       default=False, help="Generate diff from two specified BOMs")
 
+<<<<<<< HEAD
 =======
     parser.add_argument(
         "-l",
@@ -79,6 +83,8 @@ if __name__ == "__main__":
         help="List all project name from version file.")
         
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+=======
+>>>>>>> Import diff feature and its test.
     parser.add_argument('--prj_date', '-date', dest='prj_date', 
                         help='prj_date', default=None)
     parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver', 
@@ -153,6 +159,7 @@ if __name__ == "__main__":
         else:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             rep.error("Non è stato trovato nessun file.xlsx o file.csv",
                                 self.handler, terminal=self.terminal)
 =======
@@ -168,6 +175,13 @@ if __name__ == "__main__":
         lib.info("Ricerca file mergebom richiesti",
                                 self.handler, terminal=self.terminal)
 >>>>>>> Add log where needed
+=======
+            rep.error("Non è stato trovato nessun file.xlsx o file.csv",
+                                self.handler, terminal=self.terminal)
+            sys.exit(1)
+    else:
+        rep.info("Ricerca file mergebom richiesti")
+>>>>>>> Import diff feature and its test.
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
@@ -205,11 +219,15 @@ if __name__ == "__main__":
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
     
 <<<<<<< HEAD
+<<<<<<< HEAD
  
 =======
     lib.info("Inizio operazione di merge",
                                 self.handler, terminal=self.terminal)
 >>>>>>> Add log where needed
+=======
+    
+>>>>>>> Import diff feature and its test.
      
     logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
     logger.write_logo()
@@ -219,6 +237,9 @@ if __name__ == "__main__":
     file_list = map(os.path.basename, f_list)
     ft = os.path.join(options.working_dir, options.out_filename+'.xlsx')
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Import diff feature and its test.
 
     if options.diff:
         if len(f_list) != 2:
@@ -245,6 +266,7 @@ if __name__ == "__main__":
                         name=options.prj_name,
                         pcb=options.prj_pcb)
 
+<<<<<<< HEAD
     if options.delete:
         rep.info("Cancellazione vecchio file")
         for i,v in enumerate(f_list):
@@ -260,10 +282,13 @@ if __name__ == "__main__":
                     hw_ver=options.prj_hw_ver,
                     name=options.prj_name,
                     pcb=options.prj_pcb)
+=======
+>>>>>>> Import diff feature and its test.
     if options.delete:
-        lib.info("Cancellazione vecchio file",
-                                self.handler, terminal=self.terminal)
+        rep.info("Cancellazione vecchio file")
         for i,v in enumerate(f_list):
             os.remove(f_list[i])
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+
+
 
