@@ -91,8 +91,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         parser = argparse.ArgumentParser()
         parser.print_help()
-        
-    
 
     f_list = []
     if options.revs is None or options.revs == []:
@@ -118,8 +116,12 @@ if __name__ == "__main__":
                     f_list.append(appo[j])
                 
         else:
+            lib.error("Non è stato trovato nessun file.xlsx o file.csv",
+                                self.handler, terminal=self.terminal)
             sys.exit(1)
     else:
+        lib.info("Ricerca file mergebom richiesti",
+                                self.handler, terminal=self.terminal)
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
@@ -139,7 +141,9 @@ if __name__ == "__main__":
     if options.report_time is not None:
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
     
-    
+    lib.info("Inizio operazione di merge",
+                                self.handler, terminal=self.terminal)
+     
     logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
     logger.write_logo()
 
@@ -156,6 +160,8 @@ if __name__ == "__main__":
                     name=options.prj_name,
                     pcb=options.prj_pcb)
     if options.delete:
+        lib.info("Cancellazione vecchio file",
+                                self.handler, terminal=self.terminal)
         for i,v in enumerate(f_list):
             os.remove(f_list[i])
 
