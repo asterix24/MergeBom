@@ -278,19 +278,17 @@ def cfg_altiumWorkspace(path_ws, csv_file):
             #es. temp='nomeprogetto/nomeprogetto.txt' 
             temp = config.get(i, 'ProjectPath')
             temp = temp.split('\\')
-            k = ''
-            k = os.path.join(k, *temp[:-1])
+            k = os.path.join(*temp[:-1])
             p=os.path.join(*temp)
             #es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
             path_dict[k] = p
 
         except ConfigParser.NoOptionError:
             pass
-    
+
     #calcolo path dove si trovano i progetti
-    ws = path_ws.split('/')
-    path_proj = ''
-    path_proj = os.path.join(path_proj, *ws[:-1])
+    ws = path_ws.split(os.sep)
+    path_proj = os.path.join(*ws[:-1])
 
     """
     ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
@@ -302,7 +300,7 @@ def cfg_altiumWorkspace(path_ws, csv_file):
         parametri_dict = {}
         file_BOM = []
         #ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
-        prj = os.path.join(path_proj,v)
+        prj = os.path.join(path_proj, v)
         if not os.path.exists(prj) :
             continue
     
@@ -317,11 +315,13 @@ def cfg_altiumWorkspace(path_ws, csv_file):
                 parametri_dict[parametro] = val
 
         #ricerca file del progetto a cui fare il merge e messi in una lista
-        pathfile = os.path.join(path_filemerge,k)
-        
-        init = os.path.join(pathfile, k)+'.csv'
+        pathfile = os.path.join(path_filemerge, k)
+
+
+        bom_name = "bom-%s" % k
+        init = os.path.join(pathfile, bom_name) + '.csv'
         if not csv_file:
-            init = os.path.join(pathfile, k) +'.xlsx'
+            init = os.path.join(pathfile, bom_name) +'.xlsx'
         if os.path.exists(init):            
             file_BOM.append(init)
 
