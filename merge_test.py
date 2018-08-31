@@ -57,24 +57,15 @@ class TestMergeBom(unittest.TestCase):
         pass
 
     def test_altiumWorkspace(self):
-<<<<<<< HEAD
         lib = report.Report(log_on_file=True, terminal=True, report_date=None)
 		#os.path.join('test','Assembly','progettotest1','progettotest1.xlsx')
 		#os.path.join('.test','Assembly','progettotest2','progettotest2.xlsx')
         file_BOM=[([], 
-=======
-        
-        file_BOM=[([os.path.join('./test','Assembly','progettotest1','progettotest1.xlsx')], 
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
                 {'prj_status': 'status', 'prj_pcb': 'C', 'prj_name': 'TEST',
                  'prj_date': '28/05/2018', 'prj_pn': 'pn',
                   'prj_name_long': 'CMOS Sensor adapter iMX8', 
                   'prj_license': '-', 'prj_hw_ver': '13'}), 
-<<<<<<< HEAD
                   ([], 
-=======
-                  ([os.path.join('./test','Assembly','progettotest2','progettotest2.xlsx')], 
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
                   {'prj_status': 'status', 'prj_pcb': 'A', 'prj_name': 'Adapter-imx8', 
                   'prj_date': '28/05/2018', 'prj_pn': 'pn',
                    'prj_name_long': 'CMOS Sensor adapter iMX8',

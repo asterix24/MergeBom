@@ -98,6 +98,7 @@ if __name__ == "__main__":
 
     parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
     options = parser.parse_args()
+<<<<<<< HEAD
 
 <<<<<<< HEAD
     if len(sys.argv) == 1:
@@ -105,8 +106,16 @@ if __name__ == "__main__":
     if options.cf:
         options.out_filename=options.namef
 =======
+=======
+    
+    if len(sys.argv) == 1:
+        parser.print_help
+>>>>>>> Print short Help when run script without args.
     if options.cf:
         options.out_filename=options.nw
+    if len(sys.argv) == 1:
+        parser = argparse.ArgumentParser()
+        parser.print_help()
         
     
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
@@ -159,8 +168,12 @@ if __name__ == "__main__":
         if options.prj_hw_ver is None:
 =======
     if not options.delete:
+<<<<<<< HEAD
         if options.hw_ver is None:
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+=======
+        if options.prj_hw_ver is None:
+>>>>>>> Print short Help when run script without args.
             options.out_filename=options.out_filename+'_merge'
         else:
             options.out_filename=options.out_filename+options.prj_hw_ver
