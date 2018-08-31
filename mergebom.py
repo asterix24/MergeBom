@@ -32,18 +32,16 @@ if __name__ == "__main__":
 
     file_list = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--workspace_file', '-w', dest='ws', 
+    parser.add_argument('--workspace-file', '-w', dest='ws', 
                         help='Dove si trova il file WorkSpace', default=None)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
     parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
                       default=None, help="MergeBOM configuration file.")
     parser.add_argument("-o", "--out-filename", dest="out_filename",
-                      default='merged_bom.xlsx', help="Out file name")
+                      default='merged_bom', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
-                      default='./', help="BOM to merge working path.")  
-    parser.add_argument('--merge_file', '-m', dest='ms', 
-                        help='File per il merge', default=None)    
+                      default='./', help="BOM to merge working path.")     
     parser.add_argument('--report_time', '-t', dest='report_time', 
                         help='datetime nel formato : %d/%m/%y', default=None)               
     parser.add_argument("-r", "--bom-revision", dest="bom_rev",
@@ -75,22 +73,14 @@ if __name__ == "__main__":
     parser.add_argument('--prj_pn', '-pn', dest='prj_pn', 
                         help='prj_pn', default=None)
     parser.add_argument('--prj_status', '-status', dest='prj_status', 
-                        help='prj_status', default=None)                    
+                        help='prj_status', default=None)   
+
+    parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
+                     
     options = parser.parse_args()
-    options_list['-w', '-a', '-c', '-o', '-p', '-m', '-t', '-r', '-pc', '-n', '-date', '-hw_ver', '-license', '-name', '-name_long', '-pcb', '-pn', '-status',
-        options.ws, options.csv_file, options.merge_cfg, options.out_filename, options.working_dir, options.ms, options.report_time, options.bom_rev, options.bom_pcb_ver, options.bom_prj_name, options.log_on_file, options.prj_date, options.prj_hw_ver, options.prj_license, options.prj_name, options.prj_name_long, options.prj_pcb, options.prj_pn, options.prj_status]
-    print sys.argv
 
     f_list= []
-    command_line=False
-    for i in enumerate(sys.argv):
-        for j in enumerate(options_list):
-            if not(sys.argv[i]==options_list[j]):
-                f_list.append(sys.argv)
-                command_line=True
-            
-
-    if not command_line:
+    if options.revs is None:
         if not options.ws == None:
             file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 
             if len(file_BOM)>0:
@@ -112,12 +102,13 @@ if __name__ == "__main__":
             else:
                 sys.exit
         else:
-            print options.ms
             if os.path.exists(options.ms):
                 f_list.append(options.ms)
-                print f_list
             else:
                 sys.exit
+    else:
+        for i,v in enumerate(options.revs):
+            f_list.append(options.revs[i])
 
     config = cfg.CfgMergeBom(options.merge_cfg)
     if options.report_time is not None:

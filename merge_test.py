@@ -464,8 +464,9 @@ class TestMergeBom(unittest.TestCase):
     def test_mergeFileCommandLine(self):
         dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py", 
-                                      "-m", "./test/Assembly/programmatest1/programmatest1.xlsx", '-o', 'merged_line.xlsx',
-                                       '-p', dirpath ],
+                                       '-o', 'merged_line.xlsx',
+                                       '-p', dirpath,
+                                       "./test/Assembly/progettotest1/progettotest1.xlsx" ],
                                       stderr=subprocess.STDOUT)
         file=os.path.join(dirpath,'merged_line.xlsx')
         self.assertTrue(os.path.exists(file))
@@ -512,14 +513,14 @@ class TestMergeBom(unittest.TestCase):
             pcb="C",
             name="TEST")
         
-        out = subprocess.check_output(["python", "mergebom.py", 
-                                      "-m", "./test/Assembly/progettotest1/progettotest1.xlsx", 
+        out = subprocess.check_output(["python", "mergebom.py",  
                                       "-p", dirpath,
                                       "-o", "due.xlsx",
                                       "-t", '11/03/2018',
                                       "--prj_hw_ver", "13",
                                       "--prj_name", "TEST",
-                                      "--prj_pcb", "C"],
+                                      "--prj_pcb", "C"
+                                      ,"./test/Assembly/progettotest1/progettotest1.xlsx"],
                                       stderr=subprocess.STDOUT)
         ft1=os.path.join(dirpath, "due.xlsx")
         
@@ -621,7 +622,7 @@ class TestMergeBom(unittest.TestCase):
                              pcb="C", name="TEST", statistics=stats)
 
     def test_cliMerge(self):
-        outfilename = os.path.join(self.temp_dir, "cli-merged.xlsx")
+        outfilename = os.path.join("cli-merged.xlsx")
         out = subprocess.check_output(["python",
                                        "mergebom.py",
                                        "-o",
@@ -629,11 +630,12 @@ class TestMergeBom(unittest.TestCase):
                                        "-r", "0",
                                        "-pc", "S",
                                        "-n", "Test project",
-                                       "test/cli-merge0.xlsx",
-                                       "test/cli-merge1.xlsx"],
+                                       "./test/cli-merge0.xlsx",
+                                       "./test/cli-merge1.xlsx"],
                                       stderr=subprocess.STDOUT)
 
         print out
+        outfilename=os.path.join('./', outfilename)
         self.assertTrue(
             os.path.isfile(outfilename),
             "Merged File not generated")
@@ -782,7 +784,7 @@ class TestMergeBom(unittest.TestCase):
                                        "-r", "77",
                                        "-pc", "X",
                                        "-n", "Test project CVS",
-                                       "-o", outfilename, "test/test.csv"],
+                                       "-o", outfilename, "test/Assembly/progettotest1/progettotest1.csv"],
                                       stderr=subprocess.STDOUT)
 
         print out
@@ -827,12 +829,12 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
-    #suite.addTest(TestMergeBom("test_cliMerge"))
+    suite.addTest(TestMergeBom("test_cliMerge"))
     # suite.addTest(TestMergeBom("test_cliMergeDiff"))
-    #suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    # suite.addTest(TestMergeBom("test_categoryGroup"))
-    # suite.addTest(TestMergeBom("test_otherColumn"))
-    # suite.addTest(TestMergeBom("test_cliCSV"))
+    suite.addTest(TestMergeBom("test_cliMergeGlob"))
+    suite.addTest(TestMergeBom("test_categoryGroup"))
+    suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_cliCSV"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)

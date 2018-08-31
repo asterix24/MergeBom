@@ -324,6 +324,7 @@ def cfg_altiumWorkspace(path_ws, csv_file):
             init = os.path.join(pathfile, k) +'.xlsx'
         if os.path.exists(init):            
             file_BOM.append(init)
+
         #creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
         #ret[
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
