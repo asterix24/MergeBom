@@ -1,5 +1,0 @@
-[test]
-name="Test project without subfolder"
-hw_ver=12
-pcb_ver="Z"
-date=20160510
