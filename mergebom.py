@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
                       default=None, help="MergeBOM configuration file.")
     parser.add_argument("-o", "--out-filename", dest="out_filename",
-                      default='merged_bom', help="Out file name")
+                      default='merged_bom.xlsx', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
                       default='./', help="BOM to merge working path.")     
     parser.add_argument('--report_time', '-t', dest='report_time', 
@@ -80,10 +80,11 @@ if __name__ == "__main__":
     options = parser.parse_args()
 
     f_list = []
-    if options.revs is None:
+    if options.revs is None or options.revs == []:
         if not options.ws == None:
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 
-            if len(file_BOM)<1:
+            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file)
+            print file_BOM
+            if len(file_BOM) < 1:
                 sys.exit(1)
             appo = []
             for i,v in enumerate(file_BOM):
