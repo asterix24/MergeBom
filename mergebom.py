@@ -79,33 +79,31 @@ if __name__ == "__main__":
                      
     options = parser.parse_args()
 
-    f_list= []
+    f_list = []
     if options.revs is None:
         if not options.ws == None:
             file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file) 
-            if len(file_BOM)>0:
-                appo = []
-                for i,v in enumerate(file_BOM):
-                    parametri_dict={}
-                    appo = file_BOM[i][0]
-                    parametri_dict=file_BOM[i][1]
-                    options.prj_date=parametri_dict.get('prj_date', None)
-                    options.prj_hw_ver=parametri_dict.get('prj_hw_ver',None)
-                    options.prj_license=parametri_dict.get('prj_license', None)
-                    options.prj_name=parametri_dict.get('prj_name', None)
-                    options.prj_name_long=parametri_dict.get('prj_name_long', None)
-                    options.prj_pcb=parametri_dict.get('prj_pcb', None)
-                    options.prj_pn=parametri_dict.get('prj_pn', None)
-                    options.prj_status=parametri_dict.get('prj_status', None)
-                    for j,v in enumerate(appo):
-                        f_list.append(appo[j])
-            else:
-                sys.exit
+            if len(file_BOM)<1:
+                sys.exit(1)
+            appo = []
+            for i,v in enumerate(file_BOM):
+                parametri_dict={}
+                appo = file_BOM[i][0]
+                parametri_dict = file_BOM[i][1]
+                options.prj_date = parametri_dict.get('prj_date', None)
+                options.prj_hw_ver = parametri_dict.get('prj_hw_ver',None)
+                options.prj_license = parametri_dict.get('prj_license', None)
+                options.prj_name = parametri_dict.get('prj_name', None)
+                options.prj_name_long = parametri_dict.get('prj_name_long', None)
+                options.prj_pcb = parametri_dict.get('prj_pcb', None)
+                options.prj_pn = parametri_dict.get('prj_pn', None)
+                options.prj_status = parametri_dict.get('prj_status', None)
+                for j,v in enumerate(appo):
+                    f_list.append(appo[j])
         else:
-            if os.path.exists(options.ms):
-                f_list.append(options.ms)
-            else:
-                sys.exit
+            if not os.path.exists(options.ms):
+                sys.exit(1)
+            f_list.append(options.ms)
     else:
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
@@ -115,7 +113,7 @@ if __name__ == "__main__":
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
     
     
-    logger = report.Report(log_on_file=options.log_on_file, terminal=True, report_date=options.report_time)
+    logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
     logger.write_logo()
 
     m = MergeBom(f_list, config, logger=logger)
