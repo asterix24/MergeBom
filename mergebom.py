@@ -82,11 +82,15 @@ if __name__ == "__main__":
                         help='prj_status', default=None)   
 
     parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
-                     
     options = parser.parse_args()
-
+    
+    if len(sys.argv) == 1:
+        parser.print_help
     if options.cf:
         options.out_filename=options.nw
+    if len(sys.argv) == 1:
+        parser = argparse.ArgumentParser()
+        parser.print_help()
         
     
 
@@ -120,7 +124,7 @@ if __name__ == "__main__":
             f_list.append(options.revs[i])
 
     if not options.delete:
-        if options.hw_ver is None:
+        if options.prj_hw_ver is None:
             options.out_filename=options.out_filename+'_merge'
         else:
             options.out_filename=options.out_filename+options.prj_hw_ver
