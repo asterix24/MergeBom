@@ -57,16 +57,18 @@ class TestMergeBom(unittest.TestCase):
         pass
 
     def test_altiumWorkspace(self):
-        file_BOM=[(['./test/Assembly/progettotest1/progettotest1.xlsx'], 
+        
+        file_BOM=[([os.path.join('./test','Assembly','progettotest1','progettotest1.xlsx')], 
                 {'prj_status': 'status', 'prj_pcb': 'C', 'prj_name': 'TEST',
                  'prj_date': '28/05/2018', 'prj_pn': 'pn',
                   'prj_name_long': 'CMOS Sensor adapter iMX8', 
                   'prj_license': '-', 'prj_hw_ver': '13'}), 
-                  (['./test/Assembly/progettotest2/progettotest2.xlsx'], 
+                  ([os.path.join('./test','Assembly','progettotest2','progettotest2.xlsx')], 
                   {'prj_status': 'status', 'prj_pcb': 'A', 'prj_name': 'Adapter-imx8', 
                   'prj_date': '28/05/2018', 'prj_pn': 'pn',
                    'prj_name_long': 'CMOS Sensor adapter iMX8',
                    'prj_license': '-', 'prj_hw_ver': '0'})]
+                   
 
 
         self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace('./test/utils.DsnWrk', False))

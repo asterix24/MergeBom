@@ -34,12 +34,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--workspace-file', '-w', dest='ws', 
                         help='Dove si trova il file WorkSpace', default=None)
+    parser.add_argument('--nome-file.xlsx', '-nw', dest='nw', 
+                        help='Nome file da mergiare', default='bom-')
+    parser.add_argument('--caratteristiche-file', '-cf', dest='cf', action="store_true",
+                        help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
     parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
                       default=None, help="MergeBOM configuration file.")
     parser.add_argument("-o", "--out-filename", dest="out_filename",
-                      default='merged_bom.xlsx', help="Out file name")
+                      default='merged_bom', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
                       default='./', help="BOM to merge working path.")     
     parser.add_argument('--report_time', '-t', dest='report_time', 
@@ -50,6 +54,8 @@ if __name__ == "__main__":
                       default=None, help="PCB Revision")
     parser.add_argument("-n", "--bom-prj-name", dest="bom_prj_name",
                       default=None, help="Project names.")
+    parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
+                      default=False, help="delete file")                  
     parser.add_argument(
         "-l",
         "--log-on-file",
@@ -79,10 +85,15 @@ if __name__ == "__main__":
                      
     options = parser.parse_args()
 
+    if options.cf:
+        options.out_filename=options.nw
+        
+    
+
     f_list = []
     if options.revs is None or options.revs == []:
         if not options.ws == None:
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file)
+            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw)
             print file_BOM
             if len(file_BOM) < 1:
                 sys.exit(1)
@@ -101,13 +112,24 @@ if __name__ == "__main__":
                 options.prj_status = parametri_dict.get('prj_status', None)
                 for j,v in enumerate(appo):
                     f_list.append(appo[j])
+                
         else:
-            if not os.path.exists(options.ms):
-                sys.exit(1)
-            f_list.append(options.ms)
+            sys.exit(1)
     else:
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
+
+    if not options.delete:
+        if options.hw_ver is None:
+            options.out_filename=options.out_filename+'_merge'
+        else:
+            options.out_filename=options.out_filename+options.prj_hw_ver
+
+    if options.cf:
+        appo = f_list[0]
+        appo = appo.split(os.sep)
+        options.working_dir = os.path.join(*appo[:-1])
+    
 
     config = cfg.CfgMergeBom(options.merge_cfg)
     if options.report_time is not None:
@@ -120,7 +142,7 @@ if __name__ == "__main__":
     m = MergeBom(f_list, config, logger=logger)
     d = m.merge()
     file_list = map(os.path.basename, f_list)
-    ft = os.path.join(options.working_dir, options.out_filename)
+    ft = os.path.join(options.working_dir, options.out_filename+'.xlsx')
     report.write_xls(
                     d,
                     file_list,
@@ -129,4 +151,7 @@ if __name__ == "__main__":
                     hw_ver=options.prj_hw_ver,
                     name=options.prj_name,
                     pcb=options.prj_pcb)
+    if options.delete:
+        for i,v in enumerate(f_list):
+            os.remove(f_list[i])
 

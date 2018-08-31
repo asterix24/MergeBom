@@ -253,11 +253,12 @@ def cfg_version(filename):
         cfg[section] = d
     return cfg
 
-def cfg_altiumWorkspace(path_ws, csv_file):
+def cfg_altiumWorkspace(path_ws, csv_file, bom_name):
     """
     alla funzione vengono passati due parametri:
         1. il path del file Workspace
         2. se i file da mergiare sono di tipo csv o xlsx 
+        3. nome del file con cui fare il merge
 
     ricerca del nome di tutti i progetti all'interno del file Workspace
     esempio di file Wprkspace:
@@ -317,8 +318,6 @@ def cfg_altiumWorkspace(path_ws, csv_file):
         #ricerca file del progetto a cui fare il merge e messi in una lista
         pathfile = os.path.join(path_filemerge, k)
 
-
-        bom_name = "bom-%s" % k
         init = os.path.join(pathfile, bom_name) + '.csv'
         if not csv_file:
             init = os.path.join(pathfile, bom_name) +'.xlsx'
