@@ -36,6 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('--path-workspace-file', '-w', dest='ws', 
                         help='Dove si trova il file WorkSpace', default=None)
 <<<<<<< HEAD
+<<<<<<< HEAD
     parser.add_argument('--nome-file', '-namef', dest='namef', 
                         help='Nome file da mergiare', default='bom-')
     parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
@@ -44,6 +45,11 @@ if __name__ == "__main__":
                         help='Nome file da mergiare', default='bom-')
     parser.add_argument('--caratteristiche-file', '-cf', dest='cf', action="store_true",
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+=======
+    parser.add_argument('--nome-file', '-namef', dest='namef', 
+                        help='Nome file da mergiare', default='bom-')
+    parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
+>>>>>>> correzioni review
                         help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
@@ -122,6 +128,7 @@ if __name__ == "__main__":
         parser.print_help
 >>>>>>> Print short Help when run script without args.
     if options.cf:
+<<<<<<< HEAD
         options.out_filename=options.nw
     if len(sys.argv) == 1:
         parser = argparse.ArgumentParser()
@@ -132,16 +139,23 @@ if __name__ == "__main__":
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
 =======
 >>>>>>> Add log where needed
+=======
+        options.out_filename=options.namef
+>>>>>>> correzioni review
 
     f_list = []
     if options.revs is None or options.revs == []:
         if not options.ws == None:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef, rep)
 =======
             file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw)
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+=======
+            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef)
+>>>>>>> correzioni review
             print file_BOM
 =======
             file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw, rep)
@@ -194,6 +208,9 @@ if __name__ == "__main__":
             f_list.append(options.revs[i])
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> correzioni review
     if len(f_list) == 0:
         rep.error("Non è stato trovato nessun file da mergiare")
         sys.exit(1)
@@ -213,10 +230,14 @@ if __name__ == "__main__":
             options.out_filename=options.out_filename+options.prj_hw_ver
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     if options.finalf:
 =======
     if options.cf:
 >>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+=======
+    if options.finalf:
+>>>>>>> correzioni review
         appo = f_list[0]
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
