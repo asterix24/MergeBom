@@ -659,7 +659,6 @@ class TestMergeBom(unittest.TestCase):
                                        os.path.join("test","cli-merge-diff1.xlsx")],
                                       stderr=subprocess.STDOUT)
 
-        print out
         self.assertTrue(
             os.path.isfile(outfilename),
             "Merged diff File not generated")
@@ -677,7 +676,6 @@ class TestMergeBom(unittest.TestCase):
                                          os.path.join("test","cli-merge-diff2.xlsx")],
                                         stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            print e
             retcode = e.returncode
 
         self.assertEqual(retcode, 1)
@@ -704,7 +702,6 @@ class TestMergeBom(unittest.TestCase):
 									   os.path.join("test","diff_test_old.xlsx")],
                                       stderr=subprocess.STDOUT)
 
-        print '.................a.' , outfilename
         self.assertTrue(
             os.path.isfile(outfilename),
             "Merged File not generated")
@@ -792,7 +789,6 @@ class TestMergeBom(unittest.TestCase):
                                        "-o", 'csv_test', os.path.join("test","Assembly","progettotest1","progettotest1.csv")],
                                       stderr=subprocess.STDOUT)
 
-        print "........................" , outfilename
         self.assertTrue(
             os.path.isfile(outfilename),
             "Merged File not generated")
@@ -813,7 +809,6 @@ if __name__ == "__main__":
         default='2',
         help="Output verbosity")
     (options, args) = parser.parse_args()
-    print args
 
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_altiumWorkspace"))
