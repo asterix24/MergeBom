@@ -46,7 +46,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--out-filename", dest="out_filename",
                       default='merged_bom', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
-                      default='./', help="BOM to merge working path.")     
+                      default="./", help="BOM to merge working path.")     
     parser.add_argument('--report_time', '-t', dest='report_time', 
                         help='datetime nel formato : %d/%m/%y', default=None)               
     parser.add_argument("-r", "--bom-revision", dest="bom_rev",
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
     options = parser.parse_args()
-    
+
     if len(sys.argv) == 1:
         parser.print_help
     if options.cf:
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     f_list = []
     if options.revs is None or options.revs == []:
         if not options.ws == None:
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef)
+            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef, rep)
             print file_BOM
             if len(file_BOM) < 1:
                 sys.exit(1)
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     if options.report_time is not None:
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
     
-    
+ 
      
     logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
     logger.write_logo()
