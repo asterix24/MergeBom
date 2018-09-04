@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/use/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MergeBom is free software; you can redistribute it and/or modify

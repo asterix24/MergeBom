@@ -33,11 +33,11 @@ if __name__ == "__main__":
 
     file_list = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--workspace-file', '-w', dest='ws', 
+    parser.add_argument('--path-workspace-file', '-w', dest='ws', 
                         help='Dove si trova il file WorkSpace', default=None)
-    parser.add_argument('--nome-file.xlsx', '-nw', dest='nw', 
+    parser.add_argument('--nome-file', '-namef', dest='namef', 
                         help='Nome file da mergiare', default='bom-')
-    parser.add_argument('--caratteristiche-file', '-cf', dest='cf', action="store_true",
+    parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
                         help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
@@ -85,15 +85,12 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         parser.print_help
     if options.cf:
-        options.out_filename=options.nw
-    if len(sys.argv) == 1:
-        parser = argparse.ArgumentParser()
-        parser.print_help()
+        options.out_filename=options.namef
 
     f_list = []
     if options.revs is None or options.revs == []:
         if not options.ws == None:
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw)
+            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef)
             print file_BOM
             if len(file_BOM) < 1:
                 sys.exit(1)
@@ -122,13 +119,17 @@ if __name__ == "__main__":
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
+    if len(f_list) == 0:
+        rep.error("Non è stato trovato nessun file da mergiare")
+        sys.exit(1)
+
     if not options.delete:
         if options.prj_hw_ver is None:
             options.out_filename=options.out_filename+'_merge'
         else:
             options.out_filename=options.out_filename+options.prj_hw_ver
 
-    if options.cf:
+    if options.finalf:
         appo = f_list[0]
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
