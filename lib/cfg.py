@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/use/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MergeBom is free software; you can redistribute it and/or modify
@@ -253,88 +253,88 @@ def cfg_version(filename):
         cfg[section] = d
     return cfg
 
-def cfg_altiumWorkspace(path_ws, csv_file):
-    """
-    alla funzione vengono passati due parametri:
-        1. il path del file Workspace
-        2. se i file da mergiare sono di tipo csv o xlsx 
+def cfg_altiumWorkspace(path_ws, csv_file, bom_name, lib):
+	# """
+   # alla funzione vengono passati due parametri:
+     #   1. il path del file Workspace
+       # 2. se i file da mergiare sono di tipo csv o xlsx 
+       # 3. nome del file con cui fare il merge
 
-    ricerca del nome di tutti i progetti all'interno del file Workspace
-    esempio di file Wprkspace:
-        $ cat schemes.DsnWrk 
-        [ProjectGroup]
-        Version=1.0
+  #  ricerca del nome di tutti i progetti all'interno del file Workspace
+    #esempio di file Wprkspace:
+     #   $ cat schemes.DsnWrk 
+      #  [ProjectGroup]
+       # Version=1.0
 
-        [Project1]
-        ProjectPath=camera-tbd\camera-tbd.PrjPcb
-        [Project2]
-        ProjectPath=usb-serial\usb-serial.PrjPcb
-    """
-    path_dict = {}
-    config = ConfigParser.RawConfigParser()
-    config.read(path_ws)
-    for i in config.sections():
-        try:
-            #es. temp='nomeprogetto/nomeprogetto.txt' 
-            temp = config.get(i, 'ProjectPath')
-            temp = temp.split('\\')
-            k = os.path.join(*temp[:-1])
-            p=os.path.join(*temp)
-            #es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
-            path_dict[k] = p
+      #  [Project1]
+    #    ProjectPath=camera-tbd\camera-tbd.PrjPcb
+      #  [Project2]
+       # ProjectPath=usb-serial\usb-serial.PrjPcb
+		
+	#	"""
+	lib.warning("Ricerca progetti all'interno del file .DsnWrk")
 
-        except ConfigParser.NoOptionError:
-            pass
+	path_dict = {}
+	config = ConfigParser.RawConfigParser()
+	config.read(path_ws)
+	for i in config.sections():
+		try:
+			#es. temp='nomeprogetto/nomeprogetto.txt' 
+			temp = config.get(i, 'ProjectPath')
+			temp = temp.split('\\')
+			k = os.path.join(*temp[:-1])
+			p=os.path.join(*temp)
+			#es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
+			path_dict[k] = p
+		except ConfigParser.NoOptionError:
+			pass
 
-    #calcolo path dove si trovano i progetti
-    ws = path_ws.split(os.sep)
-    path_proj = os.path.join(*ws[:-1])
+	#calcolo path dove si trovano i progetti
+	ws = path_ws.split(os.sep)
+	path_proj = path_ws
+	if len(ws)>1:
+		path_proj = os.path.join(*ws[:-1])
 
-    """
-    ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
-    """
-    ret = []
-    path_filemerge = os.path.join(path_proj,  "Assembly")
-
-    for k, v in path_dict.items():
-        parametri_dict = {}
-        file_BOM = []
-        #ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
-        prj = os.path.join(path_proj, v)
-        if not os.path.exists(prj) :
-            continue
-    
-        f = open(prj,'r')
-        config = ConfigParser.RawConfigParser()
-        config.read(prj)
-        for i in config.sections():
-            line = re.findall(r'Parameter[0-9]', i)
-            if line:
-                parametro = config.get(i,'Name')
-                val = config.get(i,'Value')
-                parametri_dict[parametro] = val
-
-        #ricerca file del progetto a cui fare il merge e messi in una lista
-        pathfile = os.path.join(path_filemerge, k)
-
-
-        bom_name = "bom-%s" % k
-        init = os.path.join(pathfile, bom_name) + '.csv'
-        if not csv_file:
-            init = os.path.join(pathfile, bom_name) +'.xlsx'
-        if os.path.exists(init):            
-            file_BOM.append(init)
+    #"""
+    #ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
+     #"""
+	lib.warning("ricerca parametri di progetto e file mergebom")
+	ret = []
+	path_filemerge = os.path.join(path_proj,  "Assembly")
+	
+	for k, v in path_dict.items():
+		parametri_dict = {}
+		file_BOM = []
+		#ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
+		prj = os.path.join(path_proj, v)
+		if not os.path.exists(prj) :
+			continue
+		f = open(prj,'r')
+		config = ConfigParser.RawConfigParser()
+		config.read(prj)
+		for i in config.sections():
+			line = re.findall(r'Parameter[0-9]', i)
+			if line:
+				parametro = config.get(i,'Name')
+				val = config.get(i,'Value')
+				parametri_dict[parametro] = val
+		#ricerca file del progetto a cui fare il merge e messi in una lista
+		pathfile = os.path.join(path_filemerge, k)
+		init = os.path.join(pathfile, bom_name) + '.csv'
+		if not csv_file:
+			init = os.path.join(pathfile, bom_name) +'.xlsx'
+		if os.path.exists(init):            
+			file_BOM.append(init)
 
         #creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
         #ret[
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
-        ret.append((file_BOM, parametri_dict))
-        
-        
-    return ret
-    
+		ret.append((file_BOM, parametri_dict))
+	print ret
+	return ret
+	
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
