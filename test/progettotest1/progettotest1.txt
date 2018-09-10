@@ -5,7 +5,8 @@ Value=28/05/2018
 
 [Parameter2]
 Name=prj_hw_ver
-Value=13
+Value=0
+
 
 [Parameter3]
 Name=prj_license
@@ -14,6 +15,7 @@ Value=-
 [Parameter4]
 Name=prj_name
 Value=TEST
+
 
 [Parameter5]
 Name=prj_name_long

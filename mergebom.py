@@ -17,6 +17,7 @@
 #
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
+
 import sys
 import os
 import glob
@@ -178,6 +179,4 @@ if __name__ == "__main__":
         rep.info("Cancellazione vecchio file")
         for i,v in enumerate(f_list):
             os.remove(f_list[i])
-
-
 
