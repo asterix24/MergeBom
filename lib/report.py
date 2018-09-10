@@ -20,7 +20,6 @@
 
 """
 MergeBOM Report module.
-
 Utils to generate and read excel BOM files.
 """
 
@@ -43,10 +42,13 @@ class Report(object):
     """
 
     def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
-                 terminal=True):
+                 terminal=True, report_date=None):
         self.terminal = terminal
         self.report = None
         self.log_on_file = log_on_file
+        self.report_date=report_date
+        if report_date is None:
+            self.report_date = datetime.datetime.now()
         if self.log_on_file:
             self.report = open(logfile, 'w+')
 
@@ -82,8 +84,8 @@ class Report(object):
         self.__printout("Report file.\n")
         self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
 
-        report_date = datetime.datetime.now()
-        self.__printout("Date: %s\n" % report_date.strftime("%A, %d %B %Y %X"))
+        
+        self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
         self.__printout("." * 80)
         self.__printout("\n")
         self.__printout("\n")
@@ -127,21 +129,17 @@ def write_xls(
         config,
         handler,
         hw_ver="0",
-        pcb_ver="A",
-        project="MyProject",
+        pcb="A",
+        name="MyProject",
         diff=False,
         extra_data=None,
         statistics=None,
         headers=cfg.VALID_KEYS):
     """
     Write merged BOM in excel file.
-
     Statistics data should be in follow format:
-
     {'total': 38, 'R': 14, 'file_num': 2, 'C': 12}
-
     Where:
-
     - total: sum all of components numeber
     - file_num: number of merged BOM files
     - C,R, J, ecc.: Componentes category
@@ -266,10 +264,10 @@ def write_xls(
         info = [
             'Component Variation',
             '',
-            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
-            'Project: %s' % project,
+            'Project: %s' % name,
             '',
             'File A:',
             '   Hw_rev:  %s' % A_hw_diff,
@@ -284,12 +282,12 @@ def write_xls(
         info = [
             'Bill of Materials',
             '',
-            'Date: %s' % report_date.strftime("%A, %d %B %Y %X"),
+            'Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
-            'Project: %s' % project,
+            'Project: %s' % name,
             'Hardware_version: %s' % hw_ver,
-            'PCB_version: %s' % pcb_ver,
+            'PCB_version: %s' % pcb,
             '',
             'BOM files:',
         ]
