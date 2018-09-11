@@ -332,7 +332,6 @@ def cfg_altiumWorkspace(path_ws, csv_file, bom_name, lib):
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
 		ret.append((file_BOM, parametri_dict))
-	print ret
 	return ret
 	
 
