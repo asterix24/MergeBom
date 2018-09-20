@@ -254,14 +254,17 @@ def cfg_version(filename):
     return cfg
 
 
-def cfg_altiumWorkspace(path_ws, csv_file, bom_name, bom_search_dir, logger):
+def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
+                        logger, bom_postfix="", bom_prefix="bom-"):
     """
-    Alla funzione vengono passati due parametri:
+    Alla funzione vengono passati i parametri:
         1. il path del file Workspace
         2. se i file da mergiare sono di tipo csv o xlsx
         3. nome del file con cui fare il merge ricerca del nome di tutti
         i progetti all'interno del file Workspace
+
     esempio di file Wprkspace:
+
         $ cat schemes.DsnWrk
         [ProjectGroup]
         Version=1.0
@@ -269,78 +272,86 @@ def cfg_altiumWorkspace(path_ws, csv_file, bom_name, bom_search_dir, logger):
         ProjectPath=camera-tbd\camera-tbd.PrjPcb
         [Project2]
         ProjectPath=usb-serial\usb-serial.PrjPcb
+
     """
-    
-    logger.warning("Serarch project to merge in given Altiumworkspace: %s\n" % path_ws)
 
-    path_dict = {}
-    config = ConfigParser.RawConfigParser()
-    config.read(path_ws)
-    for i in config.sections():
-        try:
-            # es. temp='nomeprogetto/nomeprogetto.txt'
-            temp = config.get(i, 'ProjectPath')
-            temp = temp.split('\\')
-            k = os.path.join(*temp[:-1])
-            p = os.path.join(*temp)
-            # es. path_dict = {nomeprogetto : nomeprogetto/nomeprogetto.txt}
-            path_dict[k] = p
-        except ConfigParser.NoOptionError:
-            pass
-    
-    # calcolo path dove si trovano i progetti
-    ws = path_ws.split(os.sep)
-    path_proj = path_ws
-    if len(ws) > 1:
-        path_proj = os.path.join(*ws[:-1])
-    
-
-    # ricerca parametri per ogni progetto e esistenza dei file a cui fare il mergebom
-    logger.info("Search parameter in Altium workspace projects\n")
 
     ret = []
+
+    # calcolo path dove si trovano i progetti
+    ws = workspace_path.split(os.sep)
+    path_proj = workspace_path
+    if len(ws) > 1:
+        path_proj = os.path.join(*ws[:-1])
     path_filemerge = os.path.join(path_proj, bom_search_dir)
-	
-    print path_proj, path_filemerge, path_dict
-    for k, v in path_dict.items():
+
+    logger.info("Search project to merge in given Altiumworkspace: %s\n" %
+                   workspace_path)
+    logger.info("Mergepath %s\n" % path_filemerge)
+    logger.info("path_proj %s\n" % path_proj)
+
+
+    wk_config = ConfigParser.RawConfigParser()
+    wk_config.read(workspace_path)
+    for i in wk_config.sections():
+        print i
+        try:
+            if re.match("project[0-9]+", i.lower()) is None:
+                logger.error("Skip key %s\n" % i)
+                continue
+
+            temp = wk_config.get(i, 'ProjectPath')
+            temp = temp.split('\\')
+            basename = os.path.join(*temp[:-1])
+            complete_path = os.path.join(*temp)
+
+        except ConfigParser.NoOptionError:
+            logger.error("Missing key %s\n" % i)
+            continue
+
         parametri_dict = {}
         file_BOM = []
 
-        # ricerca parametri di ogni progetto e poi messi in un dizionario con {nomeparametro : parametro}
-        prj = os.path.join(path_proj, v)
-        print prj
-        os.path.abspath
+        # ricerca parametri di ogni progetto e poi messi in un dizionario con
+        # {nomeparametro : parametro}
+        prj = os.path.join(path_proj, complete_path)
         if not os.path.exists(prj):
             logger.error("Unable to find project BOM: %s" % prj)
             continue
 
-        config = ConfigParser.RawConfigParser()
-        config.read(prj)
-        
-        for i in config.sections():
-            line = re.findall(r'Parameter[0-9]', i)
-            if line:
-                parametro = config.get(i, 'Name')
-                val = config.get(i, 'Value')
-                parametri_dict[parametro] = val
+        prj_config = ConfigParser.RawConfigParser()
+        prj_config.read(prj)
+
+        logger.info("proj %s\n" % prj)
+        for i in prj_config.sections():
+            if re.match(r'Parameter[0-9]+', i) is None:
+                logger.error("Wrong key found [%s]\n", i)
+                continue
+
+            print "\t", i
+            parametro = prj_config.get(i, 'Name')
+            val = prj_config.get(i, 'Value')
+            parametri_dict[parametro] = val
 
         # ricerca file del progetto a cui fare il merge e messi in una lista
-        pathfile = os.path.join(path_filemerge, k)
-        init = os.path.join(pathfile, bom_name) + '.csv'
+        bom_name = "%s%s%s" % (bom_prefix, basename, bom_postfix)
+        path_file = os.path.join(path_filemerge, basename)
+        merge_file_item = os.path.join(path_file, bom_name) + '.csv'
         if not csv_file:
-            init = os.path.join(pathfile, bom_name) +'.xlsx'
-        if os.path.exists(init):            
-            file_BOM.append(init)
+            merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
 
-    # creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
-    # ret[
-    #   ([file1.csv, file2.csv], {nomeparametro : parametro})
-    #   ([file1.csv, file2.csv], {nomeparametro : parametro})
-    # ]
-    ret.append((file_BOM, parametri_dict))
+        if os.path.exists(merge_file_item):
+            file_BOM.append(merge_file_item)
+
+        # creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
+        # ret[
+        #   ([file1.csv, file2.csv], {nomeparametro : parametro})
+        #   ([file1.csv, file2.csv], {nomeparametro : parametro})
+        # ]
+        ret.append((file_BOM, parametri_dict))
 
     return ret
-	
+
 
 if __name__ == "__main__":
     import toml

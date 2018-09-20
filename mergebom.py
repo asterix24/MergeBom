@@ -28,14 +28,16 @@ import re
 from lib import cfg,lib, report
 from mergebom_class import *
 from datetime import datetime
-   
+
 if __name__ == "__main__":
     file_list = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path-workspace-file', '-w', dest='workspace_file', 
+    parser.add_argument('--path-workspace-file', '-w', dest='workspace_file',
                         help='Dove si trova il file WorkSpace', default=None)
-    parser.add_argument('--nome-file', '-namef', dest='name_file', 
-                        help='Nome file da mergiare', default='bom-')
+    parser.add_argument('--bom-prj-file-prefix', '-prefix', dest='bom_prefix',
+                        help='Default prefix for BOM in project', default='bom-')
+    parser.add_argument('--bom-prj-file-postfix', '-postfix', dest='bom_postfix',
+                        help='Default postfix for BOM in project', default='')
     parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
                         help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
@@ -45,11 +47,11 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--out-filename", dest="out_filename",
                       default='merged_bom', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
-                      default="./", help="BOM to merge working path.")     
+                      default="./", help="BOM to merge working path.")
     parser.add_argument("-s", "--bom-file-search-dir", dest="bom_search_dir",
                       default="Assembly", help="Project BOM search directory.")
-    parser.add_argument('--report_time', '-t', dest='report_time', 
-                        help='datetime nel formato : %%d/%%m/%%y', default=None)               
+    parser.add_argument('--report_time', '-t', dest='report_time',
+                        help='datetime nel formato : %%d/%%m/%%y', default=None)
     parser.add_argument("-r", "--bom-revision", dest="bom_rev",
                       default=None, help="Hardware BOM revision")
     parser.add_argument("-pc", "--bom-pcb-revision", dest="bom_pcb_ver",
@@ -57,28 +59,28 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--bom-prj-name", dest="bom_prj_name",
                       default=None, help="Project names.")
     parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
-                      default=False, help="delete file")                  
+                      default=False, help="delete file")
     parser.add_argument("-l","--log-on-file",dest="log_on_file",
                       default=True,action="store_true",help="List all project name from version file.")
     parser.add_argument( "-diff","--diff",dest="diff",action="store_true",
                       default=False, help="Generate diff from two specified BOMs")
 
-    parser.add_argument('--prj_date', '-date', dest='prj_date', 
+    parser.add_argument('--prj_date', '-date', dest='prj_date',
                         help='prj_date', default=None)
-    parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver', 
+    parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver',
                         help='prj_hw_ver', default=None)
-    parser.add_argument('--prj_license', '-license', dest='prj_license', 
+    parser.add_argument('--prj_license', '-license', dest='prj_license',
                         help='prj_license', default=None)
-    parser.add_argument('--prj_name', '-name', dest='prj_name', 
+    parser.add_argument('--prj_name', '-name', dest='prj_name',
                         help='prj_name', default=None)
-    parser.add_argument('--prj_name_long', '-name_long', dest='prj_name_long', 
+    parser.add_argument('--prj_name_long', '-name_long', dest='prj_name_long',
                         help='prj_name_long', default=None)
-    parser.add_argument('--prj_pcb', '-pcb', dest='prj_pcb', 
+    parser.add_argument('--prj_pcb', '-pcb', dest='prj_pcb',
                         help='prj_pcb', default=None)
-    parser.add_argument('--prj_pn', '-pn', dest='prj_pn', 
+    parser.add_argument('--prj_pn', '-pn', dest='prj_pn',
                         help='prj_pn', default=None)
-    parser.add_argument('--prj_status', '-status', dest='prj_status', 
-                        help='prj_status', default=None)   
+    parser.add_argument('--prj_status', '-status', dest='prj_status',
+                        help='prj_status', default=None)
 
     parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
     options = parser.parse_args()
@@ -101,7 +103,13 @@ if __name__ == "__main__":
     f_list = []
     if options.revs is None or options.revs == []:
         if not options.workspace_file == None:
-            file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file, options.csv_file, options.name_file, options.bom_search_dir, logger=logger)
+            file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file,
+                                               options.csv_file,
+                                               options.bom_search_dir,
+                                               logger,
+                                               bom_prefix=options.bom_prefix,
+                                               bom_postfix=options.bom_postfix)
+
             print file_BOM
             if len(file_BOM) < 1:
                 sys.exit(1)
@@ -120,17 +128,17 @@ if __name__ == "__main__":
                 options.prj_status = parametri_dict.get('prj_status', None)
                 for j,v in enumerate(appo):
                     f_list.append(appo[j])
-                
+
         else:
-            logger.error("No file.xlsx o file.csv found")
+            logger.error("No file.xlsx o file.csv found\n")
             sys.exit(1)
     else:
-        logger.info("Ricerca file mergebom richiesti")
+        logger.info("Ricerca file mergebom richiesti\n")
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
     if len(f_list) == 0:
-        logger.error("No file to merge")
+        logger.error("No file to merge\n")
         sys.exit(1)
 
     if not options.delete:
@@ -143,7 +151,7 @@ if __name__ == "__main__":
         appo = f_list[0]
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
-    
+
 
     m = MergeBom(f_list, config, logger=logger)
     d = m.merge()
@@ -152,7 +160,7 @@ if __name__ == "__main__":
 
     if options.diff:
         if len(f_list) != 2:
-            logger.error("No enougth file to merge")
+            logger.error("No enougth file to merge\n")
             sys.exit(1)
         d = m.diff()
         l = m.extra_data()
@@ -163,9 +171,9 @@ if __name__ == "__main__":
             ft,
             diff=True,
             extra_data=l,
-            headers=m.header_data())      
-    else:    
-        logger.info("Start Merging..")
+            headers=m.header_data())
+    else:
+        logger.info("Start Merging..\n")
         report.write_xls(
                         d,
                         file_list,
@@ -176,6 +184,6 @@ if __name__ == "__main__":
                         pcb=options.prj_pcb)
 
     if options.delete:
-        logger.info("Remove Merged files")
+        logger.info("Remove Merged files\n")
         for i,v in enumerate(f_list):
             os.remove(f_list[i])

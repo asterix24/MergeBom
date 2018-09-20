@@ -60,8 +60,18 @@ class TestMergeBom(unittest.TestCase):
         file_BOM=[
             ([], {
                 'prj_status': 'status',
+                'prj_pcb': 'C',
+                'prj_name': 'TEST',
+                'prj_date': '28/05/2018',
+                'prj_pn': 'pn',
+                'prj_name_long': 'CMOS Sensor adapter iMX8',
+                'prj_license': '-',
+                'prj_hw_ver': '13'
+                }),
+            ([], {
+                'prj_status': 'status',
                 'prj_pcb': 'A',
-                'prj_name': 'Adapter-imx8', 
+                'prj_name': 'Adapter-imx8',
                 'prj_date': '28/05/2018',
                 'prj_pn': 'pn',
                 'prj_name_long': 'CMOS Sensor adapter iMX8',
@@ -69,22 +79,14 @@ class TestMergeBom(unittest.TestCase):
                 'prj_hw_ver': '0'
                 }
             ),
-            ([], {
-                'prj_status': 'status',
-                'prj_pcb': 'C',
-                'prj_name': 'TEST',
-                'prj_date': '28/05/2018',
-                'prj_pn': 'pn',
-                'prj_name_long': 'CMOS Sensor adapter iMX8', 
-                'prj_license': '-',
-                'prj_hw_ver': '13'
-                })
         ]
-                   
 
 
-        self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace(os.path.join('test','utils.DsnWrk'), False, 'bom-', "Assembly", self.logger))
-        
+        p = os.path.join('test','utils.DsnWrk')
+        param = cfg.cfg_altiumWorkspace(p, False, "Assembly", self.logger,
+                                        bom_prefix='bom-', bom_postfix="")
+        self.assertEqual(file_BOM, param)
+
     def test_import(self):
         file_list = [
             "test/bom0.xlsx",
@@ -465,30 +467,36 @@ class TestMergeBom(unittest.TestCase):
     def test_altiumMergexlsx(self):
         dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py",
-                                       "-w", os.path.join("test","utils.DsnWrk"), '-o', 'merged_xlsx', '-p', dirpath ],
+                                       "-w", os.path.join("test","utils.DsnWrk"),
+                                       '-o', 'merged_xlsx',
+                                       '-prefix', "",
+                                       '-p', dirpath ],
                                       stderr=subprocess.STDOUT)
-        file=os.path.join(dirpath,'merged_xlsx0.xlsx')
-        self.assertTrue(os.path.exists(file))
-    
+        file_name = os.path.join(dirpath,'merged_xlsx0.xlsx')
+        self.assertTrue(os.path.exists(file_name))
+
     def test_altiumMergecsv(self):
         dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py", "--csv",
-                                      "-w", os.path.join("test","utils.DsnWrk"), '-o', 'merged_csv' 
-                                      #'-p', dirpath 
-									  ],
+                                      "-w", os.path.join("test","utils.DsnWrk"),
+                                       '-prefix', "",
+                                       '-o', 'merged_csv',
+                                       '-p', dirpath ],
                                       stderr=subprocess.STDOUT)
-        self.assertTrue(os.path.exists(os.path.join('merged_csv0.xlsx')))
-    
+
+        file_name = os.path.join(dirpath,'merged_csv0.xlsx')
+        self.assertTrue(os.path.exists(file_name))
+
     def test_mergeFileCommandLine(self):
         dirpath = tempfile.mkdtemp()
-        out = subprocess.check_output(["python", "mergebom.py", 
+        out = subprocess.check_output(["python", "mergebom.py",
                                        '-o', 'merged_line',
                                        '-p', 'test',
                                       os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx") ],
                                       stderr=subprocess.STDOUT)
         file=os.path.join('test','merged_line_merge.xlsx')
         self.assertTrue(os.path.exists(file))
-        
+
     def test_outFile(self):
         file_list = [
             "test/bom_uno.xls",
@@ -509,7 +517,7 @@ class TestMergeBom(unittest.TestCase):
             hw_ver="13",
             pcb="C",
             name="TEST")
-        
+
     def test_parametri(self):
         import xlrd
         dirpath = tempfile.mkdtemp()
@@ -530,8 +538,8 @@ class TestMergeBom(unittest.TestCase):
             hw_ver="13",
             pcb="C",
             name="TEST")
-        
-        out = subprocess.check_output(["python", "mergebom.py",  
+
+        out = subprocess.check_output(["python", "mergebom.py",
                                       "-p", dirpath,
                                       "-o", "due.xlsx",
                                       "-t", '11/03/2018',
@@ -541,7 +549,7 @@ class TestMergeBom(unittest.TestCase):
                                       ,os.path.join("test","Assembly","progettotest1","progettotest1.xlsx")],
                                       stderr=subprocess.STDOUT)
         ft1=os.path.join(dirpath, "due.xlsx")
-        
+
         wb = xlrd.open_workbook(ft)
         data = []
         for s in wb.sheets():
@@ -582,9 +590,9 @@ class TestMergeBom(unittest.TestCase):
 
                     values.append(value)
                 data.append(values)
-  
+
         risultato=True
-        if len(uno) == len(data):   
+        if len(uno) == len(data):
             for i,n in enumerate(uno):
                 if not( uno[i] == data[i]):
                     risultato=False
@@ -673,9 +681,7 @@ class TestMergeBom(unittest.TestCase):
                                        os.path.join("test","cli-merge-diff1.xlsx")],
                                       stderr=subprocess.STDOUT)
 
-        self.assertTrue(
-            os.path.isfile(outfilename),
-            "Merged diff File not generated")
+        self.assertTrue( os.path.isfile(outfilename), "Merged diff File not generated")
         os.remove(outfilename)
 
         retcode = None
@@ -713,7 +719,7 @@ class TestMergeBom(unittest.TestCase):
                                        "-pc", "O",
                                        "-n", "Test project glob",
                                        "-o", "cli-mergedGlob", "-p",os.path.join(".","test","glob"),
-									   os.path.join("test","diff_test_old.xlsx")],
+                                       os.path.join("test","diff_test_old.xlsx")],
                                       stderr=subprocess.STDOUT)
 
         self.assertTrue(
@@ -761,9 +767,6 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
 
-        # file_list = map(os.path.basename, file_list)
-        # stats = report.write_xls(h, d, file_list, "/tmp/uno.xls")
-
         print
         dump(d)
         for i in d.keys():
@@ -775,13 +778,13 @@ class TestMergeBom(unittest.TestCase):
                     print "T >", c
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
-		dirpath = tempfile.mkdtemp()
+        dirpath = tempfile.mkdtemp()
         outfilename = os.path.join(dirpath, "extra_column_merge.xlsx")
         out = subprocess.check_output(["python",
                                        "mergebom.py",
                                        "-o",
                                        "extra_column",
-									   "-p", dirpath,
+                                       "-p", dirpath,
                                        "-r", "0",
                                        "-w", "S",
                                        "-n", "Test project",
@@ -808,7 +811,7 @@ class TestMergeBom(unittest.TestCase):
             "Merged File not generated")
         os.remove(outfilename)
 
-    
+
 
 
 if __name__ == "__main__":
