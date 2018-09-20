@@ -17,6 +17,7 @@
 #
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
+
 import sys
 import os
 import glob
@@ -24,32 +25,18 @@ import getopt
 import argparse
 import ConfigParser
 import re
-from lib import cfg,lib,report
+from lib import cfg,lib, report
 from mergebom_class import *
 from datetime import datetime
    
 if __name__ == "__main__":
-    rep = report.Report(log_on_file=True, terminal=True, report_date=None)
-
     file_list = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path-workspace-file', '-w', dest='ws', 
+    parser.add_argument('--path-workspace-file', '-w', dest='workspace_file', 
                         help='Dove si trova il file WorkSpace', default=None)
-<<<<<<< HEAD
-<<<<<<< HEAD
-    parser.add_argument('--nome-file', '-namef', dest='namef', 
+    parser.add_argument('--nome-file', '-namef', dest='name_file', 
                         help='Nome file da mergiare', default='bom-')
     parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
-=======
-    parser.add_argument('--nome-file.xlsx', '-nw', dest='nw', 
-                        help='Nome file da mergiare', default='bom-')
-    parser.add_argument('--caratteristiche-file', '-cf', dest='cf', action="store_true",
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
-    parser.add_argument('--nome-file', '-namef', dest='namef', 
-                        help='Nome file da mergiare', default='bom-')
-    parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
->>>>>>> correzioni review
                         help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                       default=False, help="Find and merge csv files, by defaul are excel files.")
@@ -59,8 +46,10 @@ if __name__ == "__main__":
                       default='merged_bom', help="Out file name")
     parser.add_argument("-p", "--working-dir", dest="working_dir",
                       default="./", help="BOM to merge working path.")     
+    parser.add_argument("-s", "--bom-file-search-dir", dest="bom_search_dir",
+                      default="Assembly", help="Project BOM search directory.")
     parser.add_argument('--report_time', '-t', dest='report_time', 
-                        help='datetime nel formato : %d/%m/%y', default=None)               
+                        help='datetime nel formato : %%d/%%m/%%y', default=None)               
     parser.add_argument("-r", "--bom-revision", dest="bom_rev",
                       default=None, help="Hardware BOM revision")
     parser.add_argument("-pc", "--bom-pcb-revision", dest="bom_pcb_ver",
@@ -69,28 +58,11 @@ if __name__ == "__main__":
                       default=None, help="Project names.")
     parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
                       default=False, help="delete file")                  
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Import diff feature and its test.
     parser.add_argument("-l","--log-on-file",dest="log_on_file",
                       default=True,action="store_true",help="List all project name from version file.")
     parser.add_argument( "-diff","--diff",dest="diff",action="store_true",
                       default=False, help="Generate diff from two specified BOMs")
 
-<<<<<<< HEAD
-=======
-    parser.add_argument(
-        "-l",
-        "--log-on-file",
-        dest="log_on_file",
-        default=True,
-        action="store_true",
-        help="List all project name from version file.")
-        
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
->>>>>>> Import diff feature and its test.
     parser.add_argument('--prj_date', '-date', dest='prj_date', 
                         help='prj_date', default=None)
     parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver', 
@@ -110,56 +82,27 @@ if __name__ == "__main__":
 
     parser.add_argument('revs', metavar='N', nargs='*', help='revisions', default=None)
     options = parser.parse_args()
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-    if len(sys.argv) == 1:
-        parser.print_help
-    if options.cf:
-        options.out_filename=options.namef
-=======
-=======
-    
-=======
-
->>>>>>> cambiamenti per funzionamento anche su windows
-    if len(sys.argv) == 1:
-        parser.print_help
->>>>>>> Print short Help when run script without args.
-    if options.cf:
-<<<<<<< HEAD
-        options.out_filename=options.nw
-    if len(sys.argv) == 1:
-        parser = argparse.ArgumentParser()
+    if len(sys.argv) < 2:
         parser.print_help()
-<<<<<<< HEAD
-        
-    
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
->>>>>>> Add log where needed
-=======
-        options.out_filename=options.namef
->>>>>>> correzioni review
+        sys.exit(0)
+
+    if options.report_time is not None:
+        options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
+
+    logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
+    logger.write_logo()
+
+    config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
+
+    if options.finalf:
+        options.out_filename = options.name_file
 
     f_list = []
     if options.revs is None or options.revs == []:
-        if not options.ws == None:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef, rep)
-=======
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw)
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.namef)
->>>>>>> correzioni review
+        if not options.workspace_file == None:
+            file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file, options.csv_file, options.name_file, options.bom_search_dir, logger=logger)
             print file_BOM
-=======
-            file_BOM = cfg.cfg_altiumWorkspace(options.ws, options.csv_file, options.nw, rep)
->>>>>>> cambiamenti per funzionamento anche su windows
             if len(file_BOM) < 1:
                 sys.exit(1)
             appo = []
@@ -179,104 +122,37 @@ if __name__ == "__main__":
                     f_list.append(appo[j])
                 
         else:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            rep.error("Non è stato trovato nessun file.xlsx o file.csv",
-                                self.handler, terminal=self.terminal)
-=======
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
+            logger.error("No file.xlsx o file.csv found")
             sys.exit(1)
     else:
-        rep.info("Ricerca file mergebom richiesti")
-=======
-            lib.error("Non è stato trovato nessun file.xlsx o file.csv",
-                                self.handler, terminal=self.terminal)
-            sys.exit(1)
-    else:
-        lib.info("Ricerca file mergebom richiesti",
-                                self.handler, terminal=self.terminal)
->>>>>>> Add log where needed
-=======
-            rep.error("Non è stato trovato nessun file.xlsx o file.csv",
-                                self.handler, terminal=self.terminal)
-            sys.exit(1)
-    else:
-        rep.info("Ricerca file mergebom richiesti")
->>>>>>> Import diff feature and its test.
+        logger.info("Ricerca file mergebom richiesti")
         for i,v in enumerate(options.revs):
             f_list.append(options.revs[i])
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> correzioni review
     if len(f_list) == 0:
-        rep.error("Non è stato trovato nessun file da mergiare")
+        logger.error("No file to merge")
         sys.exit(1)
 
     if not options.delete:
         if options.prj_hw_ver is None:
-=======
-    if not options.delete:
-<<<<<<< HEAD
-        if options.hw_ver is None:
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
-        if options.prj_hw_ver is None:
->>>>>>> Print short Help when run script without args.
             options.out_filename=options.out_filename+'_merge'
         else:
             options.out_filename=options.out_filename+options.prj_hw_ver
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     if options.finalf:
-=======
-    if options.cf:
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-=======
-    if options.finalf:
->>>>>>> correzioni review
         appo = f_list[0]
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
     
 
-    config = cfg.CfgMergeBom(options.merge_cfg)
-    if options.report_time is not None:
-        options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
-    
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
- 
-=======
-    lib.info("Inizio operazione di merge",
-                                self.handler, terminal=self.terminal)
->>>>>>> Add log where needed
-=======
-    
->>>>>>> Import diff feature and its test.
-=======
- 
->>>>>>> cambiamenti per funzionamento anche su windows
-     
-    logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
-    logger.write_logo()
-
     m = MergeBom(f_list, config, logger=logger)
     d = m.merge()
     file_list = map(os.path.basename, f_list)
     ft = os.path.join(options.working_dir, options.out_filename+'.xlsx')
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Import diff feature and its test.
 
     if options.diff:
         if len(f_list) != 2:
-            logger.error("E' possibile usare la modalità diff solo con 2 file.")
+            logger.error("No enougth file to merge")
             sys.exit(1)
         d = m.diff()
         l = m.extra_data()
@@ -289,7 +165,7 @@ if __name__ == "__main__":
             extra_data=l,
             headers=m.header_data())      
     else:    
-        rep.info("Inizio operazione di merge")
+        logger.info("Start Merging..")
         report.write_xls(
                         d,
                         file_list,
@@ -299,29 +175,7 @@ if __name__ == "__main__":
                         name=options.prj_name,
                         pcb=options.prj_pcb)
 
-<<<<<<< HEAD
     if options.delete:
-        rep.info("Cancellazione vecchio file")
+        logger.info("Remove Merged files")
         for i,v in enumerate(f_list):
             os.remove(f_list[i])
-
-
-=======
-    report.write_xls(
-                    d,
-                    file_list,
-                    config,
-                    ft,
-                    hw_ver=options.prj_hw_ver,
-                    name=options.prj_name,
-                    pcb=options.prj_pcb)
-=======
->>>>>>> Import diff feature and its test.
-    if options.delete:
-        rep.info("Cancellazione vecchio file")
-        for i,v in enumerate(f_list):
-            os.remove(f_list[i])
->>>>>>> tutto meno Print short Help when run script without args. Add log where needed.Use pyinstaller to generate binary.Import diff feature and its test.
-
-
-

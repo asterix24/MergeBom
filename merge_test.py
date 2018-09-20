@@ -57,23 +57,33 @@ class TestMergeBom(unittest.TestCase):
         pass
 
     def test_altiumWorkspace(self):
-        lib = report.Report(log_on_file=True, terminal=True, report_date=None)
-		#os.path.join('test','Assembly','progettotest1','progettotest1.xlsx')
-		#os.path.join('.test','Assembly','progettotest2','progettotest2.xlsx')
-        file_BOM=[([], 
-                {'prj_status': 'status', 'prj_pcb': 'C', 'prj_name': 'TEST',
-                 'prj_date': '28/05/2018', 'prj_pn': 'pn',
-                  'prj_name_long': 'CMOS Sensor adapter iMX8', 
-                  'prj_license': '-', 'prj_hw_ver': '13'}), 
-                  ([], 
-                  {'prj_status': 'status', 'prj_pcb': 'A', 'prj_name': 'Adapter-imx8', 
-                  'prj_date': '28/05/2018', 'prj_pn': 'pn',
-                   'prj_name_long': 'CMOS Sensor adapter iMX8',
-                   'prj_license': '-', 'prj_hw_ver': '0'})]
+        file_BOM=[
+            ([], {
+                'prj_status': 'status',
+                'prj_pcb': 'A',
+                'prj_name': 'Adapter-imx8', 
+                'prj_date': '28/05/2018',
+                'prj_pn': 'pn',
+                'prj_name_long': 'CMOS Sensor adapter iMX8',
+                'prj_license': '-',
+                'prj_hw_ver': '0'
+                }
+            ),
+            ([], {
+                'prj_status': 'status',
+                'prj_pcb': 'C',
+                'prj_name': 'TEST',
+                'prj_date': '28/05/2018',
+                'prj_pn': 'pn',
+                'prj_name_long': 'CMOS Sensor adapter iMX8', 
+                'prj_license': '-',
+                'prj_hw_ver': '13'
+                })
+        ]
                    
 
 
-        self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace(os.path.join('test','utils.DsnWrk'), False, 'bom-', lib))
+        self.assertEqual(file_BOM, cfg.cfg_altiumWorkspace(os.path.join('test','utils.DsnWrk'), False, 'bom-', "Assembly", self.logger))
         
     def test_import(self):
         file_list = [
@@ -455,7 +465,7 @@ class TestMergeBom(unittest.TestCase):
     def test_altiumMergexlsx(self):
         dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py",
-                                       "-w", os.path.join(".","test","utils.DsnWrk"), '-o', 'merged_xlsx', '-p', dirpath ],
+                                       "-w", os.path.join("test","utils.DsnWrk"), '-o', 'merged_xlsx', '-p', dirpath ],
                                       stderr=subprocess.STDOUT)
         file=os.path.join(dirpath,'merged_xlsx0.xlsx')
         self.assertTrue(os.path.exists(file))
@@ -842,7 +852,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
     suite.addTest(TestMergeBom("test_cliMerge"))
-    # suite.addTest(TestMergeBom("test_cliMergeDiff"))
+    suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_otherColumn"))
@@ -850,7 +860,6 @@ if __name__ == "__main__":
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
-
 
 
 
