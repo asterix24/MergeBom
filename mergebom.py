@@ -123,7 +123,6 @@ if __name__ == "__main__":
             sys.exit(1)
 
         for item in file_BOM:
-            parametri_dict = {}
             parametri_dict = item[1]
             options.prj_date = parametri_dict.get('prj_date', None)
             options.prj_hw_ver = parametri_dict.get('prj_hw_ver',None)

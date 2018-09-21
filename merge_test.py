@@ -465,30 +465,27 @@ class TestMergeBom(unittest.TestCase):
                 print "-" * 80
 
     def test_altiumMergexlsx(self):
-        dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py",
                                        "-w", os.path.join("test","utils.DsnWrk"),
                                        '-o', 'merged_xlsx',
                                        '-prefix', "",
-                                       '-p', dirpath ],
+                                       '-p', self.temp_dir ],
                                       stderr=subprocess.STDOUT)
-        file_name = os.path.join(dirpath,'merged_xlsx0.xlsx')
+        file_name = os.path.join(self.temp_dir, 'merged_xlsx0.xlsx')
         self.assertTrue(os.path.exists(file_name))
 
     def test_altiumMergecsv(self):
-        dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py", "--csv",
                                       "-w", os.path.join("test","utils.DsnWrk"),
                                        '-prefix', "",
                                        '-o', 'merged_csv',
-                                       '-p', dirpath ],
+                                       '-p', self.temp_dir ],
                                       stderr=subprocess.STDOUT)
 
-        file_name = os.path.join(dirpath,'merged_csv0.xlsx')
+        file_name = os.path.join(self.temp_dir,'merged_csv0.xlsx')
         self.assertTrue(os.path.exists(file_name))
 
     def test_mergeFileCommandLine(self):
-        dirpath = tempfile.mkdtemp()
         out = subprocess.check_output(["python", "mergebom.py",
                                        '-o', 'merged_line',
                                        '-p', 'test',
@@ -520,7 +517,6 @@ class TestMergeBom(unittest.TestCase):
 
     def test_parametri(self):
         import xlrd
-        dirpath = tempfile.mkdtemp()
         file_list = [
             os.path.join("test","Assembly","progettotest1","progettotest1.xlsx")
         ]
@@ -529,7 +525,7 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
         file_list = map(os.path.basename, file_list)
-        ft = os.path.join(dirpath, 'due.xlsx')
+        ft = os.path.join(self.temp_dir, 'due.xlsx')
         report.write_xls(
             d,
             file_list,
@@ -540,7 +536,7 @@ class TestMergeBom(unittest.TestCase):
             name="TEST")
 
         out = subprocess.check_output(["python", "mergebom.py",
-                                      "-p", dirpath,
+                                      "-p", self.temp_dir,
                                       "-o", "due.xlsx",
                                       "-t", '11/03/2018',
                                       "--prj_hw_ver", "13",
@@ -548,7 +544,7 @@ class TestMergeBom(unittest.TestCase):
                                       "--prj_pcb", "C"
                                       ,os.path.join("test","Assembly","progettotest1","progettotest1.xlsx")],
                                       stderr=subprocess.STDOUT)
-        ft1=os.path.join(dirpath, "due.xlsx")
+        ft1=os.path.join(self.temp_dir, "due.xlsx")
 
         wb = xlrd.open_workbook(ft)
         data = []
@@ -774,13 +770,12 @@ class TestMergeBom(unittest.TestCase):
                     print "T >", c
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
-        dirpath = tempfile.mkdtemp()
-        outfilename = os.path.join(dirpath, "extra_column_merge.xlsx")
+        outfilename = os.path.join(self.temp_dir, "extra_column_merge.xlsx")
         out = subprocess.check_output(["python",
                                        "mergebom.py",
                                        "-o",
                                        "extra_column",
-                                       "-p", dirpath,
+                                       "-p", self.temp_dir,
                                        "-r", "0",
                                        "-w", "S",
                                        "-n", "Test project",
