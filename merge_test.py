@@ -486,13 +486,14 @@ class TestMergeBom(unittest.TestCase):
         self.assertTrue(os.path.exists(file_name))
 
     def test_mergeFileCommandLine(self):
+        outfilename = os.path.join(self.temp_dir, 'cli_merge.xlsx')
         out = subprocess.check_output(["python", "mergebom.py",
-                                       '-o', 'merged_line',
-                                       '-p', 'test',
-                                      os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx") ],
+                                       '-o', 'cli',
+                                       '-p', self.temp_dir,
+                                      os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx")],
                                       stderr=subprocess.STDOUT)
-        file=os.path.join('test','merged_line_merge.xlsx')
-        self.assertTrue(os.path.exists(file))
+        self.assertTrue(os.path.exists(outfilename))
+        os.remove(outfilename)
 
     def test_outFile(self):
         file_list = [
@@ -705,19 +706,17 @@ class TestMergeBom(unittest.TestCase):
         self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated")
 
     def test_cliMergeGlob(self):
-        outfilename = os.path.join(".","test","glob", "cli-mergedGlob_merge.xlsx")
+        outfilename = os.path.join(self.temp_dir, "cli-mergedGlob_merge.xlsx")
         out = subprocess.check_output(["python", "mergebom.py",
                                        "-r", "53",
                                        "-pc", "O",
                                        "-n", "Test project glob",
-                                       "-o", "cli-mergedGlob", "-p",os.path.join(".","test","glob"),
-                                       os.path.join("test","diff_test_old.xlsx")],
+                                       "-o", "cli-mergedGlob", "-p", self.temp_dir,
+                                       os.path.join("test", "diff_test_old.xlsx")],
                                       stderr=subprocess.STDOUT)
 
-        self.assertTrue(
-            os.path.isfile(outfilename),
-            "Merged File not generated")
-        #os.remove(outfilename)
+        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        os.remove(outfilename)
 
     def test_categoryGroup(self):
         file_list = [
