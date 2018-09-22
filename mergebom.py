@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
-# Copyright 2015 Daniele Basile <asterix24@gmail.com>
+# Copyright 2018 Daniele Basile <asterix24@gmail.com>
 #
 
 import sys
@@ -152,38 +152,38 @@ if __name__ == "__main__":
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
 
-
     m = MergeBom(merge_file_list, config, logger=logger)
-    d = m.merge()
+    items = m.merge()
     file_list = map(os.path.basename, merge_file_list)
-    ft = os.path.join(options.working_dir, options.out_filename+'.xlsx')
+    out_file = os.path.join(options.working_dir, options.out_filename + '.xlsx')
+    extra_data = None
+    diff_mode = False
+    header_data = cfg.VALID_KEYS
 
     if options.diff:
+        logger.info("Diff Mode..\n")
         if len(merge_file_list) != 2:
             logger.error("No enougth file to merge\n")
             sys.exit(1)
-        d = m.diff()
-        l = m.extra_data()
-        report.write_xls(
-            d,
-            file_list,
-            config,
-            ft,
-            diff=True,
-            extra_data=l,
-            headers=m.header_data())
-    else:
-        logger.info("Start Merging..\n")
-        report.write_xls(
-            d,
-            file_list,
-            config,
-            ft,
-            hw_ver=options.prj_hw_ver,
-            name=options.prj_name,
-            pcb=options.prj_pcb)
+
+        items = m.diff()
+        extra_data = m.extra_data()
+        diff_mode = True
+        header_data = m.header_data()
+
+    report.write_xls(items,
+        file_list,
+        config,
+        out_file,
+        hw_ver=options.prj_hw_ver,
+        pcb=options.prj_pcb,
+        name=options.prj_name,
+        diff=diff_mode,
+        extra_data=extra_data,
+        headers=header_data)
 
     if options.delete:
         logger.info("Remove Merged files\n")
         for i,v in enumerate(merge_file_list):
             os.remove(merge_file_list[i])
+
