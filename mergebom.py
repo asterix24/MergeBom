@@ -82,7 +82,8 @@ if __name__ == "__main__":
     parser.add_argument('--prj_status', '-status', dest='prj_status',
                         help='prj_status', default=None)
 
-    parser.add_argument('revs', metavar='N', nargs='*', help='revisions',
+    parser.add_argument('file_to_merge', metavar='N', nargs='*',
+                        help='List of file to merge.',
                         default=[])
     options = parser.parse_args()
 
@@ -93,7 +94,9 @@ if __name__ == "__main__":
     if options.report_time is not None:
         options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
 
-    logger = report.Report(log_on_file = options.log_on_file, terminal = True, report_date = options.report_time)
+    logger = report.Report(log_on_file = options.log_on_file,
+                           terminal = True,
+                           report_date = options.report_time)
     logger.write_logo()
 
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
@@ -101,16 +104,8 @@ if __name__ == "__main__":
     if options.finalf:
         options.out_filename = options.name_file
 
-    merge_file_list = []
-    if options.revs != []:
-        logger.info("Ricerca file mergebom richiesti\n")
-        for i,v in enumerate(options.revs):
-            merge_file_list.append(options.revs[i])
-    else:
-        if options.workspace_file is None:
-            logger.error("No file.xlsx o file.csv found\n")
-            sys.exit(1)
-
+    merge_file_list = options.file_to_merge
+    if options.workspace_file is not None:
         file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file,
                                            options.csv_file,
                                            options.bom_search_dir,
@@ -136,16 +131,15 @@ if __name__ == "__main__":
             for j in item[0]:
                 merge_file_list.append(j)
 
-
     if len(merge_file_list) == 0:
         logger.error("No file to merge\n")
         sys.exit(1)
 
     if not options.delete:
         if options.prj_hw_ver is None:
-            options.out_filename=options.out_filename+'_merge'
+            options.out_filename = options.out_filename + '_merge'
         else:
-            options.out_filename=options.out_filename+options.prj_hw_ver
+            options.out_filename = options.out_filename + options.prj_hw_ver
 
     if options.finalf:
         appo = merge_file_list[0]

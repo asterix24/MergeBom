@@ -776,7 +776,7 @@ class TestMergeBom(unittest.TestCase):
                                        "extra_column",
                                        "-p", self.temp_dir,
                                        "-r", "0",
-                                       "-w", "S",
+                                       "-hw_ver", "S",
                                        "-n", "Test project",
                                        "test/column.xlsx"],
                                        stderr=subprocess.STDOUT)
