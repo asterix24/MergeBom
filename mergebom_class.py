@@ -86,7 +86,7 @@ class MergeBom(object):
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
             self.stats['file_num'] += 1
-            self.logger.warning("File name %s" % file_name)
+            self.logger.warning("File name %s\n" % file_name)
 
             # Get all data from select data that could be CSV or xls
             reader = report.DataReader(file_name, is_csv=is_csv)

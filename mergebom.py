@@ -101,9 +101,6 @@ if __name__ == "__main__":
 
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
 
-    if options.finalf:
-        options.out_filename = options.name_file
-
     merge_file_list = options.file_to_merge
     if options.workspace_file is not None:
         file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file,
@@ -135,6 +132,9 @@ if __name__ == "__main__":
         logger.error("No file to merge\n")
         sys.exit(1)
 
+    if options.finalf:
+        options.out_filename = options.name_file
+
     if not options.delete:
         if options.prj_hw_ver is None:
             options.out_filename = options.out_filename + '_merge'
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         appo = appo.split(os.sep)
         options.working_dir = os.path.join(*appo[:-1])
 
-    m = MergeBom(merge_file_list, config, logger=logger)
+    m = MergeBom(merge_file_list, config, is_csv=options.csv_file, logger=logger)
     items = m.merge()
     file_list = map(os.path.basename, merge_file_list)
     out_file = os.path.join(options.working_dir, options.out_filename + '.xlsx')
@@ -156,9 +156,6 @@ if __name__ == "__main__":
 
     if options.diff:
         logger.info("Diff Mode..\n")
-        if len(merge_file_list) != 2:
-            logger.error("No enougth file to merge\n")
-            sys.exit(1)
 
         items = m.diff()
         extra_data = m.extra_data()

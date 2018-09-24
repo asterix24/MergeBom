@@ -293,10 +293,9 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
     wk_config = ConfigParser.RawConfigParser()
     wk_config.read(workspace_path)
     for i in wk_config.sections():
-        print i
         try:
             if re.match("project[0-9]+", i.lower()) is None:
-                logger.error("Skip key %s\n" % i)
+                #logger.error("Skip key %s\n" % i)
                 continue
 
             temp = wk_config.get(i, 'ProjectPath')
@@ -305,7 +304,7 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
             complete_path = os.path.join(*temp)
 
         except ConfigParser.NoOptionError:
-            logger.error("Missing key %s\n" % i)
+            #logger.info("Missing key %s\n" % i)
             continue
 
         parametri_dict = {}
@@ -324,10 +323,9 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
         logger.info("proj %s\n" % prj)
         for i in prj_config.sections():
             if re.match(r'Parameter[0-9]+', i) is None:
-                logger.error("Wrong key found [%s]\n", i)
+                #logger.info("Wrong key found [%s]\n" % i)
                 continue
 
-            print "\t", i
             parametro = prj_config.get(i, 'Name')
             val = prj_config.get(i, 'Value')
             parametri_dict[parametro] = val
