@@ -1,0 +1,15 @@
+[slsc-hbd]
+name=Slsc test suite board (902, 903, 904, 905)
+hw_ver=1
+pcb_ver=A
+date=20160510
+[cgd-tbd]
+name=CGD Test board.
+hw_ver=1
+pcb_ver=A
+date=20170101
+[camera-tbd]
+name=Camera Test suite board
+hw_ver=0
+pcb_ver=A
+date=20170627

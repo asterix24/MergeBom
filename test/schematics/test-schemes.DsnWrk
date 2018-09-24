@@ -1,0 +1,6 @@
+[ProjectGroup]
+Version=1.0
+[Project1]
+ProjectPath=camera-tbd\camera-tbd.PrjPcb
+[Project2]
+ProjectPath=usb-serial\usb-serial.PrjPcb

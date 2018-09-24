@@ -1,0 +1,184 @@
+Altium Designer Pick and Place Locations
+C:\Users\djeasy\Documents\GitHub\develer\misc-embedded\schematics\Assembly\camera-tbd\Pick Place for camera-tbd.txt
+
+========================================================================================================================
+File Design Information:
+
+Date:       28/06/17
+Time:       14:57
+Revision:   Not in VersionControl
+Variant:    No variations
+Units used: mm
+
+Designator  Comment           Layer       Footprint                        Center-X(mm) Center-Y(mm) Rotation Description                                        
+Logo        Logo              TopLayer    Develer_logo_15x6mm              -351.701     -205.141     0                                                           
+U9          TVS Array         BottomLayer SOT-563                          55.030       26.000       180      ESD Protection                                     
+U8          TVS Array         BottomLayer SOT-563                          55.030       20.250       360      ESD Protection                                     
+U7          TVS Array         BottomLayer SOT-563                          63.500       26.000       360      ESD Protection                                     
+P7          Header 8          TopLayer    HEADER_1X8_2.54MM_THD            57.000       5.000        180      Header, 8-Pin                                      
+L34         WE742792022       TopLayer    0805_[2012]                      66.000       30.300       360      Inductor                                           
+L32         WE742792022       TopLayer    0805_[2012]                      66.000       28.600       360      Inductor                                           
+L26         WE742792022       TopLayer    0805_[2012]                      66.000       23.375       360      Inductor                                           
+L24         WE742792022       TopLayer    0805_[2012]                      66.000       21.600       360      Inductor                                           
+L21         WE742792022       TopLayer    0805_[2012]                      66.000       19.875       360      Inductor                                           
+L17         WE742792022       TopLayer    0805_[2012]                      66.000       18.100       360      Inductor                                           
+D17         MBR120VLSFT1G     TopLayer    SOD-123                          66.100       52.400       90       Diode                                              
+D16         MBR120VLSFT1G     TopLayer    SOD-123                          47.400       16.400       180      Diode                                              
+D13         MBR120VLSFT1G     TopLayer    SOD-123                          46.600       7.900        360      Diode                                              
+D12         MBR120VLSFT1G     TopLayer    SOD-123                          13.000       80.000       360      Diode                                              
+D6          MBR120VLSFT1G     TopLayer    SOD-123                          13.400       87.500       360      Diode                                              
+L2          WE742792022       TopLayer    0805_[2012]                      21.130       36.050       90       Inductor                                           
+R16         4k7               TopLayer    0603_[1608]                      17.600       56.860       270      Resistor                                           
+D11         PWR_CAM           TopLayer    0603_[1608]_K1-A2_LED            15.600       58.900       90       Red LED                                            
+R14         470R              TopLayer    0603_[1608]                      17.600       47.500       270      Resistor                                           
+R7          470R              TopLayer    0603_[1608]                      17.600       54.000       270      Resistor                                           
+R9          470R              TopLayer    0603_[1608]                      13.976       43.100       180      Resistor                                           
+D14         3V3               TopLayer    0603_[1608]_K1-A2_LED            15.600       47.500       90       Red LED                                            
+D10         MBR120VLSFT1G     TopLayer    SOD-123                          52.420       10.400       180      Diode                                              
+D5          5V                TopLayer    0603_[1608]_K1-A2_LED            15.600       54.000       90       Red LED                                            
+D9          MBR120VLSFT1G     TopLayer    SOD-123                          13.000       83.000       360      Diode                                              
+D8          3V3_INT           TopLayer    0603_[1608]_K1-A2_LED            10.400       45.900       90       Red LED                                            
+J3          CAM               TopLayer    RJ45_horizontal_con              65.085       107.750      90       RJ45 Connector (615008137421)                      
+J2          ETH               TopLayer    RJ45_horizontal_con              10.015       107.500      270      RJ45 Connector (615008137421)                      
+L12         WE742792022       TopLayer    0805_[2012]                      53.700       42.125       180      Inductor                                           
+R1          1k                TopLayer    0603_[1608]                      14.300       51.700       180      Resistor                                           
+R1          1k                TopLayer    0603_[1608]                      14.300       50.200       180      Resistor                                           
+D1_USB_IO   PWR_USB           TopLayer    0603_[1608]_K1-A2_LED            10.400       55.625       90       Red LED                                            
+D1_USB_DATA PWR_USB           TopLayer    0603_[1608]_K1-A2_LED            10.400       52.350       90       Red LED                                            
+J10         AUTO_BSEL1        TopLayer    HEADER_1X3_2.54MM_THD            40.040       39.750       180      Header, 3-Pin                                      
+J15         GIO_89            TopLayer    HEADER_1X3_2.54MM_THD            40.040       70.750       180      Header, 3-Pin                                      
+L7          NP                TopLayer    0805_[2012]                      13.800       91.000       180      WE742792022                                        
+J17         SERVICE_OLD       TopLayer    HEADER_2x10_2.00MM_BOX_THD       59.250       49.250       90       Header, 10-Pin, Dual row                           
+U3          Relays SPCO       TopLayer    RELAYS_SPDT_7.5x12.5x10mm_2.54mm 24.250       92.000       180      Relay                                              
+C1          1nF X/Y 2kV       TopLayer    1808_[4520]                      10.400       4.080        90       Capacitor X/Y                                      
+C2          100nF             TopLayer    0603_[1608]                      19.500       36.000       270      Capacitor                                          
+C3          10uF              TopLayer    0805_[2012]                      17.750       34.750       90       Polarized Capacitor (Radial)                       
+C4          100nF             TopLayer    0603_[1608]                      16.000       34.750       270      Capacitor                                          
+C10         10uF              TopLayer    0805_[2012]                      42.750       15.555       180      Polarized Capacitor (Radial)                       
+C11         10uF              TopLayer    0805_[2012]                      65.250       57.150       90       Polarized Capacitor (Radial)                       
+C12         100nF             TopLayer    0603_[1608]                      42.750       17.100       360      Capacitor                                          
+C13         100nF             TopLayer    0603_[1608]                      66.800       56.949       270      Capacitor                                          
+FU1         500mA             TopLayer    1812-[4532]                      13.000       34.250       90       Fuse                                               
+J1          Mini USB Type B   TopLayer    usb_typeB_mini_smd               6.000        27.891       270      Mini USB SMT Type B 5 Contacts (10033526-N3212MLF) 
+J5          BOOT0_SEL         TopLayer    HEADER_1X3_2.54MM_THD            40.040       48.310       180      Header, 3-Pin                                      
+J6          BOOT1_SEL         TopLayer    HEADER_1X3_2.54MM_THD            40.040       50.850       180      Header, 3-Pin                                      
+J8          AUTO_FLASH_WE_SEL TopLayer    HEADER_1X3_2.54MM_THD            40.040       24.750       180      Header, 3-Pin                                      
+J9          AUTO_BSEL0        TopLayer    HEADER_1X3_2.54MM_THD            40.040       37.210       180      Header, 3-Pin                                      
+J11         AUTO_BSEL2        TopLayer    HEADER_1X3_2.54MM_THD            40.040       42.290       180      Header, 3-Pin                                      
+J12         EMU1              TopLayer    HEADER_1X3_2.54MM_THD            40.040       62.000       180      Header, 3-Pin                                      
+J13         EMU0              TopLayer    HEADER_1X3_2.54MM_THD            40.040       59.460       180      Header, 3-Pin                                      
+J14         GIO_90            TopLayer    HEADER_1X3_2.54MM_THD            40.040       68.210       180      Header, 3-Pin                                      
+J16         GIO_86            TopLayer    HEADER_1X3_2.54MM_THD            40.040       73.290       180      Header, 3-Pin                                      
+L1          WE742792022       TopLayer    0805_[2012]                      27.300       36.800       180      Inductor                                           
+L3          WE742792022       TopLayer    0805_[2012]                      24.750       36.000       90       Inductor                                           
+L4          WE742792022       TopLayer    0805_[2012]                      22.920       36.050       90       Inductor                                           
+L5          WE742792022       TopLayer    0805_[2012]                      13.000       29.991       360      Inductor                                           
+L6          WE742792022       TopLayer    0805_[2012]                      13.050       25.791       360      Inductor                                           
+L8          WE742792022       TopLayer    0805_[2012]                      28.750       28.070       180      Inductor                                           
+L9          WE742792022       TopLayer    0805_[2012]                      53.750       40.125       180      Inductor                                           
+L10         WE742792022       TopLayer    0805_[2012]                      66.000       14.625       0        Inductor                                           
+L11         WE742792022       TopLayer    0805_[2012]                      52.500       14.625       180      Inductor                                           
+L13         WE742792022       TopLayer    0805_[2012]                      66.000       16.375       360      Inductor                                           
+L14         WE742792022       TopLayer    0805_[2012]                      52.500       16.375       180      Inductor                                           
+L15         WE742792022       TopLayer    0805_[2012]                      66.050       44.375       360      Inductor                                           
+L16         WE742792022       TopLayer    0805_[2012]                      53.700       44.125       180      Inductor                                           
+L18         WE742792022       TopLayer    0805_[2012]                      52.500       18.125       180      Inductor                                           
+L19         WE742792022       TopLayer    0805_[2012]                      66.050       46.375       360      Inductor                                           
+L20         WE742792022       TopLayer    0805_[2012]                      53.700       46.125       180      Inductor                                           
+L22         WE742792022       TopLayer    0805_[2012]                      52.500       19.875       180      Inductor                                           
+L23         WE742792022       TopLayer    0805_[2012]                      66.050       48.375       360      Inductor                                           
+L25         WE742792022       TopLayer    0805_[2012]                      52.500       21.625       180      Inductor                                           
+L27         WE742792022       TopLayer    0805_[2012]                      52.500       23.375       180      Inductor                                           
+L28         WE742792022       TopLayer    0805_[2012]                      66.000       25.125       360      Inductor                                           
+L29         WE742792022       TopLayer    0805_[2012]                      52.500       25.125       180      Inductor                                           
+L30         WE742792022       TopLayer    0805_[2012]                      66.000       26.875       0        Inductor                                           
+L31         WE742792022       TopLayer    0805_[2012]                      52.500       26.875       180      Inductor                                           
+L33         WE742792022       TopLayer    0805_[2012]                      52.500       28.625       180      Inductor                                           
+L35         WE742792022       TopLayer    0805_[2012]                      52.500       30.375       180      Inductor                                           
+P1          TTL SERIAL        TopLayer    HEADER_1X4_2.54MM_THD            24.940       39.750       360      Header, 4-Pin                                      
+P2          Camera Supply     TopLayer    TBLOCK_1X2_3.5MM_HOR_THD         8.000        89.250       270      Header, 2-Pin                                      
+P6          Camera Supply     TopLayer    HEADER_1X2_2.54MM_THD            42.200       9.200        270      Header, 2-Pin                                      
+P3          Relay 2           TopLayer    TBLOCK_1X3_3.5MM_HOR_THD         66.750       88.250       90       Header, 3-Pin                                      
+P5          Relay 3           TopLayer    TBLOCK_1X3_3.5MM_HOR_THD         66.750       73.500       90       Header, 3-Pin                                      
+R2          470R              TopLayer    0603_[1608]                      14.000       40.000       180      Resistor                                           
+R3          470R              TopLayer    0603_[1608]                      14.000       38.600       180      Resistor                                           
+R4          33                TopLayer    0603_[1608]                      33.250       86.500       360      Resistor                                           
+R5          33                TopLayer    0603_[1608]                      33.250       85.000       360      Resistor                                           
+R6          33                TopLayer    0603_[1608]                      33.250       83.500       360      Resistor                                           
+R10         33                TopLayer    0603_[1608]                      28.750       32.250       0        Resistor                                           
+R12         33                TopLayer    0603_[1608]                      28.750       33.750       0        Resistor                                           
+R17         2K2               TopLayer    0603_[1608]                      23.725       17.250       360      Resistor                                           
+R18         2K2               TopLayer    0603_[1608]                      42.330       33.710       90       Resistor                                           
+R19         2K2               TopLayer    0603_[1608]                      45.520       56.350       90       Resistor                                           
+R20         2K2               TopLayer    0603_[1608]                      44.020       56.350       90       Resistor                                           
+R21         2K2               TopLayer    0603_[1608]                      42.560       56.350       90       Resistor                                           
+R22         2K2               TopLayer    0603_[1608]                      37.170       33.710       270      Resistor                                           
+R23         2K2               TopLayer    0603_[1608]                      34.440       56.350       270      Resistor                                           
+R24         2K2               TopLayer    0603_[1608]                      35.940       56.350       270      Resistor                                           
+R25         2K2               TopLayer    0603_[1608]                      37.400       56.350       270      Resistor                                           
+R26         4k7               TopLayer    0603_[1608]                      21.794       51.480       180      Resistor                                           
+R27         100R              TopLayer    0603_[1608]                      21.794       52.730       180      Resistor                                           
+R28         4k7               TopLayer    0603_[1608]                      21.794       55.230       180      Resistor                                           
+R29         100R              TopLayer    0603_[1608]                      21.794       56.480       180      Resistor                                           
+R30         4k7               TopLayer    0603_[1608]                      21.794       58.980       180      Resistor                                           
+R31         100R              TopLayer    0603_[1608]                      21.794       60.230       180      Resistor                                           
+R32         2k2               TopLayer    0603_[1608]                      21.814       48.750       180      Resistor                                           
+R33         1k                TopLayer    0603_[1608]                      9.550        15.750       270      Resistor                                           
+R34         1k                TopLayer    0603_[1608]                      21.814       46.250       360      Resistor                                           
+R35         1k                TopLayer    0603_[1608]                      21.794       50.230       360      Resistor                                           
+R36         1k                TopLayer    0603_[1608]                      21.794       53.980       360      Resistor                                           
+R37         1k                TopLayer    0603_[1608]                      21.794       57.730       360      Resistor                                           
+R38         4k7               TopLayer    0603_[1608]                      21.814       47.500       180      Resistor                                           
+R39         10K               TopLayer    0603_[1608]                      44.080       65.000       90       Resistor                                           
+R40         10K               TopLayer    0603_[1608]                      45.580       65.000       90       Resistor                                           
+R41         2K2               TopLayer    0603_[1608]                      45.580       76.250       90       Resistor                                           
+R42         2K2               TopLayer    0603_[1608]                      44.080       76.250       90       Resistor                                           
+R43         2K2               TopLayer    0603_[1608]                      42.620       76.250       90       Resistor                                           
+R44         2K2               TopLayer    0603_[1608]                      36.000       65.000       270      Resistor                                           
+R45         2K2               TopLayer    0603_[1608]                      34.500       65.000       270      Resistor                                           
+R46         2K2               TopLayer    0603_[1608]                      34.500       76.250       270      Resistor                                           
+R47         2K2               TopLayer    0603_[1608]                      36.000       76.250       270      Resistor                                           
+R48         2K2               TopLayer    0603_[1608]                      37.460       76.250       270      Resistor                                           
+U2          ULN2803           TopLayer    SOIC18                           42.550       85.000       360      BJT Darlinton Array                                
+C5          100nF             TopLayer    0603_[1608]                      13.375       22.750       360      Capacitor                                          
+C6          10uF              TopLayer    0805_[2012]                      39.730       7.440        90       Polarized Capacitor (Radial)                       
+C9          100nF             TopLayer    0603_[1608]                      37.980       7.440        270      Capacitor                                          
+C8          10uF              TopLayer    0805_[2012]                      28.750       26.320       360      Polarized Capacitor (Radial)                       
+C7          100nF             TopLayer    0603_[1608]                      28.750       24.770       180      Capacitor                                          
+R8          470R              TopLayer    0603_[1608]                      13.950       44.500       180      Resistor                                           
+U6          LD29150DT33R      TopLayer    TO-252_D2PAK                     32.000       12.537       90       Very Low Drop Linear regulator 3.3V                
+U4          Relays SPCO       TopLayer    RELAYS_SPDT_7.5x12.5x10mm_2.54mm 57.500       88.250       360      Relay                                              
+U5          Relays SPCO       TopLayer    RELAYS_SPDT_7.5x12.5x10mm_2.54mm 57.500       73.500       360      Relay                                              
+S1          RESET             TopLayer    TACTILE_SWITCH_6x6MM_SMD         18.750       12.500       270      standard 6x6mm                                     
+Q1          BC817             TopLayer    SOT-23                           10.500       12.525       270      NPN                                                
+Q2          BC807             TopLayer    SOT-23                           25.500       47.500       360      PNP                                                
+Q3          BC807             TopLayer    SOT-23                           25.507       51.610       360      PNP                                                
+Q4          BC807             TopLayer    SOT-23                           25.507       55.210       360      PNP                                                
+Q5          BC807             TopLayer    SOT-23                           25.507       58.810       360      PNP                                                
+D2_USB_DATA TX                TopLayer    0603_[1608]_K1-A2_LED            10.400       42.605       90       Green LED                                          
+D3_USB_DATA RX                TopLayer    0603_[1608]_K1-A2_LED            10.400       39.325       90       Yellow LED                                         
+D7          3V3_CAM           TopLayer    0603_[1608]_K1-A2_LED            10.410       49.100       90       Red LED                                            
+C2          100nF             TopLayer    0603_[1608]                      19.500       76.750       270      Capacitor                                          
+C3          10uF              TopLayer    0805_[2012]                      17.750       75.500       90       Polarized Capacitor (Radial)                       
+C4          100nF             TopLayer    0603_[1608]                      16.000       75.500       270      Capacitor                                          
+C5          100nF             TopLayer    0603_[1608]                      13.375       63.500       360      Capacitor                                          
+FU1         500mA             TopLayer    1812-[4532]                      13.000       75.000       90       Fuse                                               
+J1          Mini USB Type B   TopLayer    usb_typeB_mini_smd               6.000        68.641       270      Mini USB SMT Type B 5 Contacts (10033526-N3212MLF) 
+L1          WE742792022       TopLayer    0805_[2012]                      27.300       77.550       180      Inductor                                           
+L2          WE742792022       TopLayer    0805_[2012]                      21.130       76.800       90       Inductor                                           
+L3          WE742792022       TopLayer    0805_[2012]                      24.750       76.750       90       Inductor                                           
+L4          WE742792022       TopLayer    0805_[2012]                      22.920       76.800       90       Inductor                                           
+L5          WE742792022       TopLayer    0805_[2012]                      13.000       70.741       360      Inductor                                           
+L6          WE742792022       TopLayer    0805_[2012]                      13.050       66.541       360      Inductor                                           
+P1          TTL SERIAL        TopLayer    HEADER_1X4_2.54MM_THD            24.940       80.500       360      Header, 4-Pin                                      
+P4          PWR_MODE          TopLayer    HEADER_1X3_2.54MM_THD            33.250       92.000       270      Header, 3-Pin                                      
+D4          +12V              TopLayer    0603_[1608]_K1-A2_LED            10.400       58.865       90       Red LED                                            
+R11         4k7               TopLayer    0603_[1608]                      5.100        61.800       180      Resistor                                           
+R13         4k7               TopLayer    0603_[1608]                      7.800        61.800       360      Resistor                                           
+U1          FT232RL           TopLayer    SSOP-28                          21.000       68.641       270      USB to TTL Converter                               
+U1          FT232RL           TopLayer    SSOP-28                          21.000       27.891       270      USB to TTL Converter                               
+J7          BOOT2_SEL         TopLayer    HEADER_1X3_2.54MM_THD            40.040       53.390       180      Header, 3-Pin                                      
+J4          FLASH_WE_SEL      TopLayer    HEADER_1X3_2.54MM_THD            40.040       30.750       180      Header, 3-Pin                                      
+D15         MBR120VLSFT1G     TopLayer    SOD-123                          46.600       10.400       360      Diode                                              
+R15         4k7               TopLayer    0603_[1608]                      17.600       59.680       90       Resistor                                           
+J18         SERVICE_NEW       TopLayer    HEADER_2X10_1.27MM_THD           59.240       22.515       90       Header, 10-Pin, Dual row (SHF-110-01-L-D-TH-TR)    

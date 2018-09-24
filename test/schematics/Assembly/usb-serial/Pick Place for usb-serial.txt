@@ -1,0 +1,48 @@
+Altium Designer Pick and Place Locations
+C:\Users\Asterix\Documents\github\misc-embedded\schematics\Assembly\usb-serial\Pick Place for usb-serial.txt
+
+========================================================================================================================
+File Design Information:
+
+Date:       09-05-18
+Time:       14:26
+Revision:   b6407027dfc3a82f9f802f11843b93f371cc5d2d
+Variant:    No variations
+Units used: mm
+
+Designator  Comment           Layer       Footprint                     Center-X(mm) Center-Y(mm) Rotation Description                                           
+Designator2 Comment           TopLayer    db_firma                      -386.5700    -325.0700    360      ""                                                    
+Designator2 Comment           TopLayer    Develer_logo_15x6mm_TopSolder -386.5700    -325.0700    360      ""                                                    
+U2          LM1117F-ADJ       BottomLayer SOT-89                        15.2800      7.0800       180      "LM1117 LDO Fixed output"                             
+J3          SERIAL            TopLayer    HEADER_1X3_2.54MM_THD         21.3300      7.0800       90       "Header, 3-Pin"                                       
+L2          "600R 0,5A"       TopLayer    0805_[2012]                   2.3300       7.0800       360      "Ferrite Beat (WE 742792022)"                         
+R20         1k                TopLayer    0603_[1608]                   1.8298       3.5800       180      Resistor                                              
+R19         1k                TopLayer    0603_[1608]                   1.8298       10.5800      180      Resistor                                              
+R18         0R                BottomLayer 0603_[1608]                   11.0798      11.5800      180      Resistor                                              
+R16         NP                BottomLayer 0603_[1608]                   11.0798      12.8300      180      Resistor                                              
+D4          +3.3V             TopLayer    0603_[1608]_K1-A2_LED         1.8302       2.0800       360      "Yellow LED"                                          
+D3          +5V               TopLayer    0603_[1608]_K1-A2_LED         1.8302       12.0800      360      "Yellow LED"                                          
+J7          GPIO_BOT          TopLayer    HEADER_1X3_2.54MM_THD         18.7900      2.0000       360      "Header, 3-Pin"                                       
+J6          SERIAL            TopLayer    SOCKET_1X3_2.54MM_ANGLED_THD  23.8700      7.0800       90       "Header, 3-Pin"                                       
+J2          GPIO_TOP          TopLayer    HEADER_1X3_2.54MM_THD         18.7900      12.1600      360      "Header, 3-Pin"                                       
+R23         "10k 1%"          BottomLayer 0603_[1608]                   16.0798      10.3300      180      Resistor                                              
+R22         "1k8 1%"          BottomLayer 0603_[1608]                   18.8298      9.8300       180      Resistor                                              
+R21         "1k 1%"           BottomLayer 0603_[1608]                   13.5798      10.3300      180      Resistor                                              
+C9          100nF             BottomLayer 0603_[1608]                   13.5802      11.5800      360      "Ceramic X7R 50V"                                     
+U1          FT232RQ           TopLayer    QFN-32_LARGE                  10.8300      7.0800       270      "USB-to-UART 1-CH 256byte FIFO 5V 32-Pin QFN EP Tray" 
+R7          22R               TopLayer    0603_[1608]                   16.3302      8.0800       360      Resistor                                              
+R4          22R               TopLayer    0603_[1608]                   16.3302      10.0800      360      Resistor                                              
+R3          22R               TopLayer    0603_[1608]                   16.3302      6.8300       0        Resistor                                              
+R2          1k                BottomLayer 0603_[1608]                   23.8299      12.3301      150      Resistor                                              
+R1          1k                BottomLayer 0603_[1608]                   24.0799      1.8299       210      Resistor                                              
+L1          "600R 0,5A"       TopLayer    0805_[2012]                   6.0800       2.8300       90       "Ferrite Beat (WE 742792022)"                         
+J1          "Mini USB Type B" BottomLayer usb_typeB_mini_smd            5.0800       7.0800       90       "Mini USB SMT Type B 5 Contacts (WE 65100516121)"     
+D2          RX                TopLayer    0603_[1608]_K1-A2_LED         23.8302      12.3299      330      "Yellow LED"                                          
+D1          TX                TopLayer    0603_[1608]_K1-A2_LED         24.0802      1.8301       30       "Green LED"                                           
+C8          100nF             BottomLayer 0603_[1608]                   18.8298      4.3300       180      "Ceramic X7R 50V"                                     
+C7          10uF              BottomLayer 1206_[3216]                   18.5800      7.0800       90       "Ceramic X5R 25V"                                     
+C5          1uF               BottomLayer 1206_[3216]                   11.8300      3.3300       360      "Ceramic X7R 50V"                                     
+C4          100nF             TopLayer    0603_[1608]                   13.4298      11.5300      180      "Ceramic X7R 50V"                                     
+C3          100nF             BottomLayer 0603_[1608]                   11.0802      1.5800       360      "Ceramic X7R 50V"                                     
+C2          10nF              TopLayer    0603_[1608]                   4.5800       2.8298       270      "Ceramic X7R 50V"                                     
+C1          4.7uF             TopLayer    1206_[3216]                   9.3300       1.7300       360      "Ceramic X5R 25V"                                     
