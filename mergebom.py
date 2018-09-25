@@ -32,55 +32,60 @@ from datetime import datetime
 if __name__ == "__main__":
     file_list = []
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path-workspace-file', '-w', dest='workspace_file',
-                        help='Dove si trova il file WorkSpace', default=None)
-    parser.add_argument('--bom-prj-file-prefix', '-prefix', dest='bom_prefix',
-                        help='Default prefix for BOM in project', default='bom-')
-    parser.add_argument('--bom-prj-file-postfix', '-postfix', dest='bom_postfix',
-                        help='Default postfix for BOM in project', default='')
+
+    # Altium Plugin section
+    parser.add_argument('-w', '--workspace-file', dest='workspace_file',
+                        help='Altium WorkSpace file, where mergebom grab project infos.', default=None)
+    parser.add_argument('-prx', '--bom-prj-file-prefix', dest='bom_prefix',
+                        help='Default prefix for BOM in Alrium project', default='bom-')
+    parser.add_argument('-ptx', '--bom-prj-file-postfix', dest='bom_postfix',
+                        help='Default postfix for BOM in Alrium project', default='')
+    parser.add_argument("-pdir", "--bom-prj-dir", dest="bom_search_dir",
+                        help="Default name of directory in Altium project where search BOM.", default="Assembly")
+
+    # MergeBom Configuration section
+    parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
+                        help="Mergebom configuration file", default=None)
+    parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
+                        help="Find and merge csv files, by defaul are excel files.", default=False)
+    parser.add_argument("-o", "--out-filename", dest="out_filename",
+                        help="Out file name", default='merged_bom')
+
+    parser.add_argument("-l","--log-on-file", dest="log_on_file", action="store_true",
+                        help="Log all output in file (by default megebom_report.txt)", default=True)
+    parser.add_argument("-p", "--working-dir", dest="working_dir",
+                        help="Mergebom working directory", default="./")
+    parser.add_argument('-t', '--bom-report-date', dest='report_date_timestamp',
+                        help='Default date for merged BOM file in format: %%d/%%m/%%y, by default is today()', default=None)
+
+
+    # BOM default parameter
+    parser.add_argument('-pd', '--prj-date', dest='prj_date',
+                        help='Project date time release.', default=None)
+    parser.add_argument('-n', '--prj-name',  dest='prj_name',
+                        help='Short project name', default=None)
+    parser.add_argument('-ln', '--prj-name-long', dest='prj_name_long',
+                        help='Long project name', default=None)
+    parser.add_argument('-hw', '--prj-hw-ver', dest='prj_hw_ver',
+                        help='Project hardware version [0, 1, 2, ..]', default=None)
+    parser.add_argument('-pv', '--prj-pcb', dest='prj_pcb',
+                        help='PCB hardware version [A, B, C, ..]', default=None)
+    parser.add_argument('-lic', '--prj-license',  dest='prj_license',
+                        help='prj_license', default=None)
+    parser.add_argument('-pn', '--prj-pn', dest='prj_pn',
+                        help='Project Part Numeber', default=None)
+    parser.add_argument('-s', '--prj-status', dest='prj_status',
+                        help='Project status [Prototype, Production, ..]', default=None)
+
+    # Advanced fuctions
     parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
                         help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
-    parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
-                        default=False, help="Find and merge csv files, by defaul are excel files.")
-    parser.add_argument("-c", "--merge-cfg", dest="merge_cfg",
-                        default=None, help="MergeBOM configuration file.")
-    parser.add_argument("-o", "--out-filename", dest="out_filename",
-                        default='merged_bom', help="Out file name")
-    parser.add_argument("-p", "--working-dir", dest="working_dir",
-                        default="./", help="BOM to merge working path.")
-    parser.add_argument("-s", "--bom-file-search-dir", dest="bom_search_dir",
-                        default="Assembly", help="Project BOM search directory.")
-    parser.add_argument('--report_time', '-t', dest='report_time',
-                        help='datetime nel formato : %%d/%%m/%%y', default=None)
-    parser.add_argument("-r", "--bom-revision", dest="bom_rev",
-                        default=None, help="Hardware BOM revision")
-    parser.add_argument("-pc", "--bom-pcb-revision", dest="bom_pcb_ver",
-                        default=None, help="PCB Revision")
-    parser.add_argument("-n", "--bom-prj-name", dest="bom_prj_name",
-                        default=None, help="Project names.")
-    parser.add_argument("-d", "--delete-file", dest="delete",action="store_true",
+    parser.add_argument("-dd", "--delete-file", dest="delete",action="store_true",
                         default=False, help="delete file")
-    parser.add_argument("-l","--log-on-file",dest="log_on_file",
-                        default=True,action="store_true",help="List all project name from version file.")
-    parser.add_argument( "-diff","--diff",dest="diff",action="store_true",
-                        default=False, help="Generate diff from two specified BOMs")
 
-    parser.add_argument('--prj_date', '-date', dest='prj_date',
-                        help='prj_date', default=None)
-    parser.add_argument('--prj_hw_ver', '-hw_ver', dest='prj_hw_ver',
-                        help='prj_hw_ver', default=None)
-    parser.add_argument('--prj_license', '-license', dest='prj_license',
-                        help='prj_license', default=None)
-    parser.add_argument('--prj_name', '-name', dest='prj_name',
-                        help='prj_name', default=None)
-    parser.add_argument('--prj_name_long', '-name_long', dest='prj_name_long',
-                        help='prj_name_long', default=None)
-    parser.add_argument('--prj_pcb', '-pcb', dest='prj_pcb',
-                        help='prj_pcb', default=None)
-    parser.add_argument('--prj_pn', '-pn', dest='prj_pn',
-                        help='prj_pn', default=None)
-    parser.add_argument('--prj_status', '-status', dest='prj_status',
-                        help='prj_status', default=None)
+    # Diff Mode
+    parser.add_argument("-d","--diff", dest="diff", action="store_true",
+                        help="Generate diff from two specified BOMs", default=False)
 
     parser.add_argument('file_to_merge', metavar='N', nargs='*',
                         help='List of file to merge.',
@@ -91,12 +96,12 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(0)
 
-    if options.report_time is not None:
-        options.report_time = datetime.strptime(options.report_time, '%d/%m/%Y')
+    if options.report_date_timestamp is not None:
+        options.report_date_timestamp = datetime.strptime(options.report_date_timestamp, '%d/%m/%Y')
 
     logger = report.Report(log_on_file = options.log_on_file,
                            terminal = True,
-                           report_date = options.report_time)
+                           report_date = options.report_date_timestamp)
     logger.write_logo()
 
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
@@ -139,7 +144,7 @@ if __name__ == "__main__":
         if options.prj_hw_ver is None:
             options.out_filename = options.out_filename + '_merge'
         else:
-            options.out_filename = options.out_filename + options.prj_hw_ver
+            options.out_filename = "%s-R%s" % (options.out_filename, options.prj_hw_ver)
 
     if options.finalf:
         appo = merge_file_list[0]
