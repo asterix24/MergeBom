@@ -86,7 +86,7 @@ class MergeBom(object):
         self.stats['file_num'] = 0
         for index_file, file_name in enumerate(list_bom_files):
             self.stats['file_num'] += 1
-            self.logger.warning("File name %s\n" % file_name)
+            self.logger.warning("File name: %s\n" % file_name)
 
             # Get all data from select data that could be CSV or xls
             reader = report.DataReader(file_name, is_csv=is_csv)
@@ -103,7 +103,6 @@ class MergeBom(object):
             extra_keys = {}
             for row in data:
                 for n, item in enumerate(row):
-                    # search header to import corretly all data
                     if item.lower() in cfg.VALID_KEYS:
                         header[item.lower()] = n
 
@@ -135,9 +134,9 @@ class MergeBom(object):
 
             except KeyError as e:
                 self.logger.error("No key header found! [%s]\n" % e)
-                self.logger.warning("Valid are:")
+                self.logger.warning("Valid are:\n")
                 for i in cfg.VALID_KEYS:
-                    self.logger.warning(" %s" % i)
+                    self.logger.warning(" %s\n" % i)
 
                 sys.exit(1)
 

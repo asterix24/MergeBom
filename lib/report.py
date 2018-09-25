@@ -84,7 +84,7 @@ class Report(object):
         self.__printout("Report file.\n")
         self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
 
-        
+
         self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
         self.__printout("." * 80)
         self.__printout("\n")
