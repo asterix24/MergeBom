@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     if not options.delete:
         if options.prj_hw_ver is None:
-            options.out_filename = options.out_filename + '_merge'
+            options.out_filename = "%s_merged" % options.out_filename
         else:
             options.out_filename = "%s-R%s" % (options.out_filename, options.prj_hw_ver)
 
