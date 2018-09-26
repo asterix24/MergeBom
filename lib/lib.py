@@ -35,16 +35,14 @@ def order_designator(ref_str, logger):
         sys.exit(1)
     return ", ".join(d)
 
-
 def value_toFloat(l, unit, logger):
     acc = 0
     value = "0"
     mult = 1
     div = 1
     if unit not in cfg.CATEGORY_TO_UNIT:
-        logger.error(
-            "Unknow category [%s] allowed are[%s]\n" %
-            (unit, cfg.CATEGORY_TO_UNIT.keys()))
+        logger.error("Unknow category [%s] allowed are[%s]\n" % (
+            unit, cfg.CATEGORY_TO_UNIT.keys()))
         sys.exit(1)
 
     # K is always chilo .. so fix case
@@ -52,14 +50,14 @@ def value_toFloat(l, unit, logger):
     # herz
     l = l.replace("HZ", "Hz")
     l = l.replace("hz", "Hz")
+    l = l.replace("ohm", "R")
 
     # manage correctly NP value
     for n in cfg.NOT_POPULATE_KEY:
         if n in l:
             return -1, l, ""
 
-    # In string value we could find a note or other info, remove it, put for
-    # later
+    # In string value we could find a note or other info, remove it, use later
     note = ""
     if " " in l:
         ss = l.split(" ")
@@ -71,30 +69,32 @@ def value_toFloat(l, unit, logger):
     if re.search("^[0-9]", l) is None:
         return -2, l, note
 
+    flag = False
     for c in l:
-        if c in cfg.ENG_LETTER:
+        if c in cfg.ENG_LETTER and not flag:
             try:
                 value = value.replace(',', '.')
                 acc = float(value)
                 mult, div = cfg.ENG_LETTER[c]
                 value = "0"
+                flag = True
                 continue
             except ValueError as e:
-                logger.error(
-                    "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" %
-                    (l, acc, mult, value, div, e))
+                logger.error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
+                    l, acc, mult, value, div, e))
                 sys.exit(1)
 
-        if c in cfg.CATEGORY_TO_UNIT[unit]:
+        # skip measure unit, we use only numbers
+        if re.search("[a-zA-z]", c) is not None:
             continue
 
         value += c
-        # print "[",c,"<>", value, "]",
+        #print "[",c,"<>", value, "]",
 
     try:
         value = acc * mult + float(value) * div
     except ValueError as e:
-        logger.error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
+        logger.error(">> l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
             l, acc, mult, value, div, e))
         return -2, l, note
 

@@ -366,8 +366,10 @@ class TestMergeBom(unittest.TestCase):
             ("R", ("1k", "1k5", "1", "10R", "1R2", "2.2k", "0.3")),
             ("C", ("0.1uF", "100nF", "1F", "10pF", "2.2uF", "47uF", "1uF")),
             ("L", ("1nH", "1H", "10pH", "2.2uH", "47uH")),
-            ("R", ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm")),
+            ("R", ("68ohm", "1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm")),
             ("Y", ("32.768kHz", "1MHz", "12.134kHz")),
+            ("L", ("4mH", "4.7mH", "100uH")),
+            ("R", ("33nohm",)),
         ]
         checkv1 = [
             ((1e-10, "F"),),
@@ -376,8 +378,10 @@ class TestMergeBom(unittest.TestCase):
             ((0.3, "ohm"), (1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
             ((10e-12, "F"), (100e-9, "F"), (0.1e-6, "F"), (1e-6, "F"), (2.2e-6, "F"), (47e-6, "F"), (1.0, "F")),
             ((10e-12, "H"), (1e-9, "H"), (2.2e-6, "H"), (47e-6, "H"), (1.0, "H")),
-            ((3.3e-8, "ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm")),
+            ((3.3e-8, "ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm"), (68, "ohm")),
             ((12134.0, "Hz"), (32768.0, "Hz"), (1e6, "Hz")),
+            ((100e-6, "H"), (4e-3, "H"), (0.0047, "H")),
+            ((33e-9, "ohm"),),
         ]
 
         print
@@ -390,7 +394,7 @@ class TestMergeBom(unittest.TestCase):
             l = sorted(l, key=lambda x: x[0])
             for n, i in enumerate(l):
                 print i, "->", checkv1[k][n]
-                self.assertTrue(str(i[0]) == str(checkv1[k][n][0]))
+                self.assertTrue(abs(i[0] - checkv1[k][n][0]) < 10e-9)
                 self.assertEqual(i[1], checkv1[k][n][1])
                 print "-" * 80
 
