@@ -248,12 +248,12 @@ class TestMergeBom(unittest.TestCase):
             "led": (1, 5),
             "develboard": (1, 1),
             "ld29150dt33r": (1, 1),
-            "220h ohm @ 100mhz": (1, 14),
+            "220h r @ 100mhz": (1, 14),
             "100nf": (1, 30),
             "6.8r": (1, 3),
             "ft232rq": (1, 1),
             "line filter (we 744232090)": (1, 2),
-            "np  (220 ohm @ 100mhz)": (1, 1),
+            "np  (220 r @ 100mhz)": (1, 1),
             "100uf": (2, 2),
             "lm22670mre-5.0/nopb": (1, 1),
             "0r": (1, 1),
@@ -285,7 +285,7 @@ class TestMergeBom(unittest.TestCase):
                     test_dict[key] = (1, j[0])
 
         for k in test_dict.keys():
-            #print "\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1])
+            print "\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1])
             print "T > %20.20s | row count %5.5s | count %5.5s |" % (k, test_dict[k][0], test_dict[k][1])
             print "C < %20.20s | row count %5.5s | count %5.5s |" % (k, check[k][0], check[k][1])
 
