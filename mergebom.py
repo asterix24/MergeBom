@@ -30,7 +30,6 @@ from mergebom_class import *
 from datetime import datetime
 
 if __name__ == "__main__":
-    file_list = []
     parser = argparse.ArgumentParser()
 
     # Altium Plugin section
@@ -77,11 +76,8 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--prj-status', dest='prj_status',
                         help='Project status [Prototype, Production, ..]', default=None)
 
-    # Advanced fuctions
-    parser.add_argument('--nome-directory-final-file', '-finalf', dest='finalf', action="store_true",
-                        help='Se il file deve avere lo stesso nome e la stessa directory del file vecchio', default=False)
-    parser.add_argument("-dd", "--delete-file", dest="delete",action="store_true",
-                        default=False, help="delete file")
+    parser.add_argument("-r", "--replace-original", dest="replace_original", action="store_true",
+                        help="delete file", default=False)
 
     # Diff Mode
     parser.add_argument("-d","--diff", dest="diff", action="store_true",
@@ -106,7 +102,14 @@ if __name__ == "__main__":
 
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
 
-    merge_file_list = options.file_to_merge
+
+    dataset_to_merge = []
+
+    if options.file_to_merge != [] and options.workspace_file is None:
+        dataset_to_merge = [
+            (options.file_to_merge, {})
+        ]
+
     if options.workspace_file is not None:
         file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file,
                                            options.csv_file,
@@ -130,56 +133,49 @@ if __name__ == "__main__":
             options.prj_pn = parametri_dict.get('prj_pn', None)
             options.prj_status = parametri_dict.get('prj_status', None)
 
-            for j in item[0]:
-                merge_file_list.append(j)
+            dataset_to_merge.append((item[0], item[1]))
+            print dataset_to_merge
 
-    if len(merge_file_list) == 0:
+    if len(dataset_to_merge[0][0]) == 0:
         logger.error("No file to merge\n")
         sys.exit(1)
 
-    if options.finalf:
-        options.out_filename = options.name_file
+    if options.prj_hw_ver is None:
+        options.out_filename = "%s_merged" % options.out_filename
+    else:
+        options.out_filename = "%s-R%s" % (options.out_filename, options.prj_hw_ver)
 
-    if not options.delete:
-        if options.prj_hw_ver is None:
-            options.out_filename = "%s_merged" % options.out_filename
-        else:
-            options.out_filename = "%s-R%s" % (options.out_filename, options.prj_hw_ver)
+    #if options.finalf:
+    #    appo = merge_file_list[0]
+    #    appo = appo.split(os.sep)
+    #    options.working_dir = os.path.join(*appo[:-1])
 
-    if options.finalf:
-        appo = merge_file_list[0]
-        appo = appo.split(os.sep)
-        options.working_dir = os.path.join(*appo[:-1])
+    for item in dataset_to_merge:
+        m = MergeBom(item[0], config, is_csv=options.csv_file, logger=logger)
+        items = m.merge()
+        file_list = map(os.path.basename, item[0])
+        out_file = os.path.join(options.working_dir, options.out_filename + '.xlsx')
+        extra_data = None
+        diff_mode = False
+        header_data = cfg.VALID_KEYS
 
-    m = MergeBom(merge_file_list, config, is_csv=options.csv_file, logger=logger)
-    items = m.merge()
-    file_list = map(os.path.basename, merge_file_list)
-    out_file = os.path.join(options.working_dir, options.out_filename + '.xlsx')
-    extra_data = None
-    diff_mode = False
-    header_data = cfg.VALID_KEYS
+        if options.diff:
+            logger.info("Diff Mode..\n")
 
-    if options.diff:
-        logger.info("Diff Mode..\n")
+            items = m.diff()
+            extra_data = m.extra_data()
+            diff_mode = True
+            header_data = m.header_data()
 
-        items = m.diff()
-        extra_data = m.extra_data()
-        diff_mode = True
-        header_data = m.header_data()
+        report.write_xls(items,
+            file_list,
+            config,
+            out_file,
+            hw_ver=options.prj_hw_ver,
+            pcb=options.prj_pcb,
+            name=options.prj_name,
+            diff=diff_mode,
+            extra_data=extra_data,
+            headers=header_data)
 
-    report.write_xls(items,
-        file_list,
-        config,
-        out_file,
-        hw_ver=options.prj_hw_ver,
-        pcb=options.prj_pcb,
-        name=options.prj_name,
-        diff=diff_mode,
-        extra_data=extra_data,
-        headers=header_data)
-
-    if options.delete:
-        logger.info("Remove Merged files\n")
-        for i,v in enumerate(merge_file_list):
-            os.remove(merge_file_list[i])
 

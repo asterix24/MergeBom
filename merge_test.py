@@ -465,12 +465,15 @@ class TestMergeBom(unittest.TestCase):
                 print "-" * 80
 
     def test_altiumMergexlsx(self):
-        out = subprocess.check_output(["python", "mergebom.py",
-                                       "-w", os.path.join("test","utils.DsnWrk"),
-                                       '-o', 'merged_xlsx',
-                                       '-prx', "",
-                                       '-p', self.temp_dir ],
-                                      stderr=subprocess.STDOUT)
+
+        cmd = ["python", "mergebom.py",
+                   "-w", os.path.join("test","utils.DsnWrk"),
+                   '-o', 'merged_xlsx',
+                   '-prx', "",
+                   '-p', self.temp_dir ]
+        print
+        print "%s" % " ".join(cmd)
+        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         file_name = os.path.join(self.temp_dir, 'merged_xlsx-R0.xlsx')
         self.assertTrue(os.path.exists(file_name))
 
@@ -646,17 +649,19 @@ class TestMergeBom(unittest.TestCase):
 
     def test_cliMerge(self):
         outfilename = os.path.join(self.temp_dir, "climerge")
-        print subprocess.check_output(["python", "mergebom.py",
-                                       "-o", outfilename,
-                                       "-hw", "0",
-                                       "-pv", "S",
-                                       "-n", "Test project",
-                                       os.path.join("test","cli-merge0.xlsx"),
-                                       os.path.join("test","cli-merge1.xlsx")],
-                                      stderr=subprocess.STDOUT)
+        cmd = ["python", "mergebom.py",
+                   "-o", outfilename,
+                   "-hw", "0",
+                   "-pv", "S",
+                   "-n", "Test project",
+                   os.path.join("test","cli-merge0.xlsx"),
+                   os.path.join("test","cli-merge1.xlsx")]
+        print
+        print "%s" % " ".join(cmd)
+        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
         outfilename = os.path.join(self.temp_dir, 'climerge-R0.xlsx')
-        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        self.assertTrue(os.path.isfile(outfilename))
         os.remove(outfilename)
 
     def test_cliMergeDiff(self):
@@ -814,20 +819,20 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_orderRef"))
     suite.addTest(TestMergeBom("test_valueToFloat"))
     suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_altiumMergexlsx"))
-    suite.addTest(TestMergeBom("test_altiumMergecsv"))
-    suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
     suite.addTest(TestMergeBom("test_outFile"))
     suite.addTest(TestMergeBom("test_parametri"))
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
+    suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    suite.addTest(TestMergeBom("test_categoryGroup"))
-    suite.addTest(TestMergeBom("test_otherColumn"))
     suite.addTest(TestMergeBom("test_cliCSV"))
+    suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
+    suite.addTest(TestMergeBom("test_altiumMergexlsx"))
+    suite.addTest(TestMergeBom("test_altiumMergecsv"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
