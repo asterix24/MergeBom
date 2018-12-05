@@ -32,6 +32,9 @@ from datetime import datetime
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("-v", "--version", dest="mergebom_version", action="store_true",
+                        help="Program version", default=False)
+
     # Altium Plugin section
     parser.add_argument('-w', '--workspace-file', dest='workspace_file',
                         help='Altium WorkSpace file, where mergebom grab project infos.', default=None)
@@ -88,6 +91,11 @@ if __name__ == "__main__":
                         default=[])
     options = parser.parse_args()
 
+
+    if options.mergebom_version:
+        print cfg.MERGEBOM_VER
+        sys.exit(0)
+
     if len(sys.argv) < 2:
         parser.print_help()
         sys.exit(0)
@@ -104,7 +112,6 @@ if __name__ == "__main__":
 
 
     dataset_to_merge = []
-
     if options.file_to_merge != [] and options.workspace_file is None:
         dataset_to_merge = [
             (options.file_to_merge, {})
