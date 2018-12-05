@@ -30,7 +30,7 @@ import glob
 import os
 import re
 
-MERGEBOM_VER = "1.0.0"
+MERGEBOM_VER = "1.1.0"
 
 LOGO_SIMPLE = """
 
@@ -279,16 +279,16 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
 
     # calcolo path dove si trovano i progetti
     ws = workspace_path.split(os.sep)
-    path_proj = workspace_path
     if len(ws) > 1:
         path_proj = os.path.join(*ws[:-1])
+    else:
+        path_proj = os.path.join("." + os.sep)
     path_filemerge = os.path.join(path_proj, bom_search_dir)
 
     logger.info("Search project to merge in given Altiumworkspace: %s\n" %
                    workspace_path)
     logger.info("Mergepath %s\n" % path_filemerge)
     logger.info("path_proj %s\n" % path_proj)
-
 
     wk_config = ConfigParser.RawConfigParser()
     wk_config.read(workspace_path)
@@ -299,9 +299,14 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
                 continue
 
             temp = wk_config.get(i, 'ProjectPath')
-            temp = temp.split('\\')
-            basename = os.path.join(*temp[:-1])
-            complete_path = os.path.join(*temp)
+            if "\\" in temp:
+                temp = temp.split('\\')
+                basename = os.path.join(*temp[:-1])
+                complete_path = os.path.join(*temp)
+            else:
+                if "." in temp:
+                    basename = temp.split(".")[0]
+                complete_path = temp
 
         except ConfigParser.NoOptionError:
             #logger.info("Missing key %s\n" % i)
