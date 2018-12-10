@@ -57,7 +57,7 @@ class TestMergeBom(unittest.TestCase):
         pass
 
     def test_altiumWorkspace(self):
-        file_BOM=[
+        file_BOM = [
             ([], {
                 'prj_status': 'status',
                 'prj_pcb': 'C',
@@ -86,6 +86,44 @@ class TestMergeBom(unittest.TestCase):
         param = cfg.cfg_altiumWorkspace(p, False, "Assembly", self.logger,
                                         bom_prefix='bom-', bom_postfix="")
         self.assertEqual(file_BOM, param)
+
+        check = [
+            ([], {}),
+            ([],
+             {'prj_pcb': 'A',
+              'prj_name': 'Sensor Shield 5Mp',
+              'prj_date': '01/06/2018',
+              'prj_status': 'Prototype',
+              'prj_name_long': 'Camera sensor shield 5Mp AR0521',
+              'prj_license': 'Copyright company spa',
+              'prj_hw_ver': '0', 'prj_prefix': ''}),
+            ( ['/Users/asterix/src/MergeBom/test/wktest/Assembly/camera-core/bom-camera-core.xlsx'],
+             {'prj_status': 'Prototype',
+              'prj_pcb': 'A',
+              'prj_name': 'Camera Core',
+              'prj_date': '01/06/2018',
+              'prj_pn': '-',
+              'prj_name_long': 'Camera core imx8',
+              'prj_license': 'Copyright company spa',
+              'prj_hw_ver': '0',
+              'prj_prefix': ''}),
+            ([],
+             {'prj_pcb': 'A',
+              'prj_name': 'Sensor Shield 18Mp',
+              'prj_date': '01/06/2018',
+              'prj_status': 'Prototype',
+              'prj_name_long': 'Camera sensor shield 5Mp AR1820',
+              'prj_license': 'Copyright company spa',
+              'prj_hw_ver': '0',
+              'prj_prefix': ''}),
+            ([], {}),
+        ]
+
+        wk_path = os.path.abspath(os.path.join('test', "wktest", "camera.DsnWrk"))
+        #wk_path = os.path.join('test', "wktest", "camera.DsnWrk")
+        param = cfg.cfg_altiumWorkspace(wk_path, False, "Assembly", self.logger,
+                                        bom_prefix='bom-', bom_postfix="")
+        self.assertEqual(check, param)
 
     def test_import(self):
         file_list = [

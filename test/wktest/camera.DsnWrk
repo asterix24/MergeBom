@@ -1,0 +1,12 @@
+[ProjectGroup]
+Version=1.0
+[Project1]
+ProjectPath=camera.PrjMbd
+[Project2]
+ProjectPath=5mp-sensor\5mp-sensor.PrjPCB
+[Project3]
+ProjectPath=camera-core\camera-core.PrjPCB
+[Project4]
+ProjectPath=18mp-sensor\18mp-sensor.PrjPCB
+[Project5]
+ProjectPath=imx8m_evk\imx8_evk.PrjPcb
