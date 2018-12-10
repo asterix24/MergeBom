@@ -181,6 +181,18 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
+MERGED_FILE_TEMPLATE_HW  = "%s-R%s"
+MERGED_FILE_TEMPLATE_NOHW  = "%s_merged"
+
+PRJ_DATE = 'prj_date'
+PRJ_HW_VER = 'prj_hw_ver'
+PRJ_LICENSE = 'prj_license'
+PRJ_NAME = 'prj_name'
+PRJ_NAME_LONG = 'prj_name_long'
+PRJ_PCB = 'prj_pcb'
+PRJ_PN = 'prj_pn'
+PRJ_STATUS = 'prj_status'
+
 
 class CfgMergeBom(object):
     """
@@ -346,7 +358,8 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
-        ret.append((file_BOM, parametri_dict))
+        if not (parametri_dict == {} and file_BOM == []):
+            ret.append((file_BOM, parametri_dict))
 
     return ret
 

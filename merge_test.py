@@ -88,7 +88,6 @@ class TestMergeBom(unittest.TestCase):
         self.assertEqual(file_BOM, param)
 
         check = [
-            ([], {}),
             ([],
              {'prj_pcb': 'A',
               'prj_name': 'Sensor Shield 5Mp',
@@ -116,7 +115,6 @@ class TestMergeBom(unittest.TestCase):
               'prj_license': 'Copyright company spa',
               'prj_hw_ver': '0',
               'prj_prefix': ''}),
-            ([], {}),
         ]
 
         wk_path = os.path.abspath(os.path.join('test', "wktest", "camera.DsnWrk"))
