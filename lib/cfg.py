@@ -254,7 +254,7 @@ def cfg_version(filename):
     return cfg
 
 
-def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
+def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                         logger, bom_postfix="", bom_prefix="bom-"):
     """
     Alla funzione vengono passati i parametri:
@@ -278,20 +278,16 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
     ret = []
 
     # calcolo path dove si trovano i progetti
-    ws = workspace_path.split(os.sep)
-    if len(ws) > 1:
-        path_proj = os.path.join(*ws[:-1])
-    else:
-        path_proj = os.path.join("." + os.sep)
-    path_filemerge = os.path.join(path_proj, bom_search_dir)
+    root_path = os.path.dirname(workspace_file_path)
+    file_to_merge_path = os.path.join(root_path, bom_search_dir)
 
-    logger.info("Search project to merge in given Altiumworkspace: %s\n" %
-                   workspace_path)
-    logger.info("Mergepath %s\n" % path_filemerge)
-    logger.info("path_proj %s\n" % path_proj)
+    logger.info("\nSearch project to merge in given Altiumworkspace: %s\n" %
+                   workspace_file_path)
+    logger.info("BOM path %s\n" % file_to_merge_path)
+    logger.info("Root path %s\n" % root_path)
 
     wk_config = ConfigParser.RawConfigParser()
-    wk_config.read(workspace_path)
+    wk_config.read(workspace_file_path)
     for i in wk_config.sections():
         try:
             if re.match("project[0-9]+", i.lower()) is None:
@@ -317,7 +313,7 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
 
         # ricerca parametri di ogni progetto e poi messi in un dizionario con
         # {nomeparametro : parametro}
-        prj = os.path.join(path_proj, complete_path)
+        prj = os.path.join(root_path, complete_path)
         if not os.path.exists(prj):
             logger.error("Unable to find project BOM: %s\n" % prj)
             continue
@@ -337,7 +333,7 @@ def cfg_altiumWorkspace(workspace_path, csv_file, bom_search_dir,
 
         # ricerca file del progetto a cui fare il merge e messi in una lista
         bom_name = "%s%s%s" % (bom_prefix, basename, bom_postfix)
-        path_file = os.path.join(path_filemerge, basename)
+        path_file = os.path.join(file_to_merge_path, basename)
         merge_file_item = os.path.join(path_file, bom_name) + '.csv'
         if not csv_file:
             merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
