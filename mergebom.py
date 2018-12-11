@@ -92,24 +92,93 @@ if __name__ == "__main__":
     options = parser.parse_args()
 
 
-    if options.mergebom_version:
-        print cfg.MERGEBOM_VER
-        sys.exit(0)
+
 
     if len(sys.argv) < 2:
         parser.print_help()
         sys.exit(0)
 
+    if options.mergebom_version:
+        print cfg.MERGEBOM_VER
+        sys.exit(0)
+
     if options.report_date_timestamp is not None:
         options.report_date_timestamp = datetime.strptime(options.report_date_timestamp, '%d/%m/%Y')
+
 
     logger = report.Report(log_on_file = options.log_on_file,
                            terminal = True,
                            report_date = options.report_date_timestamp)
     logger.write_logo()
 
+
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
 
+
+    # ===== AltiumWorkspace =============
+
+
+    if options.workspace_file is not None:
+        if options.diff:
+            log.error("Invalid switch [--diff], could not run diff mode when merge from altium workspase")
+            sys.exit(1)
+
+        bom_dataset = cfg.cfg_altiumWorkspace(options.workspace_file,
+                                           options.csv_file,
+                                           options.bom_search_dir,
+                                           logger,
+                                           bom_prefix=options.bom_prefix,
+                                           bom_postfix=options.bom_postfix)
+
+
+        if len(bom_dataset) < 1:
+            logger.error("No BOM files found in Workspace\n")
+            sys.exit(1)
+
+        for item in bom_dataset:
+            if len(item) < 1:
+                logger.error("Somethings wrong.. no valid dataset")
+                sys.exit(1)
+
+            name = item[0]
+            bom = item[1]
+            param = item[2]
+
+            if len(bom) > 1:
+                logger.warning("There are more than one bom to merge, what wolud I do?")
+                # TODO: gestire piu' file di bom, chiedendo all'utente
+                sys.exit(0)
+
+            m = MergeBom(bom, config, is_csv=options.csv_file, logger=logger)
+
+            # Compute outfile name
+            hw_ver = param.get(cfg.PRJ_HW_VER, None)
+            prj_pcb = param.get(cfg.PRJ_PCB, None)
+            prj_name_long = param.get(cfg.PRJ_NAME_LONG, "project")
+            prj_name = param.get(cfg.PRJ_NAME, "project")
+            prj_pn = param.get(cfg.PRJ_PN, "-")
+
+            out_merge_file = cfg.MERGED_FILE_TEMPLATE_HW % (name, hw_ver)
+            if hw_ver is None:
+                out_merge_file = cfg.MERGED_FILE_TEMPLATE_NOHW %  name
+
+            wk_path = os.path.dirname(options.workspace_file)
+            out = os.path.join(wk_path, options.bom_search_dir, out_merge_file)
+            report.write_xls(m.merge(),
+                map(os.path.basename, bom),
+                config,
+                out,
+                hw_ver=hw_ver,
+                pcb=prj_pcb,
+                name=prj_name_long + " PN: " + prj_pn,
+                diff=False,
+                extra_data=None,
+                headers=cfg.VALID_KEYS)
+
+            if options.replace_original:
+                os.remove(bom)
+
+    sys.exit(0)
 
     dataset_to_merge = []
     if options.file_to_merge != [] and options.workspace_file is None:
@@ -117,18 +186,12 @@ if __name__ == "__main__":
             (options.file_to_merge, {})
         ]
 
-    if options.workspace_file is not None:
-        file_BOM = cfg.cfg_altiumWorkspace(options.workspace_file,
-                                           options.csv_file,
-                                           options.bom_search_dir,
-                                           logger,
-                                           bom_prefix=options.bom_prefix,
-                                           bom_postfix=options.bom_postfix)
 
-        if len(file_BOM) < 1:
-            logger.error("No BOM files found in Workspace\n")
-            sys.exit(1)
-
+        # l'aggiornamento dei parametri va bene se si passa da linea di comando
+        # e con un file solo o con un merge esplicito.
+        # Da wk, ingnorare questi paramentri e chidere all'utente se
+        # vuole mergiare il file che ha trovato.
+        # mettere un switch per mergerli tutti.
         for item in file_BOM:
             parametri_dict = item[1]
             options.prj_date = parametri_dict.get('prj_date', None)

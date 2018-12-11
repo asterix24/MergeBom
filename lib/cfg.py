@@ -181,8 +181,8 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
-MERGED_FILE_TEMPLATE_HW  = "%s-R%s"
-MERGED_FILE_TEMPLATE_NOHW  = "%s_merged"
+MERGED_FILE_TEMPLATE_HW  = "%s-R%s.xlsx"
+MERGED_FILE_TEMPLATE_NOHW  = "%s_merged.xlsx"
 
 PRJ_DATE = 'prj_date'
 PRJ_HW_VER = 'prj_hw_ver'
@@ -359,7 +359,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
         if not (parametri_dict == {} and file_BOM == []):
-            ret.append((file_BOM, parametri_dict))
+            ret.append((basename, file_BOM, parametri_dict))
 
     return ret
 
