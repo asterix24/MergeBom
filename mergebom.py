@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--csv", dest="csv_file", action="store_true",
                         help="Find and merge csv files, by defaul are excel files.", default=False)
     parser.add_argument("-o", "--out-filename", dest="out_filename",
-                        help="Out file name", default='merged_bom')
+                        help="Out file name", default=None)
 
     parser.add_argument("-l","--log-on-file", dest="log_on_file", action="store_true",
                         help="Log all output in file (by default megebom_report.txt)", default=True)
@@ -116,8 +116,6 @@ if __name__ == "__main__":
 
 
     # ===== AltiumWorkspace =============
-
-
     if options.workspace_file is not None:
         if options.diff:
             log.error("Invalid switch [--diff], could not run diff mode when merge from altium workspase")
@@ -146,6 +144,8 @@ if __name__ == "__main__":
 
             if len(bom) > 1:
                 logger.warning("There are more than one bom to merge, what wolud I do?")
+                for i in bom:
+                    logger.info(i)
                 # TODO: gestire piu' file di bom, chiedendo all'utente
                 sys.exit(0)
 
@@ -178,74 +178,50 @@ if __name__ == "__main__":
             if options.replace_original:
                 os.remove(bom)
 
-    sys.exit(0)
+        sys.exit(0)
 
-    dataset_to_merge = []
-    if options.file_to_merge != [] and options.workspace_file is None:
-        dataset_to_merge = [
-            (options.file_to_merge, {})
-        ]
-
-
-        # l'aggiornamento dei parametri va bene se si passa da linea di comando
-        # e con un file solo o con un merge esplicito.
-        # Da wk, ingnorare questi paramentri e chidere all'utente se
-        # vuole mergiare il file che ha trovato.
-        # mettere un switch per mergerli tutti.
-        for item in file_BOM:
-            parametri_dict = item[1]
-            options.prj_date = parametri_dict.get('prj_date', None)
-            options.prj_hw_ver = parametri_dict.get('prj_hw_ver',None)
-            options.prj_license = parametri_dict.get('prj_license', None)
-            options.prj_name = parametri_dict.get('prj_name', None)
-            options.prj_name_long = parametri_dict.get('prj_name_long', None)
-            options.prj_pcb = parametri_dict.get('prj_pcb', None)
-            options.prj_pn = parametri_dict.get('prj_pn', None)
-            options.prj_status = parametri_dict.get('prj_status', None)
-
-            dataset_to_merge.append((item[0], item[1]))
-            print dataset_to_merge
-
-    if len(dataset_to_merge[0][0]) == 0:
-        logger.error("No file to merge\n")
+    if len(options.file_to_merge) == 0:
+        log.error("You should specify a file to merge or diff.")
         sys.exit(1)
 
+    if options.out_filename is None:
+        options.out_filename = "%smerged.xlsx" % options.bom_prefix
+        if options.prj_hw_ver is not None:
+            options.out_filename = "%s_merged-R%s.xlsx" % (options.bom_prefix,
+                                                          options.prj_hw_ver)
+
     if options.prj_hw_ver is None:
-        options.out_filename = "%s_merged" % options.out_filename
-    else:
-        options.out_filename = "%s-R%s" % (options.out_filename, options.prj_hw_ver)
+        logger.warning("Could be nice to specify a hardware version for better tracking.")
 
-    #if options.finalf:
-    #    appo = merge_file_list[0]
-    #    appo = appo.split(os.sep)
-    #    options.working_dir = os.path.join(*appo[:-1])
+    if options.prj_name is None:
+        logger.warning("Could be nice to specify a project name for better tracking.")
 
-    for item in dataset_to_merge:
-        m = MergeBom(item[0], config, is_csv=options.csv_file, logger=logger)
-        items = m.merge()
-        file_list = map(os.path.basename, item[0])
-        out_file = os.path.join(options.working_dir, options.out_filename + '.xlsx')
-        extra_data = None
-        diff_mode = False
-        header_data = cfg.VALID_KEYS
 
-        if options.diff:
-            logger.info("Diff Mode..\n")
 
-            items = m.diff()
-            extra_data = m.extra_data()
-            diff_mode = True
-            header_data = m.header_data()
+    m = MergeBom(options.file_to_merge, config, is_csv=options.csv_file, logger=logger)
 
-        report.write_xls(items,
-            file_list,
-            config,
-            out_file,
-            hw_ver=options.prj_hw_ver,
-            pcb=options.prj_pcb,
-            name=options.prj_name,
-            diff=diff_mode,
-            extra_data=extra_data,
-            headers=header_data)
+    items = m.merge()
+    file_list = map(os.path.basename, options.file_to_merge)
+    extra_data = None
+    diff_mode = False
+    header_data = cfg.VALID_KEYS
+
+    if options.diff:
+        logger.info("Diff Mode..\n")
+        items = m.diff()
+        extra_data = m.extra_data()
+        diff_mode = True
+        header_data = m.header_data()
+
+    report.write_xls(items,
+        file_list,
+        config,
+        os.path.join(options.working_dir, options.out_filename),
+        hw_ver=options.prj_hw_ver,
+        pcb=options.prj_pcb,
+        name=options.prj_name,
+        diff=diff_mode,
+        extra_data=extra_data,
+        headers=header_data)
 
 
