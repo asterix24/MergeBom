@@ -187,8 +187,12 @@ if __name__ == "__main__":
     if options.out_filename is None:
         options.out_filename = "%smerged.xlsx" % options.bom_prefix
         if options.prj_hw_ver is not None:
-            options.out_filename = "%s_merged-R%s.xlsx" % (options.bom_prefix,
-                                                          options.prj_hw_ver)
+            if "bom-" == options.bom_prefix:
+                options.out_filename = "%smerged-R%s.xlsx" % (options.bom_prefix,
+                                                               options.prj_hw_ver)
+            else:
+                options.out_filename = "%s_merged-R%s.xlsx" % (options.bom_prefix,
+                                                               options.prj_hw_ver)
 
     if options.prj_hw_ver is None:
         logger.warning("Could be nice to specify a hardware version for better tracking.")

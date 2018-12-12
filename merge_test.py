@@ -797,27 +797,28 @@ class TestMergeBom(unittest.TestCase):
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
 
-        outfilename = os.path.join(self.temp_dir, "extra_column-R0.xlsx")
-        print subprocess.check_output(["python",
-                                       "mergebom.py",
-                                       "-o", "extra_column",
-                                       "-p", self.temp_dir,
-                                       "-hw", "0",
-                                       "-pv", "S",
-                                       "-n", "Test project",
-                                       "test/column.xlsx"],
-                                       stderr=subprocess.STDOUT)
+        outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
+        cmd = ["python",
+               "mergebom.py",
+               "-prx", "extra_column",
+               "-p", self.temp_dir,
+               "-hw", "0",
+               "-pv", "S",
+               "-n", "Test project",
+               "test/column.xlsx"]
+        print " ".join(cmd)
+        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
 
     def test_cliCSV(self):
         inputfilename = os.path.join("test", "Assembly", "progettotest1", "progettotest1.csv")
-        outfilename = os.path.join(".", "merged_bom-R77.xlsx")
+        outfilename = os.path.join(".", "bom-merged-R77.xlsx")
         cmd =["python", "mergebom.py", "--csv",
-                                       "-hw", "77",
-                                       "-pv", "X",
-                                       "-n", "Test project CVS",
-                                       inputfilename]
+              "-hw", "77",
+              "-pv", "X",
+              "-n", "Test project CVS",
+              inputfilename]
         print " ".join(cmd)
         print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
@@ -864,12 +865,12 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
-    #suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_otherColumn"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    #suite.addTest(TestMergeBom("test_cliCSV"))
+    suite.addTest(TestMergeBom("test_cliCSV"))
     suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
     #suite.addTest(TestMergeBom("test_altiumMergexlsx"))
     #suite.addTest(TestMergeBom("test_altiumMergecsv"))
