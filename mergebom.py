@@ -128,26 +128,88 @@ if __name__ == "__main__":
                                            bom_prefix=options.bom_prefix,
                                            bom_postfix=options.bom_postfix)
 
-
         if len(bom_dataset) < 1:
             logger.error("No BOM files found in Workspace\n")
             sys.exit(1)
 
-        for item in bom_dataset:
+        logger.info("Found following projects:\n")
+        bom_count = 0
+        for data in bom_dataset:
+            if len(data[1]) == 0:
+                continue
+            bom_count += 1
+            logger.info("%s: %s\n" % (data[0], data[1]))
+
+        bom_dataset_merge = []
+        if bom_count == 0:
+            logger.error("No Bom to merge found..\n")
+            sys.exit(1)
+        elif bom_count == 1:
+            bom_dataset_merge = bom_dataset
+        else:
+            logger.info("Wich you want merge?\n")
+            logger.info("  1 - All\n", prefix="*")
+            logger.info("  2 - interactive\n", prefix="*")
+            logger.info("  3 - None\n", prefix="*")
+            logger.info(" ", prefix=">>")
+
+            ret = raw_input()
+            if ret == "1":
+                pass
+            elif ret == "2":
+                for i in bom_dataset:
+                    if len(i[1]) == 0:
+                        continue
+
+                    logger.info(i[0] + "\n", prefix="== ")
+                    logger.info("Keep or remove [K/r]? ", prefix=">> ")
+                    ret = raw_input()
+                    if ret in ["r", "R"]:
+                        logger.info("Removed!\n", prefix="** ")
+                        continue
+                    else:
+                        logger.info("Added!\n", prefix="** ")
+                        bom_dataset_merge.append(i)
+            else:
+                logger.warning("Bye!\n")
+                sys.exit(0)
+
+        logger.warning("==== Start merge ===\n", prefix="")
+        for item in bom_dataset_merge:
             if len(item) < 1:
                 logger.error("Somethings wrong.. no valid dataset")
                 sys.exit(1)
+
+            if len(item[1]) == 0:
+                continue
 
             name = item[0]
             bom = item[1]
             param = item[2]
 
             if len(bom) > 1:
-                logger.warning("There are more than one bom to merge, what wolud I do?")
+                logger.warning("There are more than one bom to merge, what wolud I do?\n")
+                logger.info("Found following files:\n")
                 for i in bom:
                     logger.info(i)
-                # TODO: gestire piu' file di bom, chiedendo all'utente
-                sys.exit(0)
+                logger.info("Wich BOM file you want merge?\n")
+                logger.info("  1 - All\n", prefix="*")
+                logger.info("  2 - interactive\n", prefix="*")
+                logger.info("  3 - None\n", prefix="*")
+                logger.info(" ", prefix=">>")
+                ret = raw_input()
+                if ret == "2":
+                    for i in bom:
+                        print "-" * 80
+                        logger.info(i)
+                        logger.info("Keep or remove [K/r]?\n", prefix=">> ")
+                        ret = raw_input()
+                        if ret ["r", "R"]:
+                            bom.remove(i)
+
+                if ret == "3":
+                    sys.exit(0)
+
 
             m = MergeBom(bom, config, is_csv=options.csv_file, logger=logger)
 
@@ -176,8 +238,11 @@ if __name__ == "__main__":
                 headers=cfg.VALID_KEYS)
 
             if options.replace_original:
-                os.remove(bom)
+                for i in bom:
+                    logger.warning("Remove original..[%s]\n" % i)
+                    os.remove(i)
 
+        logger.warning("==== Merge Done! ===\n", prefix="")
         sys.exit(0)
 
     if len(options.file_to_merge) == 0:
