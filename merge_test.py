@@ -500,30 +500,6 @@ class TestMergeBom(unittest.TestCase):
                 self.assertEqual(l, check[k][n])
                 print "-" * 80
 
-    def test_altiumMergexlsx(self):
-
-        cmd = ["python", "mergebom.py",
-                   "-w", os.path.join("test","utils.DsnWrk"),
-                   '-o', 'merged_xlsx',
-                   '-prx', "",
-                   '-p', self.temp_dir ]
-        print
-        print "%s" % " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        file_name = os.path.join(self.temp_dir, 'merged_xlsx-R0.xlsx')
-        self.assertTrue(os.path.exists(file_name))
-
-    def test_altiumMergecsv(self):
-        out = subprocess.check_output(["python", "mergebom.py", "--csv",
-                                      "-w", os.path.join("test","utils.DsnWrk"),
-                                       '-prx', "",
-                                       '-o', 'merged_csv',
-                                       '-p', self.temp_dir ],
-                                      stderr=subprocess.STDOUT)
-
-        file_name = os.path.join(self.temp_dir,'merged_csv-R0.xlsx')
-        self.assertTrue(os.path.exists(file_name))
-
     def test_mergeFileCommandLine(self):
         outfilename = os.path.join(self.temp_dir, 'cli_merged.xlsx')
         cmd  = ["python", "mergebom.py",
@@ -872,8 +848,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_cliMergeGlob"))
     suite.addTest(TestMergeBom("test_cliCSV"))
     suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
-    #suite.addTest(TestMergeBom("test_altiumMergexlsx"))
-    #suite.addTest(TestMergeBom("test_altiumMergecsv"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
