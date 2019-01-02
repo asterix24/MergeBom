@@ -220,12 +220,12 @@ if __name__ == "__main__":
             prj_name = param.get(cfg.PRJ_NAME, "project")
             prj_pn = param.get(cfg.PRJ_PN, "-")
 
-            out_merge_file = cfg.MERGED_FILE_TEMPLATE_HW % (name, hw_ver)
+            out_merge_file = cfg.MERGED_FILE_TEMPLATE_HW % (options.bom_prefix, name, hw_ver)
             if hw_ver is None:
-                out_merge_file = cfg.MERGED_FILE_TEMPLATE_NOHW %  name
+                out_merge_file = cfg.MERGED_FILE_TEMPLATE_NOHW % (options.bom_prefix, name)
 
             wk_path = os.path.dirname(options.workspace_file)
-            out = os.path.join(wk_path, options.bom_search_dir, name,out_merge_file)
+            out = os.path.join(wk_path, options.bom_search_dir, name, out_merge_file)
             report.write_xls(m.merge(),
                 map(os.path.basename, bom),
                 config,

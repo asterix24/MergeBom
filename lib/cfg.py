@@ -181,8 +181,8 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
-MERGED_FILE_TEMPLATE_HW  = "%s-R%s.xlsx"
-MERGED_FILE_TEMPLATE_NOHW  = "%s_merged.xlsx"
+MERGED_FILE_TEMPLATE_HW  = "%s%s_R%s.xlsx"
+MERGED_FILE_TEMPLATE_NOHW  = "%s%s_merged.xlsx"
 
 PRJ_DATE = 'prj_date'
 PRJ_HW_VER = 'prj_hw_ver'
