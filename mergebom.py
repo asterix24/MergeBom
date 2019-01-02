@@ -225,7 +225,7 @@ if __name__ == "__main__":
                 out_merge_file = cfg.MERGED_FILE_TEMPLATE_NOHW %  name
 
             wk_path = os.path.dirname(options.workspace_file)
-            out = os.path.join(wk_path, options.bom_search_dir, out_merge_file)
+            out = os.path.join(wk_path, options.bom_search_dir, name,out_merge_file)
             report.write_xls(m.merge(),
                 map(os.path.basename, bom),
                 config,
