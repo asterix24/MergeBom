@@ -60,7 +60,6 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--bom-report-date', dest='report_date_timestamp',
                         help='Default date for merged BOM file in format: %%d/%%m/%%y, by default is today()', default=None)
 
-
     # BOM default parameter
     parser.add_argument('-pd', '--prj-date', dest='prj_date',
                         help='Project date time release.', default=None)
@@ -91,9 +90,6 @@ if __name__ == "__main__":
                         default=[])
     options = parser.parse_args()
 
-
-
-
     if len(sys.argv) < 2:
         parser.print_help()
         sys.exit(0)
@@ -105,28 +101,25 @@ if __name__ == "__main__":
     if options.report_date_timestamp is not None:
         options.report_date_timestamp = datetime.strptime(options.report_date_timestamp, '%d/%m/%Y')
 
-
     logger = report.Report(log_on_file = options.log_on_file,
                            terminal = True,
                            report_date = options.report_date_timestamp)
     logger.write_logo()
 
-
     config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
-
 
     # ===== AltiumWorkspace =============
     if options.workspace_file is not None:
         if options.diff:
-            log.error("Invalid switch [--diff], could not run diff mode when merge from altium workspase")
+            logger.error("Invalid switch [--diff], could not run diff mode when merge from altium workspase")
             sys.exit(1)
 
         bom_dataset = cfg.cfg_altiumWorkspace(options.workspace_file,
-                                           options.csv_file,
-                                           options.bom_search_dir,
-                                           logger,
-                                           bom_prefix=options.bom_prefix,
-                                           bom_postfix=options.bom_postfix)
+                                              options.csv_file,
+                                              options.bom_search_dir,
+                                              logger,
+                                              bom_prefix=options.bom_prefix,
+                                              bom_postfix=options.bom_postfix)
 
         if len(bom_dataset) < 1:
             logger.error("No BOM files found in Workspace\n")
@@ -140,14 +133,14 @@ if __name__ == "__main__":
             bom_count += 1
             logger.info("%s: %s\n" % (data[0], data[1]))
 
-        bom_dataset_merge = []
+        bom_data_merge = []
         if bom_count == 0:
             logger.error("No Bom to merge found..\n")
             sys.exit(1)
         elif bom_count == 1:
-            bom_dataset_merge = bom_dataset
+            bom_data_merge = bom_dataset
         else:
-            logger.info("Wich you want merge?\n")
+            logger.info("Which you want merge?\n")
             logger.info("  1 - All\n", prefix="*")
             logger.info("  2 - interactive\n", prefix="*")
             logger.info("  3 - None\n", prefix="*")
@@ -169,13 +162,13 @@ if __name__ == "__main__":
                         continue
                     else:
                         logger.info("Added!\n", prefix="** ")
-                        bom_dataset_merge.append(i)
+                        bom_data_merge.append(i)
             else:
                 logger.warning("Bye!\n")
                 sys.exit(0)
 
         logger.warning("==== Start merge ===\n", prefix="")
-        for item in bom_dataset_merge:
+        for item in bom_data_merge:
             if len(item) < 1:
                 logger.error("Somethings wrong.. no valid dataset")
                 sys.exit(1)
@@ -204,12 +197,11 @@ if __name__ == "__main__":
                         logger.info(i)
                         logger.info("Keep or remove [K/r]?\n", prefix=">> ")
                         ret = raw_input()
-                        if ret ["r", "R"]:
+                        if ret in ["r", "R"]:
                             bom.remove(i)
 
                 if ret == "3":
                     sys.exit(0)
-
 
             m = MergeBom(bom, config, is_csv=options.csv_file, logger=logger)
 
@@ -227,15 +219,15 @@ if __name__ == "__main__":
             wk_path = os.path.dirname(options.workspace_file)
             out = os.path.join(wk_path, options.bom_search_dir, name, out_merge_file)
             report.write_xls(m.merge(),
-                map(os.path.basename, bom),
-                config,
-                out,
-                hw_ver=hw_ver,
-                pcb=prj_pcb,
-                name=prj_name_long + " PN: " + prj_pn,
-                diff=False,
-                extra_data=None,
-                headers=cfg.VALID_KEYS)
+                             map(os.path.basename, bom),
+                             config,
+                             out,
+                             hw_ver=hw_ver,
+                             pcb=prj_pcb,
+                             name=prj_name_long + " PN: " + prj_pn,
+                             diff=False,
+                             extra_data=None,
+                             headers=cfg.VALID_KEYS)
 
             if options.replace_original:
                 for i in bom:
@@ -246,7 +238,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if len(options.file_to_merge) == 0:
-        log.error("You should specify a file to merge or diff.")
+        logger.error("You should specify a file to merge or diff.")
         sys.exit(1)
 
     if options.out_filename is None:
@@ -254,7 +246,7 @@ if __name__ == "__main__":
         if options.prj_hw_ver is not None:
             if "bom-" == options.bom_prefix:
                 options.out_filename = "%smerged-R%s.xlsx" % (options.bom_prefix,
-                                                               options.prj_hw_ver)
+                                                              options.prj_hw_ver)
             else:
                 options.out_filename = "%s_merged-R%s.xlsx" % (options.bom_prefix,
                                                                options.prj_hw_ver)
@@ -264,8 +256,6 @@ if __name__ == "__main__":
 
     if options.prj_name is None:
         logger.warning("Could be nice to specify a project name for better tracking.")
-
-
 
     m = MergeBom(options.file_to_merge, config, is_csv=options.csv_file, logger=logger)
 
@@ -283,14 +273,14 @@ if __name__ == "__main__":
         header_data = m.header_data()
 
     report.write_xls(items,
-        file_list,
-        config,
-        os.path.join(options.working_dir, options.out_filename),
-        hw_ver=options.prj_hw_ver,
-        pcb=options.prj_pcb,
-        name=options.prj_name,
-        diff=diff_mode,
-        extra_data=extra_data,
-        headers=header_data)
+                     file_list,
+                     config,
+                     os.path.join(options.working_dir, options.out_filename),
+                     hw_ver=options.prj_hw_ver,
+                     pcb=options.prj_pcb,
+                     name=options.prj_name,
+                     diff=diff_mode,
+                     extra_data=extra_data,
+                     headers=header_data)
 
 

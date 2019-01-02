@@ -87,9 +87,7 @@ def value_toFloat(l, unit, logger):
         # skip measure unit, we use only numbers
         if re.search("[a-zA-z]", c) is not None:
             continue
-
         value += c
-        #print "[",c,"<>", value, "]",
 
     try:
         value = acc * mult + float(value) * div
@@ -119,15 +117,13 @@ def eng_string(x):
         sign = '-'
     exp = int(math.floor(math.log10(x)))
     exp3 = exp - (exp % 3)
-    #x3 = x / (10 ** exp3)
     x3 = x / math.pow(10, exp3)
+    exp3_text = ""
 
-    if exp3 >= -24 and exp3 <= 24 and exp3 != 0:
+    if -24 <= exp3 <= 24 and exp3 != 0:
         exp3_text = 'yzafpnum kMGTPEZY'[(exp3 - (-24)) / 3]
-    elif exp3 == 0:
-        exp3_text = ''
 
-    return (sign, str(x3), exp3_text)
+    return sign, str(x3), exp3_text
 
 
 def value_toStr(l, logger):

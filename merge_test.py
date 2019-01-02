@@ -96,7 +96,7 @@ class TestMergeBom(unittest.TestCase):
               'prj_name_long': 'Camera sensor shield 5Mp AR0521',
               'prj_license': 'Copyright company spa',
               'prj_hw_ver': '0', 'prj_prefix': ''}),
-            ('camera-core', ['/Users/asterix/src/MergeBom/test/wktest/Assembly/camera-core/bom-camera-core.xlsx'],
+            ('camera-core', [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test','wktest','Assembly', 'camera-core', 'bom-camera-core.xlsx')],
              {'prj_status': 'Prototype',
               'prj_pcb': 'A',
               'prj_name': 'Camera Core',
