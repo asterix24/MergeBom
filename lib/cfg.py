@@ -112,6 +112,7 @@ CATEGORY_NAMES_DEFAULT = [
             'BT',
             'B',
             'SW',
+            'MP', # spacer and stud
             'K'],
         'ref': 'S',
     },
