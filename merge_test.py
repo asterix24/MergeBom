@@ -508,7 +508,7 @@ class TestMergeBom(unittest.TestCase):
                 '-o', 'cli_merged.xlsx',
                 '-p', self.temp_dir,
                 os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx")]
-        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         self.assertTrue(os.path.exists(outfilename), " ".join(cmd))
         os.remove(outfilename)
 
@@ -669,6 +669,7 @@ class TestMergeBom(unittest.TestCase):
                    "-pv", "S",
                    "-n", "Test project",
                    "-p", self.temp_dir,
+                   "-e",
                    os.path.join("test","cli-merge0.xlsx"),
                    os.path.join("test","cli-merge1.xlsx")]
         print
@@ -791,7 +792,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_cliCSV(self):
         inputfilename = os.path.join("test", "Assembly", "progettotest1", "progettotest1.csv")
-        outfilename = os.path.join(".", "bom-merged-R77.xlsx")
+        outfilename = os.path.join(".", "bom-merged.xlsx")
         cmd =["python", "mergebom.py", "--csv",
               "-hw", "77",
               "-pv", "X",

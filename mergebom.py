@@ -81,6 +81,9 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--replace-original", dest="replace_original", action="store_true",
                         help="delete file", default=False)
 
+    parser.add_argument("-e", "--outname-with-hwrev", dest="outname_with_hwrev", action="store_true",
+                        help="Display hw verision in file name if it is avaible.", default=False)
+
     # Diff Mode
     parser.add_argument("-d","--diff", dest="diff", action="store_true",
                         help="Generate diff from two specified BOMs", default=False)
@@ -243,7 +246,7 @@ if __name__ == "__main__":
 
     if options.out_filename is None:
         options.out_filename = "%smerged.xlsx" % options.bom_prefix
-        if options.prj_hw_ver is not None:
+        if options.prj_hw_ver is not None and options.outname_with_hwrev:
             if "bom-" == options.bom_prefix:
                 options.out_filename = "%smerged-R%s.xlsx" % (options.bom_prefix,
                                                               options.prj_hw_ver)
