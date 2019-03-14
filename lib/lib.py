@@ -69,6 +69,7 @@ def value_toFloat(l, unit, logger):
     if re.search("^[0-9]", l) is None:
         return -2, l, note
 
+    cnt = 0
     flag = False
     for c in l:
         if c in cfg.ENG_LETTER and not flag:
@@ -87,10 +88,18 @@ def value_toFloat(l, unit, logger):
         # skip measure unit, we use only numbers
         if re.search("[a-zA-z]", c) is not None:
             continue
+
         value += c
 
+        if flag:
+            cnt += 1
+
     try:
-        value = acc * mult + float(value) * div
+        div2 = 1
+        for c in range(0, cnt-1):
+            div2 = div2 * 10
+
+        value = acc * mult + float(value) * (div / div2)
     except ValueError as e:
         logger.error(">> l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
             l, acc, mult, value, div, e))

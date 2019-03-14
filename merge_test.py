@@ -441,6 +441,7 @@ class TestMergeBom(unittest.TestCase):
             ("Y", ("32.768kHz", "1MHz", "12.134kHz")),
             ("L", ("4mH", "4.7mH", "100uH")),
             ("R", ("33nohm",)),
+            ("R", ("2k31", "10k12", "5K421", "4R123", "1M12")),
         ]
         checkv1 = [
             ((1e-10, "F"),),
@@ -453,13 +454,14 @@ class TestMergeBom(unittest.TestCase):
             ((12134.0, "Hz"), (32768.0, "Hz"), (1e6, "Hz")),
             ((100e-6, "H"), (4e-3, "H"), (0.0047, "H")),
             ((33e-9, "ohm"),),
+            ((4.123, "ohm"), (2310.0, "ohm"), (5421.0, "ohm"), (10120.0, "ohm"), (1120000.0, "ohm")),
         ]
 
         print
         for k, m in enumerate(test):
             l = []
             for mm in m[1]:
-                a, b, c = lib.value_toFloat(mm, m[0], self.logger)
+                a, b, _ = lib.value_toFloat(mm, m[0], self.logger)
                 l.append((a, b))
 
             l = sorted(l, key=lambda x: x[0])
