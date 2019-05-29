@@ -269,6 +269,8 @@ def cfg_version(filename):
 
 def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                         logger, bom_postfix="", bom_prefix="bom-"):
+
+
     """
     Alla funzione vengono passati i parametri:
         1. il path del file Workspace
@@ -300,6 +302,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
     logger.info("Root path %s\n" % root_path)
 
     wk_config = ConfigParser.RawConfigParser()
+    print("Sono qui%s" %(workspace_file_path))
     wk_config.read(workspace_file_path)
     for i in wk_config.sections():
         try:
@@ -348,22 +351,34 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         bom_name = "%s%s%s" % (bom_prefix, basename, bom_postfix)
         path_file = os.path.join(file_to_merge_path, basename)
         merge_file_item = os.path.join(path_file, bom_name) + '.csv'
+        merge_file_itemNoPath = os.path.join(file_to_merge_path,bom_name)+ '.csv'
+
+        print(os.path.exists(merge_file_item))
+        print(os.path.exists(merge_file_itemNoPath))
+
         if not csv_file:
             merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
 
         if os.path.exists(merge_file_item):
             file_BOM.append(merge_file_item)
+        elif os.path.exists(merge_file_itemNoPath):
+            file_BOM.append(merge_file_itemNoPath)
+
 
         # creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
         # ret[
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
-        if not (parametri_dict == {} and file_BOM == []):
+        print("Dict %s %s" % (parametri_dict, parametri_dict == {}))
+        print("File Bom: %s %s " % (file_BOM, file_BOM == []))
+        if (parametri_dict == {} and file_BOM == []):
+            print("NO")
+            logger.error("Warning empty parameters\n")
+        else:
+            print("OK")
             ret.append((basename, file_BOM, parametri_dict))
-
     return ret
-
 
 if __name__ == "__main__":
     import toml
