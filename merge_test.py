@@ -123,6 +123,25 @@ class TestMergeBom(unittest.TestCase):
                                         bom_prefix='bom-', bom_postfix="")
         self.assertEqual(check, param)
 
+        file_BOM2 = [
+            ('915031',[('KK348', [os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test','915031','Assembly','BOM-KK348.csv')])], {
+                'prj_status': '',
+                'prj_pcb': '',
+                'prj_name': '',
+                'prj_date': '',
+                'prj_pn': '',
+                'prj_name_long': '',
+                'prj_license': '',
+                'prj_hw_ver': ''
+                }),
+        ]
+
+
+        p = os.path.join('test','915031',"BOM-KK348.csv")
+        param = cfg.cfg_altiumWorkspace(p, False, "Assembly", self.logger,
+                                        bom_prefix='bom-', bom_postfix="")
+        self.assertEqual(file_BOM2, param)
+
     def test_import(self):
         file_list = [
             "test/bom0.xlsx",
@@ -610,6 +629,7 @@ class TestMergeBom(unittest.TestCase):
             for i,n in enumerate(uno):
                 if not( uno[i] == data[i]):
                     risultato=False
+
         else:
             risultato=False
         self.assertTrue(risultato)
@@ -703,7 +723,7 @@ class TestMergeBom(unittest.TestCase):
                            "-d",
                            "-p", self.temp_dir,
                            os.path.join("test","diff_test_old.xlsx"),
-                           os.path.join("test","diff_test_new.xlsx")] 
+                           os.path.join("test","diff_test_new.xlsx")]
         print
         print " ".join(cmd)
         print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -823,34 +843,34 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(TestMergeBom("test_altiumWorkspace"))
     suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_group"))
-    suite.addTest(TestMergeBom("test_led"))
-    suite.addTest(TestMergeBom("test_rele"))
-    suite.addTest(TestMergeBom("test_groupFmt"))
-    suite.addTest(TestMergeBom("test_diff"))
-    suite.addTest(TestMergeBom("test_orderRef"))
-    suite.addTest(TestMergeBom("test_valueToFloat"))
-    suite.addTest(TestMergeBom("test_floatToValue"))
-    suite.addTest(TestMergeBom("test_outFile"))
-    suite.addTest(TestMergeBom("test_parametri"))
-    suite.addTest(TestMergeBom("test_mergedFile"))
-    suite.addTest(TestMergeBom("test_stats"))
-    suite.addTest(TestMergeBom("test_notPopulate"))
-    suite.addTest(TestMergeBom("test_otherColumn"))
-    suite.addTest(TestMergeBom("test_categoryGroup"))
-    suite.addTest(TestMergeBom("test_cliMerge"))
-    suite.addTest(TestMergeBom("test_cliMergeDiff"))
-    suite.addTest(TestMergeBom("test_cliMergeGlob"))
-    suite.addTest(TestMergeBom("test_cliCSV"))
-    suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_import"))
+    #suite.addTest(TestMergeBom("test_group"))
+    #suite.addTest(TestMergeBom("test_led"))
+    #suite.addTest(TestMergeBom("test_rele"))
+    #suite.addTest(TestMergeBom("test_groupFmt"))
+    #suite.addTest(TestMergeBom("test_diff"))
+    #suite.addTest(TestMergeBom("test_orderRef"))
+    #suite.addTest(TestMergeBom("test_valueToFloat"))
+    #suite.addTest(TestMergeBom("test_floatToValue"))
+    #suite.addTest(TestMergeBom("test_outFile"))
+    #suite.addTest(TestMergeBom("test_parametri"))
+    #suite.addTest(TestMergeBom("test_mergedFile"))
+    #suite.addTest(TestMergeBom("test_stats"))
+    #suite.addTest(TestMergeBom("test_notPopulate"))
+    #suite.addTest(TestMergeBom("test_otherColumn"))
+    #suite.addTest(TestMergeBom("test_categoryGroup"))
+    #suite.addTest(TestMergeBom("test_cliMerge"))
+    #suite.addTest(TestMergeBom("test_cliMergeDiff"))
+    #suite.addTest(TestMergeBom("test_cliMergeGlob"))
+    #suite.addTest(TestMergeBom("test_cliCSV"))
+    #suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
