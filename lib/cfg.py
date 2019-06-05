@@ -230,6 +230,7 @@ class CfgMergeBom(object):
 
         return None
 
+
     def categories(self):
         categories = []
         for item in self.category_names:
@@ -287,7 +288,6 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         ProjectPath=camera-tbd\camera-tbd.PrjPcb
         [Project2]
         ProjectPath=usb-serial\usb-serial.PrjPcb
-
     """
 
     ret = []
