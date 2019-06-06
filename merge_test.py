@@ -307,6 +307,54 @@ class TestMergeBom(unittest.TestCase):
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
 
+    def test_mergeMethod(self):
+        file_list = [
+            "test/TestFileMergeBOM.csv"
+        ]
+
+        check = {
+
+            'C' : [
+                [8, 8, u'C10, C11, C12, C13, C17, C21, C26, C30', '100nF', u'0805_[2012]', u'Ceramic 100V X7R'],
+                [3, 3, u'C101, C262, C264', '10uF', u'0805_[2012]', u'Ceramic 10V X5R'],
+                [1, 1, u'C22', '1uF', u'0805_[2012]', u'Ceramic 6.3V'],
+                [1, 1, u'C15', '1uF', u'0805_[2012]', u'Ceramic 100V'],
+                [12, 12, u'C73, C74, C75, C79, C80, C84, C85, C90, C91, C92, C97, C98', '22uF', u'0805_[2012]', u'Ceramic 6.3V X5R'],
+            ],
+
+            'D' : [
+                [1, 1, u'D3', u'SMAJ58A', u'DO214AA_K1-A2_SMB', u'TVS  58V'],
+                [1, 1, u'D10', u'NP ', u'SOD-323_K2-A1', u'Schottky Barrier Diode 40V 0.520mA (ZLLS400TA; BAT54J)'],
+                [3, 3, u'D4, D5, D11', 'LED', u'0603_[1608]_K1-A2_LED', u'Green LED'],
+                [4, 4, u'D6, D7, D8, D9', u'ZLLS400TA', u'SOD-323_K2-A1', u'Schottky Barrier Diode 40V 0.520mA (BAT54J)'],
+                [2, 2, u'D1, D2', u'HD06', u'Diode_bridge_smd', u'Diode Bridge 0.8A (MBS6)'],
+            ],
+
+            'J' : [
+                [1, 1, u'J2', 'Connector', u'ER8_SOCKET_10x2_0.8MM_5H_SMD', u'Header High Speed Stacked (ERF8-010-05.0-S-DV-K-TR;  ER8-20S-0.8SV-5H)'],
+                [1, 1, u'J1', 'Connector', u'RJ45_lan_transformer_poe_horizontal', u'RJ45 LAN Transformer PoE+ GigaBit (WE 7499511440; BEL FUSE0826-1X1T-GH-F;)'],
+                [2, 2, u'J5, J6', 'NP Connector', u'HEADER_2x5_1.27MM_SMD', u'Header, 5-Pin, Dual Row'],
+                [1, 1, u'J4', 'Connector', u'HEADER_2X10_1.27MM_SMD', u'Header, 2x10-Pin, Dual Row, 1.27mm'],
+                [1, 1, u'J3', 'Connector', u'HEADER_2x6_2MM_SMD', u'Header, 6-Socket, Dual Row']
+            ]
+
+
+        }
+
+        m = MergeBom(file_list, self.config, logger=self.logger,is_csv=True)
+        d = m.merge()
+        y = 0
+        for category in d.keys():
+            if(y == 2):
+                break
+            y = y+1
+            for n, i in enumerate(d[category]):
+                print "T >", i
+                print "C <", check[category][n]
+                self.assertEqual(i, check[category][n])
+                if(n == 4):
+                    break
+
     def test_groupFmt(self):
         file_list = [
 			os.path.join('test', 'bom-fmt.xls'),
@@ -866,6 +914,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
     #suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_mergeMethod"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
@@ -875,8 +924,3 @@ if __name__ == "__main__":
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
-
-
-
-
-
