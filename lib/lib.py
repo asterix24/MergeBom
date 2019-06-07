@@ -35,11 +35,6 @@ def order_designator(ref_str, logger):
         sys.exit(1)
     return ", ".join(d)
 
-def oreder_footprint(ref_str,logger):
-    ref_str
-
-
-
 def value_toFloat(l, unit, logger):
     acc = 0
     value = "0"

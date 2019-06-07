@@ -28,7 +28,6 @@ import ConfigParser
 from lib import cfg, report, lib
 from mergebom_class import *
 import tempfile
-import traceback
 from datetime import datetime
 
 def dump(d):
@@ -138,7 +137,7 @@ class TestMergeBom(unittest.TestCase):
 
         p = os.path.join('test','915031',"KK348.DsnWrk")
 
-        param = cfg.cfg_altiumWorkspace(p,False, "Assembly", self.logger,bom_postfix="",bom_prefix='bom-')
+        param = cfg.cfg_altiumWorkspace(p,True, "Assembly", self.logger,bom_postfix="",bom_prefix='bom-')
         self.assertEqual(file_BOM2, param)
 
     def test_import(self):
@@ -590,17 +589,14 @@ class TestMergeBom(unittest.TestCase):
         d = m.merge()
         file_list = map(os.path.basename, file_list)
         ft = os.path.join(self.temp_dir, 'uno.xlsx')
-        try:
-            report.write_xls(
-                d,
-                file_list,
-                self.config,
-                ft,
-                hw_ver="13",
-                pcb="C",
-                name="TEST")
-        except Exception:
-            traceback.print_exc()
+        report.write_xls(
+            d,
+            file_list,
+            self.config,
+            ft,
+            hw_ver="13",
+            pcb="C",
+            name="TEST")
 
     def test_parametri(self):
         import xlrd
@@ -818,8 +814,8 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         check = {'C': [
-                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
                     [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
+                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
                     [10, 10, u'C3, C4, C5, C6, C7, C8, C9, C10, C11, C12', '100nF',
                      '805', u'x7r', u'123; 456', u'altro', u'abc', u'code abc'],
                 ],
@@ -846,6 +842,7 @@ class TestMergeBom(unittest.TestCase):
                     self.assertEqual(c, j[m])
 
         outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
+
         cmd = ["python",
                "mergebom.py",
                "-prx", "extra_column",
@@ -854,9 +851,8 @@ class TestMergeBom(unittest.TestCase):
                "-pv", "S",
                "-n", "Test project",
                "test/column.xlsx"]
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-
+        print (" ".join(cmd))
+        print (subprocess.check_output(cmd, stderr=subprocess.STDOUT))
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
 
     def test_cliCSV(self):
@@ -913,7 +909,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_mergedFile"))
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
-    #suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_otherColumn"))
     suite.addTest(TestMergeBom("test_mergeMethod"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_cliMerge"))
