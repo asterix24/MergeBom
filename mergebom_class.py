@@ -358,10 +358,7 @@ class MergeBom(object):
     def merge(self):
         self.group()
         self.count()
-        d = {}
-        listApp = []
         for category in self.categories:
-            listApp = []
             if category in self.table:
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
@@ -370,17 +367,12 @@ class MergeBom(object):
                 # Convert all designator in a number to be ordered
                 if category in ["R", "C", "L", "Y"]:
                     d = {}
-                    i = 0
-                    e = 0
-                    stringa = ""
                     for item in self.table[category]:
                         if item[self.TABLE_FOOTPRINT] in d:
                             d[item[self.TABLE_FOOTPRINT]].append(item)
                         else:
                             d[item[self.TABLE_FOOTPRINT]] = [item]
-
-                    listApp.append(d.values())
-                    for x in listApp[0]:
+                    for x in d.values():
                         self.table[category] = x
                         for m in self.table[category]:
                             m[self.TABLE_COMMENT] = lib.value_toFloat(
@@ -390,13 +382,12 @@ class MergeBom(object):
                             self.table[category], key=lambda x: x[
                                 self.TABLE_COMMENT])
                         # Convert all ORDERED designator in a numeric format
-                        if category in ["R", "C", "L", "Y"]:
-                            for m in self.table[category]:
-                                m[self.TABLE_COMMENT] = lib.value_toStr(
-                                    m[self.TABLE_COMMENT], self.logger)
+                        for m in self.table[category]:
+                            m[self.TABLE_COMMENT] = lib.value_toStr(
+                                m[self.TABLE_COMMENT], self.logger)
                         x = self.table[category]
                     self.table[category] = []
-                    for x in listApp[0]:
+                    for x in d.values():
                         for y in x:
                             self.table[category].append(y)
         return self.table

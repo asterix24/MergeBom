@@ -354,7 +354,6 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
 
         if not csv_file:
             merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
-        if not csv_file:
             merge_file_item_nopath = os.path.join(file_to_merge_path,bom_name)+'.xlsx'
 
         if os.path.exists(merge_file_item):
