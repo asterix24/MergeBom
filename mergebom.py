@@ -230,6 +230,7 @@ if __name__ == "__main__":
                              name=prj_name_long + " PN: " + prj_pn,
                              diff=False,
                              extra_data=None,
+                             statistics=m.statistics(),
                              headers=cfg.VALID_KEYS)
 
             if options.replace_original:
@@ -284,6 +285,7 @@ if __name__ == "__main__":
                      name=options.prj_name,
                      diff=diff_mode,
                      extra_data=extra_data,
+                     statistics=m.statistics(),
                      headers=header_data)
 
 
