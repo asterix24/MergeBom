@@ -3,6 +3,7 @@
 
 import sys
 import os
+from lib.cfg import LOGO
 
 from PyQt5.QtCore import QDateTime, Qt, QAbstractTableModel, QVariant
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit, QTableView,
@@ -41,6 +42,7 @@ class MergeBomGUI(QDialog):
         self.__source_data()
 
         main_layout = QVBoxLayout()
+        main_layout.addWidget(QLabel(LOGO))
         main_layout.addWidget(self.altium_group)
         main_layout.addWidget(self.source_data)
         main_layout.addWidget(self.param_data)
