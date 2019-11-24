@@ -24,7 +24,6 @@ MergeBOM Default configuration
 
 
 import sys
-import ConfigParser
 import lib
 import glob
 import os
@@ -112,7 +111,7 @@ CATEGORY_NAMES_DEFAULT = [
             'BT',
             'B',
             'SW',
-            'MP', # spacer and stud
+            'MP',  # spacer and stud
             'K'],
         'ref': 'S',
     },
@@ -182,8 +181,8 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
-MERGED_FILE_TEMPLATE_HW  = "%s%s_R%s.xlsx"
-MERGED_FILE_TEMPLATE_NOHW  = "%s%s_merged.xlsx"
+MERGED_FILE_TEMPLATE_HW = "%s%s_R%s.xlsx"
+MERGED_FILE_TEMPLATE_NOHW = "%s%s_merged.xlsx"
 
 PRJ_DATE = 'prj_date'
 PRJ_HW_VER = 'prj_hw_ver'
@@ -212,13 +211,13 @@ class CfgMergeBom(object):
                 self.category_names = config.get('category_names', None)
             except IOError as e:
                 logger.error("Configuration: %s" % e,
-                              self.handler, terminal=self.terminal)
+                             self.handler, terminal=self.terminal)
                 logger.warning("No Valid Configuration file! Use Default",
-                                self.handler, terminal=self.terminal)
+                               self.handler, terminal=self.terminal)
 
         if self.category_names is None:
             logger.warning("No Valid Configuration file! Use Default",
-                            self.handler, terminal=self.terminal)
+                           self.handler, terminal=self.terminal)
 
     def check_category(self, group_key):
         if not group_key:
@@ -249,44 +248,23 @@ class CfgMergeBom(object):
         return None
 
 
-def cfg_version(filename):
-    """
-    Get all field from version file, and put it in a dictionary of dictionary.
-    """
-    config = ConfigParser.ConfigParser()
-    config.readfp(open(filename))
-
-    cfg = {}
-    for section in config.sections():
-        d = {}
-        d['name'] = config.get(section, 'name')
-        d['hw_ver'] = config.get(section, 'hw_ver')
-        d['pcb_ver'] = config.get(section, 'pcb_ver')
-        d['date'] = config.get(section, 'date')
-        cfg[section] = d
-    return cfg
-
-
 def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                         logger, bom_postfix="", bom_prefix="bom-"):
-    """
-    Alla funzione vengono passati i parametri:
-        1. il path del file Workspace
-        2. se i file da mergiare sono di tipo csv o xlsx
-        3. nome del file con cui fare il merge ricerca del nome di tutti
-        i progetti all'interno del file Workspace
-
-    esempio di file Wprkspace:
-
-        $ cat schemes.DsnWrk
-        [ProjectGroup]
-        Version=1.0
-        [Project1]
-        ProjectPath=camera-tbd\camera-tbd.PrjPcb
-        [Project2]
-        ProjectPath=usb-serial\usb-serial.PrjPcb
-
-    """
+    #   """
+    #   Alla funzione vengono passati i parametri:
+    #       1. il path del file Workspace
+    #       2. se i file da mergiare sono di tipo csv o xlsx
+    #       3. nome del file con cui fare il merge ricerca del nome di tutti
+    #       i progetti all'interno del file Workspace
+    #   esempio di file Wprkspace:
+    #       $ cat schemes.DsnWrk
+    #       [ProjectGroup]
+    #       Version=1.0
+    #       [Project1]
+    #       ProjectPath=camera-tbd\camera-tbd.PrjPcb
+    #       [Project2]
+    #       ProjectPath=usb-serial\usb-serial.PrjPcb
+    #   """
 
     ret = []
 
@@ -295,7 +273,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
     file_to_merge_path = os.path.join(root_path, bom_search_dir)
 
     logger.info("\nSearch project to merge in given Altiumworkspace: %s\n" %
-                   workspace_file_path)
+                workspace_file_path)
     logger.info("BOM path %s\n" % file_to_merge_path)
     logger.info("Root path %s\n" % root_path)
 
@@ -349,7 +327,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         path_file = os.path.join(file_to_merge_path, basename)
         merge_file_item = os.path.join(path_file, bom_name) + '.csv'
         if not csv_file:
-            merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
+            merge_file_item = os.path.join(path_file, bom_name) + '.xlsx'
 
         if os.path.exists(merge_file_item):
             file_BOM.append(merge_file_item)
@@ -369,13 +347,13 @@ if __name__ == "__main__":
     import toml
 
     if len(sys.argv) < 2:
-        print "Usage %s <cfg filename>" % sys.argv[0]
+        print("Usage %s <cfg filename>" % sys.argv[0])
         sys.exit(1)
 
     config = "Vuoto"
     with open(sys.argv[1]) as configfile:
         config = toml.loads(configfile.read())
 
-    print type(config), len(config)
-    print config.keys()
-    print config['category_names']
+    print(type(config), len(config))
+    print(config.keys())
+    print(config['category_names'])
