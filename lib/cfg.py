@@ -23,11 +23,11 @@ MergeBOM Default configuration
 """
 
 
-import sys
-import lib
-import glob
 import os
 import re
+import sys
+import glob
+import configparser
 
 MERGEBOM_VER = "1.1.0"
 
@@ -248,23 +248,102 @@ class CfgMergeBom(object):
         return None
 
 
+def extrac_projects(wk_file):
+    """
+    [ProjectGroup]
+    Version=1.0
+    [Project1]
+    ProjectPath=camera.PrjMbd
+    [Project2]
+    ProjectPath=5mp-sensor\5mp-sensor.PrjPCB
+    [Project3]
+    ProjectPath=camera-core\camera-core.PrjPCB
+    [Project4]
+    ProjectPath=18mp-sensor\18mp-sensor.PrjPCB
+    [Project5]
+    ProjectPath=imx8m_evk\imx8_evk.PrjPcb
+    """
+    wk_config = configparser.RawConfigParser()
+    wk_config.read(wk_file)
+    l = []
+    for i in wk_config.sections():
+        try:
+            if re.match("project[0-9]+", i.lower()) is None:
+                continue
+            temp = wk_config.get(i, 'ProjectPath')
+            if "prjpcb" not in temp.lower():
+                continue
+
+            if "\\" in temp:
+                temp = temp.split('\\')
+                basename = os.path.join(*temp[:-1])
+                complete_path = os.path.join(*temp)
+                l.append((basename, complete_path))
+            else:
+                if "." in temp:
+                    basename = temp.split(".")[0]
+                complete_path = temp
+                l.append((basename, complete_path))
+
+        except configparser.NoOptionError:
+            continue
+
+    return l
+
+
+def get_parameterFromPrj(prj_name, prj_file):
+    """
+    Get paramet from Altium project.
+    """
+    d = {}
+    print(prj_file)
+    if not os.path.exists(prj_file):
+        print("File not exist")
+        return []
+
+    prj_config = configparser.RawConfigParser()
+    prj_config.read(prj_file)
+    for i in prj_config.sections():
+        if re.match(r'Parameter[0-9]+', i) is None:
+            continue
+
+        parametro = prj_config.get(i, 'Name')
+        val = prj_config.get(i, 'Value')
+        d[parametro] = val
+
+    return [prj_name, d]
+
+
+def find_bomfiles(root_path, prj_name, csv_file):
+    """
+    find all bom files in prj
+    """
+    flt = "*.xlsx"
+    if csv_file:
+        flt = "*.csv"
+    pth = os.path.join(root_path, prj_name, flt)
+    print(pth)
+    bom_list = glob.glob(pth)
+    return [prj_name, bom_list]
+
+
 def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                         logger, bom_postfix="", bom_prefix="bom-"):
-    #   """
-    #   Alla funzione vengono passati i parametri:
-    #       1. il path del file Workspace
-    #       2. se i file da mergiare sono di tipo csv o xlsx
-    #       3. nome del file con cui fare il merge ricerca del nome di tutti
-    #       i progetti all'interno del file Workspace
-    #   esempio di file Wprkspace:
-    #       $ cat schemes.DsnWrk
-    #       [ProjectGroup]
-    #       Version=1.0
-    #       [Project1]
-    #       ProjectPath=camera-tbd\camera-tbd.PrjPcb
-    #       [Project2]
-    #       ProjectPath=usb-serial\usb-serial.PrjPcb
-    #   """
+    """
+    Alla funzione vengono passati i parametri:
+        1. il path del file Workspace
+        2. se i file da mergiare sono di tipo csv o xlsx
+        3. nome del file con cui fare il merge ricerca del nome di tutti
+        i progetti all'interno del file Workspace
+    esempio di file Wprkspace:
+        $ cat schemes.DsnWrk
+        [ProjectGroup]
+        Version=1.0
+        [Project1]
+        ProjectPath=camera-tbd\camera-tbd.PrjPcb
+        [Project2]
+        ProjectPath=usb-serial\\usb-serial.PrjPcb
+    """
 
     ret = []
 
@@ -277,7 +356,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
     logger.info("BOM path %s\n" % file_to_merge_path)
     logger.info("Root path %s\n" % root_path)
 
-    wk_config = ConfigParser.RawConfigParser()
+    wk_config = configparser.RawConfigParser()
     wk_config.read(workspace_file_path)
     for i in wk_config.sections():
         try:
@@ -295,7 +374,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                     basename = temp.split(".")[0]
                 complete_path = temp
 
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             #logger.info("Missing key %s\n" % i)
             continue
 
@@ -309,7 +388,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
             logger.error("Unable to find project BOM: %s\n" % prj)
             continue
 
-        prj_config = ConfigParser.RawConfigParser()
+        prj_config = configparser.RawConfigParser()
         prj_config.read(prj)
 
         logger.info("proj %s\n" % prj)
@@ -333,7 +412,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
             file_BOM.append(merge_file_item)
 
         # creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
-        # ret[
+        # [
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]

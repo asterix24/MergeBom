@@ -23,17 +23,15 @@ MergeBOM Report module.
 Utils to generate and read excel BOM files.
 """
 
-import os
+import codecs
 import sys
 import re
 import datetime
 import xlrd
 import xlsxwriter
-import lib
-import cfg
+import lib.cfg
 import csv
 from termcolor import colored
-
 
 
 class Report(object):
@@ -46,7 +44,7 @@ class Report(object):
         self.terminal = terminal
         self.report = None
         self.log_on_file = log_on_file
-        self.report_date=report_date
+        self.report_date = report_date
         if report_date is None:
             self.report_date = datetime.datetime.now()
         if self.log_on_file:
@@ -84,16 +82,16 @@ class Report(object):
         self.__printout("Report file.\n")
         self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
 
-
         self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
         self.__printout("." * 80)
         self.__printout("\n")
         self.__printout("\n")
         self.__printout(":" * 80)
         self.__printout("Date: %s\n" % conf_key.get('date', '-'))
-        self.__printout("Project Name: %s\n" % conf_key.get('name','-'))
-        self.__printout("Hardware Revision: %s\n" % conf_key.get('hw_ver','-'))
-        self.__printout("PCB Revision: %s\n" % conf_key.get('pcb_ver','-'))
+        self.__printout("Project Name: %s\n" % conf_key.get('name', '-'))
+        self.__printout("Hardware Revision: %s\n" %
+                        conf_key.get('hw_ver', '-'))
+        self.__printout("PCB Revision: %s\n" % conf_key.get('pcb_ver', '-'))
         self.__printout("\n")
 
         self.__printout("Bom Files:\n")
@@ -113,14 +111,11 @@ class Report(object):
     def warning(self, s, prefix=">> "):
         self.__printout(s, prefix=prefix, color='yellow')
 
-
     def error(self, s, prefix="!! "):
         self.__printout(s, prefix=prefix, color='red')
 
-
     def info(self, s, prefix="> "):
         self.__printout(s, prefix=prefix, color='green')
-
 
 
 def write_xls(
@@ -134,7 +129,7 @@ def write_xls(
         diff=False,
         extra_data=None,
         statistics=None,
-        headers=cfg.VALID_KEYS):
+        headers=lib.cfg.VALID_KEYS):
     """
     Write merged BOM in excel file.
     Statistics data should be in follow format:
@@ -193,7 +188,7 @@ def write_xls(
     stat_desc_fmt = workbook.add_format({
         'italic': True,
         'align': 'left',
-        'valign': 'vcenter' })
+        'valign': 'vcenter'})
 
     stat_ctot_fmt = workbook.add_format({
         'bold': True,
@@ -306,25 +301,29 @@ def write_xls(
     row += 1
 
     # Statistics
-    worksheet.merge_range('A%s:%s%s' % (row, 'C', row), "Statistics", stat_hdr1_fmt)
+    worksheet.merge_range('A%s:%s%s' % (row, 'C', row),
+                          "Statistics", stat_hdr1_fmt)
     categories = config.categories()
     if statistics is not None:
         # Write description:
         worksheet.write(row, 0, statistics.get("file_num", "-"), stat_num_fmt)
         row += 1
-        worksheet.merge_range('B%s:C%s' % (row, row), "Merged Files Number", stat_desc_fmt)
+        worksheet.merge_range('B%s:C%s' % (row, row),
+                              "Merged Files Number", stat_desc_fmt)
         row += 1
-        worksheet.merge_range('A%s:C%s' % (row, row), "Components:", stat_hdr_fmt)
+        worksheet.merge_range('A%s:C%s' % (row, row),
+                              "Components:", stat_hdr_fmt)
         for cat in categories:
             if cat in statistics:
                 worksheet.write(row, 0, statistics[cat], stat_num_fmt)
                 row += 1
                 worksheet.merge_range('B%s:C%s' % (row, row),
-                                config.get(cat, "desc"), stat_desc_fmt)
+                                      config.get(cat, "desc"), stat_desc_fmt)
 
         worksheet.write(row, 0, statistics.get("total", "-"), stat_ctot_fmt)
         row += 1
-        worksheet.merge_range('B%s:C%s' % (row, row), "Total BOM Componets", stat_ltot_fmt)
+        worksheet.merge_range('B%s:C%s' % (row, row),
+                              "Total BOM Componets", stat_ltot_fmt)
         row += 1
 
     row += 2
@@ -400,12 +399,12 @@ def write_xls(
 
     workbook.close()
 
-import csv, codecs
 
 class UTF8Recoder:
     """
     Iterator that reads an encoded stream and reencodes the input to UTF-8
     """
+
     def __init__(self, f, encoding):
         self.reader = codecs.getreader(encoding)(f)
 
@@ -420,6 +419,7 @@ class DataReader(object):
     """
     Read data from BOM.
     """
+
     def __init__(self, file_name, is_csv=False):
         self.is_csv = is_csv
         self.file_name = file_name
@@ -462,13 +462,13 @@ class DataReader(object):
         else:
             return self.__xls_reader()
 
+
 if __name__ == "__main__":
 
     config = cfg.CfgMergeBom()
     rep = Report(log_on_file=True)
     rep.write_logo()
-    rep.write_header({},[])
+    rep.write_header({}, [])
     rep.error("Errore..\n")
     rep.info("Info..\n")
     rep.warning("Warning..\n")
-

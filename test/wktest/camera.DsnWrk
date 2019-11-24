@@ -10,3 +10,5 @@ ProjectPath=camera-core\camera-core.PrjPCB
 ProjectPath=18mp-sensor\18mp-sensor.PrjPCB
 [Project5]
 ProjectPath=imx8m_evk\imx8_evk.PrjPcb
+[Project6]
+ProjectPath=camera.PrjPcb

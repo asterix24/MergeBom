@@ -24,7 +24,8 @@ import unittest
 import subprocess
 import tempfile
 import argparse
-import ConfigParser
+import glob
+
 from lib import cfg, report, lib
 from mergebom_class import *
 import tempfile
@@ -32,11 +33,11 @@ from datetime import datetime
 
 def dump(d):
     for i in d:
-        print "Key: %s" % i
-        print "Rows [%d]:" % len(d[i])
+        print("Key: %s" % i)
+        print("Rows [%d]:" % len(d[i]))
         for j in d[i]:
-            print j
-        print "-" * 80
+            print(j)
+        print("-" * 80)
 
 class TestMergeBom(unittest.TestCase):
     """
@@ -168,8 +169,8 @@ class TestMergeBom(unittest.TestCase):
 
         for category in d.keys():
             for n, i in enumerate(d[category]):
-                print "T >", i
-                print "C <", check[category][n]
+                print("T >", i)
+                print("C <", check[category][n])
                 self.assertEqual(i, check[category][n])
 
     def test_rele(self):
@@ -228,8 +229,8 @@ class TestMergeBom(unittest.TestCase):
 
         for category in d.keys():
             for n, i in enumerate(d[category]):
-                print "T >", i
-                print "C <", check[category][n]
+                print("T >", i)
+                print("C <", check[category][n])
                 self.assertEqual(i, check[category][n])
 
     def test_group(self):
@@ -281,11 +282,11 @@ class TestMergeBom(unittest.TestCase):
 
         for i in d.keys():
             for n, j in enumerate(d[i]):
-                print "T >", j
-                print "C <", check[n]
+                print("T >", j)
+                print("C <", check[n])
                 for m, c in enumerate(check[n]):
-                    print "T >", c
-                    print "C <", j[m]
+                    print("T >", c)
+                    print("C <", j[m])
                     self.assertEqual(c, j[m])
 
     def test_groupFmt(self):
@@ -356,9 +357,9 @@ class TestMergeBom(unittest.TestCase):
                     test_dict[key] = (1, j[0])
 
         for k in test_dict.keys():
-            print "\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1])
-            print "T > %20.20s | row count %5.5s | count %5.5s |" % (k, test_dict[k][0], test_dict[k][1])
-            print "C < %20.20s | row count %5.5s | count %5.5s |" % (k, check[k][0], check[k][1])
+            print("\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1]))
+            print("T > %20.20s | row count %5.5s | count %5.5s |" % (k, test_dict[k][0], test_dict[k][1]))
+            print("C < %20.20s | row count %5.5s | count %5.5s |" % (k, check[k][0], check[k][1]))
 
             self.assertEqual(check[k][0], test_dict[k][0], \
                              "Unable to merge row whit differt componet value. [%s]" % k)
@@ -401,11 +402,11 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, self.config, logger=self.logger)
         k = m.diff()
 
-        print
+        print()
         for i in k.keys():
-            print i, ">>", k[i][0]
-            print i, "<<", k[i][1]
-            print "~" * 80
+            print(i, ">>", k[i][0])
+            print(i, "<<", k[i][1])
+            print("~" * 80)
             self.assertEqual(k[i][0], check[i][0])
             self.assertEqual(k[i][1], check[i][1])
 
@@ -457,7 +458,7 @@ class TestMergeBom(unittest.TestCase):
             ((4.123, "ohm"), (2310.0, "ohm"), (5421.0, "ohm"), (10120.0, "ohm"), (1120000.0, "ohm")),
         ]
 
-        print
+        print()
         for k, m in enumerate(test):
             l = []
             for mm in m[1]:
@@ -466,10 +467,10 @@ class TestMergeBom(unittest.TestCase):
 
             l = sorted(l, key=lambda x: x[0])
             for n, i in enumerate(l):
-                print i, "->", checkv1[k][n]
+                print(i, "->", checkv1[k][n])
                 self.assertTrue(abs(i[0] - checkv1[k][n][0]) < 10e-9)
                 self.assertEqual(i[1], checkv1[k][n][1])
-                print "-" * 80
+                print("-" * 80)
 
     def test_floatToValue(self):
         test = [
@@ -498,9 +499,9 @@ class TestMergeBom(unittest.TestCase):
                 l = lib.value_toStr(m, self.logger)
                 self.assertTrue(l)
 
-                print l, "->", check[k][n]
+                print(l, "->", check[k][n])
                 self.assertEqual(l, check[k][n])
-                print "-" * 80
+                print("-" * 80)
 
     def test_mergeFileCommandLine(self):
         outfilename = os.path.join(self.temp_dir, 'cli_merged.xlsx')
@@ -508,7 +509,7 @@ class TestMergeBom(unittest.TestCase):
                 '-o', 'cli_merged.xlsx',
                 '-p', self.temp_dir,
                 os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx")]
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
         self.assertTrue(os.path.exists(outfilename), " ".join(cmd))
         os.remove(outfilename)
 
@@ -621,7 +622,7 @@ class TestMergeBom(unittest.TestCase):
 
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.extra_data()
-        print d
+        print(d)
         self.assertEqual(len(d), 1)
         self.assertEqual(d[0]['project'], "test")
         self.assertEqual(d[0]['pcb_version'], "c")
@@ -672,11 +673,11 @@ class TestMergeBom(unittest.TestCase):
                    "-e",
                    os.path.join("test","cli-merge0.xlsx"),
                    os.path.join("test","cli-merge1.xlsx")]
-        print
-        print "%s" % " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print()
+        print("%s" % " ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
-        print outfilename
+        print(outfilename)
         self.assertTrue(os.path.isfile(outfilename))
         os.remove(outfilename)
 
@@ -689,11 +690,11 @@ class TestMergeBom(unittest.TestCase):
                        "-d",
                        os.path.join("test","cli-merge-diff0.xlsx"),
                        os.path.join("test","cli-merge-diff1.xlsx")]
-        print
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print()
+        print(" ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
-        print outfilename
+        print(outfilename)
         self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated" )
         os.remove(outfilename)
 
@@ -703,10 +704,10 @@ class TestMergeBom(unittest.TestCase):
                            "-d",
                            "-p", self.temp_dir,
                            os.path.join("test","diff_test_old.xlsx"),
-                           os.path.join("test","diff_test_new.xlsx")] 
-        print
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+                           os.path.join("test","diff_test_new.xlsx")]
+        print()
+        print(" ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
         self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated")
 
@@ -717,9 +718,9 @@ class TestMergeBom(unittest.TestCase):
                        "-o", "cli-mergedGlob-R53.xlsx",
                        "-p", self.temp_dir,
                        os.path.join("test", "diff_test_old.xlsx")]
-        print
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print()
+        print(" ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
         os.remove(outfilename)
@@ -730,7 +731,7 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         with self.assertRaises(SystemExit):
-            print "Test should make sys Exit for not founded key."
+            print("Test should make sys Exit for not founded key.")
             m = MergeBom(file_list, self.config, logger=self.logger)
             d = m.merge()
 
@@ -764,16 +765,16 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
 
-        print
+        print()
         dump(d)
         for i in d.keys():
             for n, j in enumerate(d[i]):
-                print "T >", j
-                print "C <", check[i][n]
+                print("T >", j)
+                print("C <", check[i][n])
                 self.assertEqual(len(j), len(check[i][n]))
                 for m, c in enumerate(check[i][n]):
-                    print "T >", c
-                    print "C <", j[m]
+                    print("T >", c)
+                    print("C <", j[m])
                     self.assertEqual(c, j[m])
 
         outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
@@ -785,8 +786,8 @@ class TestMergeBom(unittest.TestCase):
                "-pv", "S",
                "-n", "Test project",
                "test/column.xlsx"]
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print(" ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
 
@@ -798,14 +799,77 @@ class TestMergeBom(unittest.TestCase):
               "-pv", "X",
               "-n", "Test project CVS",
               inputfilename]
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        print(" ".join(cmd))
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
         self.assertTrue(os.path.isfile(outfilename), "No mergefile generated")
         os.remove(outfilename)
 
+    def test_extracPrj(self):
+        wk_file = os.path.join("test", "wktest", "camera.DsnWrk")
+        a = cfg.extrac_projects(wk_file)
+        ck = [
+            ('5mp-sensor', os.path.join('5mp-sensor', '5mp-sensor.PrjPCB')),
+            ('camera-core', os.path.join('camera-core', 'camera-core.PrjPCB')),
+            ('18mp-sensor', os.path.join('18mp-sensor', '18mp-sensor.PrjPCB')),
+            ('imx8m_evk', os.path.join('imx8m_evk', 'imx8_evk.PrjPcb')),
+            ('camera', 'camera.PrjPcb')
+        ]
+        print(a)
+        self.assertEqual(a, ck)
 
+    def test_prjParam(self):
+        root = os.path.join("test", "wktest")
+        tst = [
+            ('5mp-sensor', os.path.join(root, '5mp-sensor', '5mp-sensor.PrjPCB')),
+            ('camera-core', os.path.join(root, 'camera-core', 'camera-core.PrjPCB')),
+            ('18mp-sensor', os.path.join(root, '18mp-sensor', '18mp-sensor.PrjPCB')),
+            ('imx8m_evk', os.path.join(root, 'imx8m_evk', 'imx8_evk.PrjPcb')),
+            ('camera', 'camera.PrjPcb')
+        ]
 
+        ch = [
+            ['5mp-sensor',
+                {
+                    'prj_date': '01/06/2018',
+                    'prj_hw_ver': '0',
+                    'prj_license': 'Copyright company spa',
+                    'prj_name': 'Sensor Shield 5Mp',
+                    'prj_name_long': 'Camera sensor shield 5Mp AR0521',
+                    'prj_pcb': 'A', 'prj_prefix': '',
+                    'prj_status': 'Prototype'
+                    }
+             ],
+            ['camera-core', {'prj_date': '01/06/2018', 'prj_hw_ver': '0', 'prj_license': 'Copyright company spa', 'prj_name': 'Camera Core', 'prj_name_long': 'Camera core imx8', 'prj_pcb': 'A', 'prj_pn': '-', 'prj_prefix': '', 'prj_status': 'Prototype'}],
+            ['18mp-sensor', {'prj_status': 'Prototype', 'prj_prefix': '', 'prj_pcb': 'A', 'prj_name_long': 'Camera sensor shield 5Mp AR1820', 'prj_name': 'Sensor Shield 18Mp', 'prj_license': 'Copyright company spa', 'prj_hw_ver': '0', 'prj_date': '01/06/2018'}],
+            ['imx8m_evk', {}],
+            [],
+        ]
+        for n, i in enumerate(tst):
+            a = cfg.get_parameterFromPrj(i[0], i[1])
+            print(a)
+            self.assertEqual(ch[n], a)
+
+    def test_fileList(self):
+        root = os.path.join("test", "wktest", "Assembly")
+        tst = [
+            ('5mp-sensor', os.path.join(root, '5mp-sensor', '5mp-sensor.PrjPCB')),
+            ('camera-core', os.path.join(root, 'camera-core', 'camera-core.PrjPCB')),
+            ('18mp-sensor', os.path.join(root, '18mp-sensor', '18mp-sensor.PrjPCB')),
+            ('imx8m_evk', os.path.join(root, 'imx8m_evk', 'imx8_evk.PrjPcb')),
+            ('camera', 'camera.PrjPcb')
+        ]
+        ck = [
+            ['5mp-sensor', []],
+            ['camera-core', ['test/wktest/Assembly/camera-core/bom-camera-core.xlsx']],
+            ['18mp-sensor', []],
+            ['imx8m_evk', []],
+            ['camera', []]
+        ]
+        for n, i in enumerate(tst):
+            a = cfg.find_bomfiles(root, i[0], False)
+            print(a)
+            self.assertEqual(ck[n], a)
 
 if __name__ == "__main__":
 
@@ -821,6 +885,9 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     suite = unittest.TestSuite()
+    suite.addTest(TestMergeBom("test_extracPrj"))
+    suite.addTest(TestMergeBom("test_prjParam"))
+    suite.addTest(TestMergeBom("test_fileList"))
     suite.addTest(TestMergeBom("test_altiumWorkspace"))
     suite.addTest(TestMergeBom("test_import"))
     suite.addTest(TestMergeBom("test_import"))
@@ -853,7 +920,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_mergeFileCommandLine"))
     unittest.TextTestRunner(
         stream=sys.stdout,
-        verbosity=options.verbose).run(suite)
+        verbosity=2).run(suite)
 
 
 

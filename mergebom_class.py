@@ -34,13 +34,14 @@ DESCRIPTION = 3
 COMMENT = 4
 FOOTPRINT = 5
 
+
 def dump(d):
     for i in d:
-        print "Key: %s" % i
-        print "Rows [%d]:" % len(d[i])
+        print("Key: %s" % i)
+        print("Rows [%d]:" % len(d[i]))
         for j in d[i]:
-            print j
-        print "-" * 80
+            print(j)
+        print("-" * 80)
 
 
 class MergeBom(object):
@@ -73,9 +74,9 @@ class MergeBom(object):
         self.terminal = terminal
 
         if logger is None:
-            print
-            print "Error you should specify a logger class"
-            print
+            print()
+            print("Error you should specify a logger class")
+            print()
             sys.exit(1)
 
         self.logger = logger
@@ -113,7 +114,7 @@ class MergeBom(object):
                             item = item.replace(w, '')
                             item = "%s %s" % (w.capitalize(), item.strip())
                             self.extra_column.append((item, n))
-                            #print "%s %s" % (item, n)
+                            # print "%s %s" % (item, n)
 
                     # search extra data, like project name and revision
                     k = ""
@@ -180,7 +181,7 @@ class MergeBom(object):
         return self.extra_keys
 
     def header_data(self):
-        return cfg.VALID_KEYS + [k for k, _ in self.extra_column ]
+        return cfg.VALID_KEYS + [k for k, _ in self.extra_column]
 
     def group(self):
         self.grouped_items = {}
@@ -194,12 +195,13 @@ class MergeBom(object):
 
                     if group_key is None:
                         self.logger.error("GROUP key not FOUND!\n")
-                        self.logger.error( "%s, %s, %s\n" % (c.group(), designator,
-                                                             table_dict[designator]))
+                        self.logger.error("%s, %s, %s\n" % (c.group(), designator,
+                                                            table_dict[designator]))
                         sys.exit(1)
 
                     if group_key == '':
-                        self.logger.warning("WARNING!! KEY SKIPPED [%s]\n" % group_key)
+                        self.logger.warning(
+                            "WARNING!! KEY SKIPPED [%s]\n" % group_key)
                         continue
 
                     if group_key in self.grouped_items:
@@ -243,8 +245,10 @@ class MergeBom(object):
 
                     # Fix Designator
                     if category in ["R", "C", "L", "Y"]:
-                        tmp_comment = lib.value_toFloat(item[COMMENT], category, self.logger)
-                        item[COMMENT] = lib.value_toStr(tmp_comment, self.logger)
+                        tmp_comment = lib.value_toFloat(
+                            item[COMMENT], category, self.logger)
+                        item[COMMENT] = lib.value_toStr(
+                            tmp_comment, self.logger)
 
                     # Fix Not poluate string in list
                     for rexp in cfg.NOT_POPULATE_KEY:
@@ -274,17 +278,20 @@ class MergeBom(object):
                     if category == 'D' and "LED" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = "LED"
-                        self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
+                        self.logger.warning(
+                            "Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
                     if category == 'S' and "TACTILE" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = "Tactile Switch"
-                        self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
+                        self.logger.warning(
+                            "Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
                     elif category == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
-                        self.logger.warning("Merged key: %s (%s)\n" % (key, item[COMMENT]))
+                        self.logger.warning(
+                            "Merged key: %s (%s)\n" % (key, item[COMMENT]))
                     else:
                         key = item[DESCRIPTION] + \
                             item[COMMENT] + item[FOOTPRINT]
@@ -317,12 +324,15 @@ class MergeBom(object):
                                     tmp[key][col_id] = raw_value
                                 else:
                                     if raw_value != "":
-                                        words = re.findall(r'\b\S+\b', tmp[key][col_id])
+                                        words = re.findall(
+                                            r'\b\S+\b', tmp[key][col_id])
                                         if not raw_value in words:
-                                            tmp[key][col_id] += "; " + raw_value
+                                            tmp[key][col_id] += "; " + \
+                                                raw_value
 
                             except IndexError:
-                                print "Error! Impossible to update extra column. This as bug!"
+                                print(
+                                    "Error! Impossible to update extra column. This as bug!")
                                 sys.exit(1)
                     else:
                         row = [item[QUANTITY]] + \
@@ -332,7 +342,7 @@ class MergeBom(object):
                                 item[COMMENT],
                                 item[FOOTPRINT],
                                 item[DESCRIPTION]
-                            ]
+                        ]
 
                         row[curr_file_index] = item[QUANTITY]
 
@@ -343,7 +353,6 @@ class MergeBom(object):
                             # file name, see init function in code that import
                             # data.
                             row.append(item[ex[1] + 1])
-
 
                         tmp[key] = row
                         # print "NEW", tmp[key], curr_file_index,
@@ -361,7 +370,8 @@ class MergeBom(object):
             if category in self.table:
                 for n, item in enumerate(self.table[category]):
                     self.table[category][n][self.TABLE_DESIGNATOR] = \
-                        lib.order_designator(item[self.TABLE_DESIGNATOR], self.logger)
+                        lib.order_designator(
+                            item[self.TABLE_DESIGNATOR], self.logger)
 
                 # Convert all designator in a number to be ordered
                 if category in ["R", "C", "L", "Y"]:
@@ -411,13 +421,15 @@ class MergeBom(object):
                     la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
                     lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    self.logger.warning("Merged key: %s (%s)\n" % (k, A[k][COMMENT]))
+                    self.logger.warning(
+                        "Merged key: %s (%s)\n" % (k, A[k][COMMENT]))
 
                 if category == 'D' and "LED" in A[k][FOOTPRINT]:
                     la = [A[k][DESIGNATOR], A[k][FOOTPRINT]]
                     lb = [B[k][DESIGNATOR], B[k][FOOTPRINT]]
 
-                    self.logger.warning("Merged key: %s (%s)\n" % (k, A[k][COMMENT]))
+                    self.logger.warning(
+                        "Merged key: %s (%s)\n" % (k, A[k][COMMENT]))
                 else:
                     la = A[k][1:]
                     lb = B[k][1:]
