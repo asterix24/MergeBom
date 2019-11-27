@@ -299,7 +299,7 @@ def get_parameterFromPrj(prj_name, prj_file):
     print(prj_file)
     if not os.path.exists(prj_file):
         print("File not exist")
-        return []
+        return "", {}
 
     prj_config = configparser.RawConfigParser()
     prj_config.read(prj_file)
@@ -311,7 +311,7 @@ def get_parameterFromPrj(prj_name, prj_file):
         val = prj_config.get(i, 'Value')
         d[parametro] = val
 
-    return [prj_name, d]
+    return prj_name, d
 
 
 def find_bomfiles(root_path, prj_name, csv_file):

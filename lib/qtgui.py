@@ -3,14 +3,13 @@
 
 import sys
 import os
-from lib.cfg import LOGO
+from lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
 
-from PyQt5.QtCore import QDateTime, Qt, QAbstractTableModel, QVariant
-from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit, QTableView,
-                             QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-                             QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
-                             QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
-                             QVBoxLayout, QWidget, QInputDialog, QLineEdit, QFileDialog)
+from PyQt5.QtCore import QDateTime, Qt
+from PyQt5.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QDialog, QGroupBox, QHBoxLayout,
+                             QLabel, QLineEdit, QPushButton, QRadioButton, QScrollBar, QSlider, QSpinBox,
+                             QStyleFactory, QTableWidget, QVBoxLayout, QWidget, QInputDialog, QLineEdit,
+                             QFileDialog, QListWidget, QTableWidgetItem, QHeaderView)
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
@@ -24,6 +23,11 @@ class MergeBomGUI(QDialog):
 
     def __init__(self, parent=None):
         super(MergeBomGUI, self).__init__(parent)
+
+        self.prj_and_data = {}
+        self.param_prj_list = None
+        self.param_prj_list_view = None
+        self.param_table_view = None
 
         self.source_data = None
         self.src_data = None
@@ -59,21 +63,40 @@ class MergeBomGUI(QDialog):
         print(line)
         if line is not None:
             self.wk_path.setText(line)
+            self.__update_src_panel()
 
-            root, ext = os.path.splitext(
-                os.path.basename(line))
+    def __update_src_panel(self):
+        line = self.wk_path.text()
+        if line is None:
+            print("Workspace path is invalid or None")
+            return
 
-            lbl_root = "Workspace Name:"
-            data_type = "Altium Workspace"
-            if ext in "PrjPCB":
-                data_type = "Altium Project"
-                lbl_root = "Project Name:"
+        root, ext = os.path.splitext(
+            os.path.basename(line))
 
-            self.src_data.insertItem(0, data_type)
-            self.src_data.setCurrentIndex(0)
+        lbl_root = "Workspace Name:"
+        data_type = "Altium Workspace"
+        if ext in "PrjPCB":
+            data_type = "Altium Project"
+            lbl_root = "Project Name:"
 
-            self.src_data_name.setText(root)
-            self.src_data_name_lbl.setText(lbl_root)
+        self.src_data.insertItem(0, data_type)
+        self.src_data.setCurrentIndex(0)
+
+        self.src_data_name.setText(root)
+        self.src_data_name_lbl.setText(lbl_root)
+
+        data = extrac_projects(line)
+        root_path = os.path.dirname(line)
+        for prj in data:
+            n, d = get_parameterFromPrj(
+                prj[0], os.path.join(root_path, prj[1]))
+            print(d, n)
+            self.prj_and_data[n] = d
+            self.param_prj_list_view.addItem(n)
+
+    def __update_prj_panel(self):
+        pass
 
     def __source_data(self):
         self.source_data = QGroupBox("Source Data")
@@ -100,14 +123,42 @@ class MergeBomGUI(QDialog):
 
         self.source_data.setLayout(data)
 
+    def __on_click_list(self, item):
+        current_prj = None
+        if type(item) == str:
+            current_prj = item
+        else:
+            current_prj = item.text()
+
+        if current_prj == "":
+            return
+
+        d = self.prj_and_data[current_prj]
+        self.param_table_view.clearContents()
+        self.param_table_view.setRowCount(len(d))
+        for n, i in enumerate(d):
+            tt = QTableWidgetItem(i)
+            tt.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.param_table_view.setItem(n, 0, tt)
+            self.param_table_view.setItem(n, 1, QTableWidgetItem(d[i]))
+
     def __param_data(self):
-        self.param_data = QGroupBox("Parms")
-        model = ParamDataModel(self.headers, self.rows)
-        view = QTableView()
-        view.setModel(model)
+        self.param_data = QGroupBox("Project and Settings")
+        self.param_table_view = QTableWidget()
+        hdr = self.param_table_view.horizontalHeader()
+        hdr.setSectionResizeMode(QHeaderView.Stretch)
+        self.param_table_view.setRowCount(1)
+        self.param_table_view.setColumnCount(2)
+        self.param_table_view.setHorizontalHeaderLabels(["Param", "Value"])
+
+        self.param_prj_list_view = QListWidget()
+        self.param_prj_list_view.itemClicked.connect(self.__on_click_list)
+        self.param_prj_list_view.currentTextChanged.connect(
+            self.__on_click_list)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(view)
+        hbox.addWidget(self.param_prj_list_view)
+        hbox.addWidget(self.param_table_view)
 
         self.param_data.setLayout(hbox)
 
@@ -124,34 +175,6 @@ class MergeBomGUI(QDialog):
         lfile.addWidget(btn)
 
         self.altium_group.setLayout(lfile)
-
-
-class ParamDataModel(QAbstractTableModel):
-    """
-    Model to display all mergebom param get from variuos source,
-    like altium wk/prj or use insertion.
-    """
-
-    def __init__(self, headers=["Name", "Value"], rows=[("-", "-")]):
-        super().__init__()
-        self.rows = rows
-        self.headers = headers
-
-    def rowCount(self, parent):
-        return len(self.rows)
-
-    def columnCount(self, parent):
-        return len(self.headers)
-
-    def data(self, index, role):
-        if role != Qt.DisplayRole:
-            return QVariant()
-        return self.rows[index.row()][index.column()]
-
-    def headerData(self, section, orientation, role):
-        if role != Qt.DisplayRole or orientation != Qt.Horizontal:
-            return QVariant()
-        return self.headers[section]
 
 
 FILE_FILTERS = {
