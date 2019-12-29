@@ -322,9 +322,8 @@ def find_bomfiles(root_path, prj_name, csv_file):
     if csv_file:
         flt = "*.csv"
     pth = os.path.join(root_path, prj_name, flt)
-    print(pth)
     bom_list = glob.glob(pth)
-    return [prj_name, bom_list]
+    return bom_list
 
 
 def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
