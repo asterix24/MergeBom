@@ -600,14 +600,7 @@ class TestMergeBom(unittest.TestCase):
                     values.append(value)
                 data.append(values)
 
-        risultato=True
-        if len(uno) == len(data):
-            for i,n in enumerate(uno):
-                if not(uno[i] == data[i]):
-                    risultato=False
-        else:
-            risultato=False
-        self.assertTrue(risultato, " ".join(cmd))
+        self.assertEquals(uno, data, " ".join(cmd))
 
     def test_mergedFile(self):
         file_list = [
@@ -751,7 +744,7 @@ class TestMergeBom(unittest.TestCase):
                 ],
                 'U': [
                     [2, 2, u'u2, u3', u'lm2902', u'soic', u'Op-amp', u'aa',
-                     u'Aa-bb; bb', u'cc', u'dd'],
+                     u'bb; Aa-bb', u'cc', u'dd'],
                     [1, 1, u'u1', u'lm75', u'soic', u'temp', u'uno', u'due',
                      u'tre', u'quattro']
                  ]
@@ -761,17 +754,10 @@ class TestMergeBom(unittest.TestCase):
 
         print()
         dump(d)
-        for i in d.keys():
-            for n, j in enumerate(d[i]):
-                print("T >", j)
-                print("C <", check[i][n])
-                self.assertEqual(len(j), len(check[i][n]))
-                for m, c in enumerate(check[i][n]):
-                    print("T >", c)
-                    print("C <", j[m])
-                    self.assertEqual(c, j[m])
+        self.maxDiff = 1000
+        self.assertEqual(d, check)
 
-        outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
+        outfilename = os.path.join(self.temp_dir, "extra_columnmerged.xlsx")
         cmd = ["python3",
                "mergebom.py",
                "-prx", "extra_column",
@@ -782,7 +768,7 @@ class TestMergeBom(unittest.TestCase):
                "test/column.xlsx"]
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
-
+        print(outfilename)
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
 
     def test_cliCSV(self):
@@ -908,18 +894,18 @@ if __name__ == "__main__":
         "test_diff",
         "test_orderRef",
         "test_valueToFloat",
-        #"test_floatToValue",
+        "test_floatToValue",
         "test_outFile",
         #"test_parametri",
         "test_mergedFile",
         "test_stats",
         "test_notPopulate",
-        #"test_otherColumn",
+        "test_otherColumn",
         "test_categoryGroup",
         "test_cliMerge",
         "test_cliMergeDiff",
         "test_cliMergeGlob",
-        #"test_cliCSV",
+        "test_cliCSV",
         "test_mergeFileCommandLine"
     ]
 

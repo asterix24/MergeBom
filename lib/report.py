@@ -437,7 +437,16 @@ class DataReader(object):
                     except IndexError:
                         continue
 
-                    values.append(str(curr.value))
+                    try:
+                        # In in excel a colum could contain a number cell,
+                        # so when import it a data became a float and number
+                        # is show as 123.0, but we won't see a ".0".
+                        # to get a correct visualization we convert in int and
+                        # then in string.
+                        values.append(str(int(curr.value)))
+                    except ValueError:
+                        values.append(str(curr.value))
+
                 if len(values) != 0:
                     print(values)
                     data.append(values)
@@ -446,11 +455,11 @@ class DataReader(object):
 
     def __csv_reader(self):
         data = []
-        f = UTF8Recoder(open(self.file_name, 'rb'), "cp1252")
-        rd = csv.reader(f, delimiter=',', quotechar='\"')
-        for item in rd:
-            if item:
-                data.append([unicode(s, "cp1252") for s in item])
+        with open(self.file_name, newline='') as csvfile:
+            csv_data = csv.reader(csvfile, delimiter=',', quotechar='\"')
+            for row in csv_data:
+                if row:
+                    data.append(row)
         return data
 
     def read(self):
