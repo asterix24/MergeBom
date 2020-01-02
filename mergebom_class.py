@@ -148,7 +148,11 @@ class MergeBom(object):
             table_dict = {}
             for row in data:
                 # skip header
-                if row[designator].lower() == 'designator':
+                try:
+                    if row[designator].lower() == 'designator':
+                        continue
+                except IndexError:
+                    logger.warning("Skip row for missed data, could be invalid row.. [%s]\n" % row)
                     continue
 
                 if filter(lambda x: x, row):
