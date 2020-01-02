@@ -255,8 +255,7 @@ class MergeBom(object):
                     if category in ["R", "C", "L", "Y"]:
                         tmp_comment = value_toFloat(
                             item[COMMENT], category, self.logger)
-                        item[COMMENT] = value_toStr(
-                            tmp_comment, self.logger)
+                        item[COMMENT] = value_toStr(tmp_comment, self.logger)
 
                     # Fix Not poluate string in list
                     for rexp in NOT_POPULATE_KEY:
@@ -386,9 +385,14 @@ class MergeBom(object):
                             m[self.TABLE_COMMENT], category, self.logger)
                         # print m[COMMENT], key
 
-                self.table[category] = sorted(
-                    self.table[category], key=lambda x: x[
-                        self.TABLE_COMMENT])
+                def foo(x):
+                    if category in ["R", "C", "L", "Y"]:
+                        return x[self.TABLE_COMMENT][0]
+                    else:
+                        return x[self.TABLE_COMMENT]
+
+                self.table[category] = sorted(self.table[category],
+                                              key=foo)
 
                 # Convert all ORDERED designator in a numeric format
                 if category in ["R", "C", "L", "Y"]:

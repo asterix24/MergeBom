@@ -29,8 +29,9 @@ import re
 import datetime
 import xlrd
 import xlsxwriter
-import lib.cfg
 import csv
+from lib.cfg import VALID_KEYS, LOGO_SIMPLE, LOGO, NP_REGEXP
+from lib.cfg import CfgMergeBom
 from termcolor import colored
 
 
@@ -69,9 +70,9 @@ class Report(object):
             self.report.flush()
 
     def write_logo(self):
-        logo = cfg.LOGO_SIMPLE
+        logo = LOGO_SIMPLE
         if self.terminal and not self.log_on_file:
-            logo = cfg.LOGO
+            logo = LOGO
         self.__printout(logo, color='green')
 
     def write_header(self, conf_key, file_list):
@@ -80,7 +81,7 @@ class Report(object):
         """
 
         self.__printout("Report file.\n")
-        self.__printout("MergeBom Version: %s\n" % cfg.MERGEBOM_VER)
+        self.__printout("MergeBom Version: %s\n" % MERGEBOM_VER)
 
         self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
         self.__printout("." * 80)
@@ -129,7 +130,7 @@ def write_xls(
         diff=False,
         extra_data=None,
         statistics=None,
-        headers=lib.cfg.VALID_KEYS):
+        headers=VALID_KEYS):
     """
     Write merged BOM in excel file.
     Statistics data should be in follow format:
@@ -292,7 +293,7 @@ def write_xls(
 
     # Compute colum len to merge for header
     #stop_col = 'F'
-    stop_col = chr(ord('A') + len(file_list + headers))
+    stop_col = chr(ord('A') + len(file_list) + len(headers))
 
     row = STR_ROW
     for i in info:
@@ -390,7 +391,7 @@ def write_xls(
                             fmt = def_fmt
                             if not isinstance(
                                     col, int) and re.findall(
-                                        cfg.NP_REGEXP, col):
+                                        NP_REGEXP, col):
                                 fmt = np_fmt
                             worksheet.write(row, c, col, fmt)
                             if not isinstance(col, int):
@@ -436,10 +437,9 @@ class DataReader(object):
                     except IndexError:
                         continue
 
-                    if curr.value == '':
-                        continue
                     values.append(str(curr.value))
                 if len(values) != 0:
+                    print(values)
                     data.append(values)
 
             return data
@@ -462,7 +462,7 @@ class DataReader(object):
 
 if __name__ == "__main__":
 
-    config = cfg.CfgMergeBom()
+    config = CfgMergeBom()
     rep = Report(log_on_file=True)
     rep.write_logo()
     rep.write_header({}, [])

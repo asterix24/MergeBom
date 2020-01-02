@@ -476,7 +476,7 @@ class TestMergeBom(unittest.TestCase):
         test = [
             ((1000, "ohm", ""), (1500, "ohm", ""), (2200, "ohm", ""), (2210, "ohm", ""), (4700, "ohm", ""), (47000, "ohm", "")),
             ((1000000, "ohm", ""), (1500000, "ohm", ""), (860000, "ohm", ""), (8600000, "ohm", "")),
-            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (3.3e-8, "ohm", "")),
+            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (33e-8, "ohm", "")),
             ((0.000010, "F", ""), (1e-3, "F", ""), (10e-3, "H", "")),
             ((1.5e-6, "F", ""), (33e-12, "F", ""), (100e-9, "F", "")),
             ((1, "ohm", ""), (0.1, "ohm", ""), (10, "ohm", ""), (100, "ohm", ""), (12.5, "ohm", "")),
@@ -486,7 +486,7 @@ class TestMergeBom(unittest.TestCase):
         check = [
             ("1k", "1k5", "2k2", "2k21", "4k7", "47k"),
             ("1M", "1M5", "860k", "8M6"),
-            ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "33nohm"),
+            ("1.2R", "3.33R", "0.12R", "1.234R", "0.33R", "330nohm"),
             ("10uF", "1mF", "10mH"),
             ("1.5uF", "33pF", "100nF"),
             ("1R", "0.1R", "10R", "100R", "12.5R"),
@@ -505,7 +505,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_mergeFileCommandLine(self):
         outfilename = os.path.join(self.temp_dir, 'cli_merged.xlsx')
-        cmd  = ["python", "mergebom.py",
+        cmd  = ["python3", "mergebom.py",
                 '-o', 'cli_merged.xlsx',
                 '-p', self.temp_dir,
                 os.path.join( "test","Assembly","progettotest1","progettotest1.xlsx")]
@@ -523,7 +523,7 @@ class TestMergeBom(unittest.TestCase):
 
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
-        file_list = map(os.path.basename, file_list)
+        file_list = list(map(os.path.basename, file_list))
         ft = os.path.join(self.temp_dir, 'uno.xlsx')
         report.write_xls(
             d,
@@ -543,7 +543,7 @@ class TestMergeBom(unittest.TestCase):
         r=report.Report(log_on_file=True, terminal=True, report_date=datetime.strptime('11/03/2018', '%d/%m/%Y'))
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
-        file_list = map(os.path.basename, file_list)
+        file_list = list(map(os.path.basename, file_list))
         ft = os.path.join(self.temp_dir, 'due.xlsx')
         report.write_xls(
             d,
@@ -553,15 +553,17 @@ class TestMergeBom(unittest.TestCase):
             hw_ver="13",
             pcb="C",
             name="TEST")
-
-        out = subprocess.check_output(["python", "mergebom.py",
+        cmd = ["python3", "mergebom.py",
                                       "-p", self.temp_dir,
                                       "-o", "due.xlsx",
                                       "-t", '11/03/2018',
                                       "--prj-hw-ver", "13",
                                       "--prj-name", "TEST",
                                       "--prj-pcb", "C"
-                                      ,os.path.join("test","Assembly","progettotest1","progettotest1.xlsx")],
+                                      ,os.path.join("test","Assembly","progettotest1","progettotest1.xlsx")]
+
+        print(" ".join(cmd))
+        out = subprocess.check_output(cmd,
                                       stderr=subprocess.STDOUT)
         ft1=os.path.join(self.temp_dir, "due.xlsx")
 
@@ -577,12 +579,7 @@ class TestMergeBom(unittest.TestCase):
                         continue
 
                     value = ""
-                    try:
-                        value = str(int(curr.value))
-                    except (TypeError, ValueError):
-                        value = unicode(curr.value)
-
-                    values.append(value)
+                    values.append(str(curr.value))
                 data.append(values)
         uno=data
 
@@ -598,10 +595,7 @@ class TestMergeBom(unittest.TestCase):
                         continue
 
                     value = ""
-                    try:
-                        value = str(int(curr.value))
-                    except (TypeError, ValueError):
-                        value = unicode(curr.value)
+                    values.append(str(curr.value))
 
                     values.append(value)
                 data.append(values)
@@ -609,11 +603,11 @@ class TestMergeBom(unittest.TestCase):
         risultato=True
         if len(uno) == len(data):
             for i,n in enumerate(uno):
-                if not( uno[i] == data[i]):
+                if not(uno[i] == data[i]):
                     risultato=False
         else:
             risultato=False
-        self.assertTrue(risultato)
+        self.assertTrue(risultato, " ".join(cmd))
 
     def test_mergedFile(self):
         file_list = [
@@ -657,14 +651,14 @@ class TestMergeBom(unittest.TestCase):
         d = m.merge()
         stats = m.statistics()
 
-        file_list = map(os.path.basename, file_list)
+        file_list = list(map(os.path.basename, file_list))
         ft = os.path.join(self.temp_dir, 'uno.xlsx')
         report.write_xls(d, file_list, self.config, ft, hw_ver="13",
                              pcb="C", name="TEST", statistics=stats)
 
     def test_cliMerge(self):
         outfilename = os.path.join(self.temp_dir, "climerge_merged-R0.xlsx")
-        cmd = ["python", "mergebom.py",
+        cmd = ["python3", "mergebom.py",
                    "-prx", "climerge",
                    "-hw", "0",
                    "-pv", "S",
@@ -683,7 +677,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_cliMergeDiff(self):
         outfilename = os.path.join(self.temp_dir, "cli-diff-R23.xlsx")
-        cmd = ["python", "mergebom.py", "-o", "cli-diff-R23.xlsx",
+        cmd = ["python3", "mergebom.py", "-o", "cli-diff-R23.xlsx",
                        "-hw", "23",
                        "-pv", "T",
                        "-p", self.temp_dir,
@@ -699,7 +693,7 @@ class TestMergeBom(unittest.TestCase):
         os.remove(outfilename)
 
         outfilename = os.path.join(self.temp_dir, "cli-diff_merged.xlsx")
-        cmd = ["python", "mergebom.py",
+        cmd = ["python3", "mergebom.py",
                            "-o", "cli-diff_merged.xlsx",
                            "-d",
                            "-p", self.temp_dir,
@@ -713,7 +707,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_cliMergeGlob(self):
         outfilename = os.path.join(self.temp_dir, "cli-mergedGlob-R53.xlsx")
-        cmd = ["python", "mergebom.py", "-hw", "53", "-pv", "O",
+        cmd = ["python3", "mergebom.py", "-hw", "53", "-pv", "O",
                        "-n", "Test project glob",
                        "-o", "cli-mergedGlob-R53.xlsx",
                        "-p", self.temp_dir,
@@ -778,7 +772,7 @@ class TestMergeBom(unittest.TestCase):
                     self.assertEqual(c, j[m])
 
         outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
-        cmd = ["python",
+        cmd = ["python3",
                "mergebom.py",
                "-prx", "extra_column",
                "-p", self.temp_dir,
@@ -794,7 +788,7 @@ class TestMergeBom(unittest.TestCase):
     def test_cliCSV(self):
         inputfilename = os.path.join("test", "Assembly", "progettotest1", "progettotest1.csv")
         outfilename = os.path.join(".", "bom-merged.xlsx")
-        cmd =["python", "mergebom.py", "--csv",
+        cmd =["python3", "mergebom.py", "--csv",
               "-hw", "77",
               "-pv", "X",
               "-n", "Test project CVS",
@@ -902,31 +896,31 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     merge_test_list = [
-        #"test_extracPrj",
-        #"test_prjParam",
-        #"test_fileList",
-        #"test_altiumWorkspace",
-        #"test_import",
-        #"test_group",
-        #"test_led",
-        #"test_rele",
+        "test_extracPrj",
+        "test_prjParam",
+        "test_fileList",
+        "test_altiumWorkspace",
+        "test_import",
+        "test_group",
+        "test_led",
+        "test_rele",
         "test_groupFmt",
-        #"test_diff",
-        #"test_orderRef",
-        #"test_valueToFloat",
+        "test_diff",
+        "test_orderRef",
+        "test_valueToFloat",
         #"test_floatToValue",
-        #"test_outFile",
+        "test_outFile",
         #"test_parametri",
-        #"test_mergedFile",
-        #"test_stats",
-        #"test_notPopulate",
+        "test_mergedFile",
+        "test_stats",
+        "test_notPopulate",
         #"test_otherColumn",
-        #"test_categoryGroup",
-        #"test_cliMerge",
-        #"test_cliMergeDiff",
-        #"test_cliMergeGlob",
+        "test_categoryGroup",
+        "test_cliMerge",
+        "test_cliMergeDiff",
+        "test_cliMergeGlob",
         #"test_cliCSV",
-        #"test_mergeFileCommandLine"
+        "test_mergeFileCommandLine"
     ]
 
     suite = unittest.TestSuite()

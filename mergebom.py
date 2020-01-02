@@ -23,9 +23,10 @@ import os
 import glob
 import getopt
 import argparse
-import ConfigParser
 import re
-from lib import cfg,lib, report
+from lib.cfg import MERGEBOM_VER
+from lib.cfg import CfgMergeBom
+from lib.report import Report, write_xls
 from mergebom_class import *
 from datetime import datetime
 
@@ -98,18 +99,18 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if options.mergebom_version:
-        print cfg.MERGEBOM_VER
+        print(MERGEBOM_VER)
         sys.exit(0)
 
     if options.report_date_timestamp is not None:
         options.report_date_timestamp = datetime.strptime(options.report_date_timestamp, '%d/%m/%Y')
 
-    logger = report.Report(log_on_file = options.log_on_file,
+    logger = Report(log_on_file = options.log_on_file,
                            terminal = True,
                            report_date = options.report_date_timestamp)
     logger.write_logo()
 
-    config = cfg.CfgMergeBom(options.merge_cfg, logger=logger)
+    config = CfgMergeBom(options.merge_cfg, logger=logger)
 
     # ===== AltiumWorkspace =============
     if options.workspace_file is not None:
@@ -196,7 +197,7 @@ if __name__ == "__main__":
                 ret = raw_input()
                 if ret == "2":
                     for i in bom:
-                        print "-" * 80
+                        print("-" * 80)
                         logger.info(i)
                         logger.info("Keep or remove [K/r]?\n", prefix=">> ")
                         ret = raw_input()
@@ -221,7 +222,7 @@ if __name__ == "__main__":
 
             wk_path = os.path.dirname(options.workspace_file)
             out = os.path.join(wk_path, options.bom_search_dir, name, out_merge_file)
-            report.write_xls(m.merge(),
+            write_xls(m.merge(),
                              map(os.path.basename, bom),
                              config,
                              out,
@@ -264,10 +265,10 @@ if __name__ == "__main__":
     m = MergeBom(options.file_to_merge, config, is_csv=options.csv_file, logger=logger)
 
     items = m.merge()
-    file_list = map(os.path.basename, options.file_to_merge)
+    file_list = list(map(os.path.basename, options.file_to_merge))
     extra_data = None
     diff_mode = False
-    header_data = cfg.VALID_KEYS
+    header_data = VALID_KEYS
 
     if options.diff:
         logger.info("Diff Mode..\n")
@@ -276,7 +277,7 @@ if __name__ == "__main__":
         diff_mode = True
         header_data = m.header_data()
 
-    report.write_xls(items,
+    write_xls(items,
                      file_list,
                      config,
                      os.path.join(options.working_dir, options.out_filename),
