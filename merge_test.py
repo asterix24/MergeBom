@@ -829,7 +829,7 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         ch = [
-            ['5mp-sensor',
+            ('5mp-sensor',
                 {
                     'prj_date': '01/06/2018',
                     'prj_hw_ver': '0',
@@ -839,11 +839,28 @@ class TestMergeBom(unittest.TestCase):
                     'prj_pcb': 'A', 'prj_prefix': '',
                     'prj_status': 'Prototype'
                     }
-             ],
-            ['camera-core', {'prj_date': '01/06/2018', 'prj_hw_ver': '0', 'prj_license': 'Copyright company spa', 'prj_name': 'Camera Core', 'prj_name_long': 'Camera core imx8', 'prj_pcb': 'A', 'prj_pn': '-', 'prj_prefix': '', 'prj_status': 'Prototype'}],
-            ['18mp-sensor', {'prj_status': 'Prototype', 'prj_prefix': '', 'prj_pcb': 'A', 'prj_name_long': 'Camera sensor shield 5Mp AR1820', 'prj_name': 'Sensor Shield 18Mp', 'prj_license': 'Copyright company spa', 'prj_hw_ver': '0', 'prj_date': '01/06/2018'}],
-            ['imx8m_evk', {}],
-            [],
+             ),
+            ('camera-core', {'prj_date': '01/06/2018',
+                             'prj_hw_ver': '0',
+                             'prj_license': 'Copyright company spa',
+                             'prj_name': 'Camera Core',
+                             'prj_name_long': 'Camera core imx8',
+                             'prj_pcb': 'A', 'prj_pn': '-',
+                             'prj_prefix': '',
+                             'prj_status': 'Prototype'}
+             ),
+            ('18mp-sensor', {'prj_status': 'Prototype',
+                             'prj_prefix': '',
+                             'prj_pcb': 'A',
+                             'prj_name_long': 'Camera sensor shield 5Mp AR1820',
+                             'prj_name': 'Sensor Shield 18Mp',
+                             'prj_license': 'Copyright company spa',
+                             'prj_hw_ver': '0',
+                             'prj_date': '01/06/2018'
+                             }
+             ),
+            ('imx8m_evk', {}),
+            ("", {}),
         ]
         for n, i in enumerate(tst):
             a = cfg.get_parameterFromPrj(i[0], i[1])
@@ -889,14 +906,6 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_prjParam"))
     suite.addTest(TestMergeBom("test_fileList"))
     suite.addTest(TestMergeBom("test_altiumWorkspace"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
-    suite.addTest(TestMergeBom("test_import"))
     suite.addTest(TestMergeBom("test_import"))
     suite.addTest(TestMergeBom("test_group"))
     suite.addTest(TestMergeBom("test_led"))
