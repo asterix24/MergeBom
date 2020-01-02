@@ -415,7 +415,7 @@ class MergeBom(object):
 
         self.logger.warning("A:%s B:%s\n" % (fA, fB))
 
-        for k in A.keys():
+        for k in list(A.keys()):
             if k in B:
 
                 c = re.search('^[a-zA-Z_]{1,3}', A[k][DESIGNATOR])
