@@ -23,7 +23,7 @@ import os
 import re
 import datetime
 
-import cfg
+from lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETTER
 
 def order_designator(ref_str, logger):
     ref_str = ref_str.replace(" ", "")
@@ -40,9 +40,9 @@ def value_toFloat(l, unit, logger):
     value = "0"
     mult = 1
     div = 1
-    if unit not in cfg.CATEGORY_TO_UNIT:
+    if unit not in CATEGORY_TO_UNIT:
         logger.error("Unknow category [%s] allowed are[%s]\n" % (
-            unit, cfg.CATEGORY_TO_UNIT.keys()))
+            unit, CATEGORY_TO_UNIT.keys()))
         sys.exit(1)
 
     # K is always chilo .. so fix case
@@ -53,7 +53,7 @@ def value_toFloat(l, unit, logger):
     l = l.replace("ohm", "R")
 
     # manage correctly NP value
-    for n in cfg.NOT_POPULATE_KEY:
+    for n in NOT_POPULATE_KEY:
         if n in l:
             return -1, l, ""
 
@@ -72,11 +72,11 @@ def value_toFloat(l, unit, logger):
     cnt = 0
     flag = False
     for c in l:
-        if c in cfg.ENG_LETTER and not flag:
+        if c in ENG_LETTER and not flag:
             try:
                 value = value.replace(',', '.')
                 acc = float(value)
-                mult, div = cfg.ENG_LETTER[c]
+                mult, div = ENG_LETTER[c]
                 value = "0"
                 flag = True
                 continue
@@ -105,7 +105,7 @@ def value_toFloat(l, unit, logger):
             l, acc, mult, value, div, e))
         return -2, l, note
 
-    return value, cfg.CATEGORY_TO_UNIT[unit], note
+    return value, CATEGORY_TO_UNIT[unit], note
 
 import math
 
@@ -130,7 +130,7 @@ def eng_string(x):
     exp3_text = ""
 
     if -24 <= exp3 <= 24 and exp3 != 0:
-        exp3_text = 'yzafpnum kMGTPEZY'[(exp3 - (-24)) / 3]
+        exp3_text = 'yzafpnum kMGTPEZY'[int((exp3 - (-24)) / 3)]
 
     return sign, str(x3), exp3_text
 

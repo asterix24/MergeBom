@@ -436,14 +436,11 @@ class DataReader(object):
                     except IndexError:
                         continue
 
-                    value = ""
-                    try:
-                        value = str(int(curr.value))
-                    except (TypeError, ValueError):
-                        value = unicode(curr.value)
-
-                    values.append(value)
-                data.append(values)
+                    if curr.value == '':
+                        continue
+                    values.append(str(curr.value))
+                if len(values) != 0:
+                    data.append(values)
 
             return data
 

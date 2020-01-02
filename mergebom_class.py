@@ -24,7 +24,11 @@ import re
 import datetime
 import tempfile
 import shutil
-from lib import report, cfg, lib
+import pprint
+from lib.common import value_toStr, value_toFloat, order_designator
+from lib.report import DataReader
+from lib.cfg import CfgMergeBom
+from lib.cfg import VALID_KEYS, NOT_POPULATE_KEY, EXTRA_KEYS, NP_REGEXP, VALID_KEYS_CODES
 
 # Exchange data layout after file import
 FILENAME = 0
@@ -90,7 +94,7 @@ class MergeBom(object):
             self.logger.warning("File name: %s\n" % file_name)
 
             # Get all data from select data that could be CSV or xls
-            reader = report.DataReader(file_name, is_csv=is_csv)
+            reader = DataReader(file_name, is_csv=is_csv)
             data = reader.read()
 
             # Create filename label for report file
@@ -104,12 +108,12 @@ class MergeBom(object):
             extra_keys = {}
             for row in data:
                 for n, item in enumerate(row):
-                    if item.lower() in cfg.VALID_KEYS:
+                    if item.lower() in VALID_KEYS:
                         header[item.lower()] = n
 
                     # Search others marked columns to add to BOM
                     words = re.findall(r'\b\S+\b', item)
-                    for w in cfg.VALID_KEYS_CODES:
+                    for w in VALID_KEYS_CODES:
                         if w in words:
                             item = item.replace(w, '')
                             item = "%s %s" % (w.capitalize(), item.strip())
@@ -122,7 +126,7 @@ class MergeBom(object):
                         k, v = item.lower().split(":")
                     except ValueError:
                         continue
-                    if k in cfg.EXTRA_KEYS:
+                    if k in EXTRA_KEYS:
                         extra_keys[k] = v.replace(' ', '')
 
             self.extra_keys.append(extra_keys)
@@ -136,7 +140,7 @@ class MergeBom(object):
             except KeyError as e:
                 self.logger.error("No key header found! [%s]\n" % e)
                 self.logger.warning("Valid are:\n")
-                for i in cfg.VALID_KEYS:
+                for i in VALID_KEYS:
                     self.logger.warning(" %s\n" % i)
 
                 sys.exit(1)
@@ -181,7 +185,7 @@ class MergeBom(object):
         return self.extra_keys
 
     def header_data(self):
-        return cfg.VALID_KEYS + [k for k, _ in self.extra_column]
+        return VALID_KEYS + [k for k, _ in self.extra_column]
 
     def group(self):
         self.grouped_items = {}
@@ -245,19 +249,19 @@ class MergeBom(object):
 
                     # Fix Designator
                     if category in ["R", "C", "L", "Y"]:
-                        tmp_comment = lib.value_toFloat(
+                        tmp_comment = value_toFloat(
                             item[COMMENT], category, self.logger)
-                        item[COMMENT] = lib.value_toStr(
+                        item[COMMENT] = value_toStr(
                             tmp_comment, self.logger)
 
                     # Fix Not poluate string in list
-                    for rexp in cfg.NOT_POPULATE_KEY:
+                    for rexp in NOT_POPULATE_KEY:
                         item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
 
                     if category == 'J':
                         # Avoid merging for NP componets
                         skip_merge = False
-                        m = re.findall(cfg.NP_REGEXP, item[COMMENT])
+                        m = re.findall(NP_REGEXP, item[COMMENT])
                         if m:
                             skip_merge = True
                             self.logger.error(
@@ -310,7 +314,7 @@ class MergeBom(object):
                         tmp[key][curr_file_index] += item[QUANTITY]
                         tmp[key][
                             self.TABLE_DESIGNATOR] += ", " + item[DESIGNATOR]
-                        tmp[key][self.TABLE_DESIGNATOR] = lib.order_designator(
+                        tmp[key][self.TABLE_DESIGNATOR] = order_designator(
                             tmp[key][self.TABLE_DESIGNATOR], self.logger)
 
                         for ex in self.extra_column:
@@ -358,7 +362,7 @@ class MergeBom(object):
                         # print "NEW", tmp[key], curr_file_index,
                         # item[FILENAME]
 
-                self.table[category] = tmp.values()
+                self.table[category] = list(tmp.values())
 
     def statistics(self):
         return self.stats
@@ -369,14 +373,12 @@ class MergeBom(object):
         for category in self.categories:
             if category in self.table:
                 for n, item in enumerate(self.table[category]):
-                    self.table[category][n][self.TABLE_DESIGNATOR] = \
-                        lib.order_designator(
-                            item[self.TABLE_DESIGNATOR], self.logger)
+                    self.table[category][n][self.TABLE_DESIGNATOR] = order_designator(item[self.TABLE_DESIGNATOR], self.logger)
 
                 # Convert all designator in a number to be ordered
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = lib.value_toFloat(
+                        m[self.TABLE_COMMENT] = value_toFloat(
                             m[self.TABLE_COMMENT], category, self.logger)
                         # print m[COMMENT], key
 
@@ -387,7 +389,7 @@ class MergeBom(object):
                 # Convert all ORDERED designator in a numeric format
                 if category in ["R", "C", "L", "Y"]:
                     for m in self.table[category]:
-                        m[self.TABLE_COMMENT] = lib.value_toStr(
+                        m[self.TABLE_COMMENT] = value_toStr(
                             m[self.TABLE_COMMENT], self.logger)
                         # print m[self.TABLE_COMMENT], category
 
