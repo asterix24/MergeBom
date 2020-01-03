@@ -54,6 +54,32 @@ LOGO = """
 
 """
 
+DEFAULT_PRJ_PARAM_KEY = 0
+DEFAULT_PRJ_PARAM_LABEL = 1
+DEFAULT_PRJ_PARAM_FIELDS = [
+    ("prj_date", "Project Date"),
+    ("prj_hw_ver", "Hardware Version"),
+    ("prj_pcb", "PCB Version"),
+    ("prj_name", "Project Name"),
+    ("prj_license", "License"),
+    ("prj_name_long", "Descriptions"),
+    ("prj_pn", "Part Number"),
+    ("prj_status", "Project status"),
+    ("prj_prefix", "Project group")
+]
+
+DEFAULT_PRJ_PARAM_DICT = {
+    "prj_date": "--/--/----",
+    "prj_hw_ver": "0",
+    "prj_pcb":  "A",
+    "prj_name": "MyProject",
+    "prj_license": "Copyright to me",
+    "prj_name_long": "My usefull project",
+    "prj_pn":  "--",
+    "prj_status":  "Prototype",
+    "prj_prefix": "--",
+}
+
 ENG_LETTER = {
     'G': (1e9, 1e8),
     'M': (1e6, 1e5),

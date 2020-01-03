@@ -521,6 +521,18 @@ class TestMergeBom(unittest.TestCase):
             "test/bom_quattro.xls",
         ]
 
+        param = {
+            "prj_date": "--/--/----",
+            "prj_hw_ver": "13",
+            "prj_pcb":  "C",
+            "prj_name": "TEST",
+            "prj_license": "Copyright to me",
+            "prj_name_long": "My usefull project",
+            "prj_pn":  "--",
+            "prj_status":  "Prototype",
+            "prj_prefix": "--",
+        }
+
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
         file_list = list(map(os.path.basename, file_list))
@@ -530,9 +542,7 @@ class TestMergeBom(unittest.TestCase):
             file_list,
             self.config,
             ft,
-            hw_ver="13",
-            pcb="C",
-            name="TEST")
+            param)
 
     def test_parametri(self):
         import xlrd
@@ -545,14 +555,25 @@ class TestMergeBom(unittest.TestCase):
         d = m.merge()
         file_list = list(map(os.path.basename, file_list))
         ft = os.path.join(self.temp_dir, 'due.xlsx')
+
+        param = {
+            "prj_date": "--/--/----",
+            "prj_hw_ver": "13",
+            "prj_pcb":  "C",
+            "prj_name": "TEST",
+            "prj_license": "Copyright to me",
+            "prj_name_long": "My usefull project",
+            "prj_pn":  "--",
+            "prj_status":  "Prototype",
+            "prj_prefix": "--",
+        }
+
         report.write_xls(
             d,
             file_list,
             self.config,
             ft,
-            hw_ver="13",
-            pcb="C",
-            name="TEST")
+            param)
         cmd = ["python3", "mergebom.py",
                                       "-p", self.temp_dir,
                                       "-o", "due.xlsx",
@@ -646,8 +667,18 @@ class TestMergeBom(unittest.TestCase):
 
         file_list = list(map(os.path.basename, file_list))
         ft = os.path.join(self.temp_dir, 'uno.xlsx')
-        report.write_xls(d, file_list, self.config, ft, hw_ver="13",
-                             pcb="C", name="TEST", statistics=stats)
+        param = {
+            "prj_date": "--/--/----",
+            "prj_hw_ver": "13",
+            "prj_pcb":  "C",
+            "prj_name": "TEST",
+            "prj_license": "Copyright to me",
+            "prj_name_long": "My usefull project",
+            "prj_pn":  "--",
+            "prj_status":  "Prototype",
+            "prj_prefix": "--",
+        }
+        report.write_xls(d, file_list, self.config, ft, param, statistics=stats)
 
     def test_cliMerge(self):
         outfilename = os.path.join(self.temp_dir, "climerge_merged-R0.xlsx")

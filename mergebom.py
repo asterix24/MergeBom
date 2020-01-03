@@ -208,31 +208,18 @@ if __name__ == "__main__":
                     sys.exit(0)
 
             m = MergeBom(bom, config, is_csv=options.csv_file, logger=logger)
-
-            # Compute outfile name
-            hw_ver = param.get(cfg.PRJ_HW_VER, None)
-            prj_pcb = param.get(cfg.PRJ_PCB, None)
-            prj_name_long = param.get(cfg.PRJ_NAME_LONG, "project")
-            prj_name = param.get(cfg.PRJ_NAME, "project")
-            prj_pn = param.get(cfg.PRJ_PN, "-")
-
-            out_merge_file = cfg.MERGED_FILE_TEMPLATE_HW % (options.bom_prefix, name, hw_ver)
-            if hw_ver is None:
-                out_merge_file = cfg.MERGED_FILE_TEMPLATE_NOHW % (options.bom_prefix, name)
-
+            out_merge_file = "%s%s.xlsx" % (options.bom_prefix, name)
             wk_path = os.path.dirname(options.workspace_file)
             out = os.path.join(wk_path, options.bom_search_dir, name, out_merge_file)
             write_xls(m.merge(),
-                             map(os.path.basename, bom),
-                             config,
-                             out,
-                             hw_ver=hw_ver,
-                             pcb=prj_pcb,
-                             name=prj_name_long + " PN: " + prj_pn,
-                             diff=False,
-                             extra_data=None,
-                             statistics=m.statistics(),
-                             headers=cfg.VALID_KEYS)
+                     map(os.path.basename, bom),
+                     config,
+                     out,
+                     param,
+                     diff=False,
+                     extra_data=None,
+                     statistics=m.statistics(),
+                     headers=cfg.VALID_KEYS)
 
             if options.replace_original:
                 for i in bom:
@@ -277,13 +264,23 @@ if __name__ == "__main__":
         diff_mode = True
         header_data = m.header_data()
 
+    param = {
+        "prj_date": "--/--/----",
+        "prj_hw_ver": options.prj_hw_ver,
+        "prj_pcb": options.prj_pcb,
+        "prj_name": options.prj_name,
+        "prj_license": "-",
+        "prj_name_long": "-",
+        "prj_pn":  "--",
+        "prj_status":  "-",
+        "prj_prefix": "--",
+    }
+
     write_xls(items,
              file_list,
              config,
              os.path.join(options.working_dir, options.out_filename),
-             hw_ver=options.prj_hw_ver,
-             pcb=options.prj_pcb,
-             name=options.prj_name,
+             param,
              diff=diff_mode,
              extra_data=extra_data,
              statistics=m.statistics(),

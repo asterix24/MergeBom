@@ -31,6 +31,8 @@ import xlrd
 import xlsxwriter
 import csv
 from lib.cfg import VALID_KEYS, LOGO_SIMPLE, LOGO, NP_REGEXP
+from lib.cfg import DEFAULT_PRJ_PARAM_FIELDS
+from lib.cfg import DEFAULT_PRJ_PARAM_DICT, DEFAULT_PRJ_PARAM_KEY, DEFAULT_PRJ_PARAM_LABEL
 from lib.cfg import CfgMergeBom
 from termcolor import colored
 
@@ -88,11 +90,12 @@ class Report(object):
         self.__printout("\n")
         self.__printout("\n")
         self.__printout(":" * 80)
-        self.__printout("Date: %s\n" % conf_key.get('date', '-'))
-        self.__printout("Project Name: %s\n" % conf_key.get('name', '-'))
-        self.__printout("Hardware Revision: %s\n" %
-                        conf_key.get('hw_ver', '-'))
-        self.__printout("PCB Revision: %s\n" % conf_key.get('pcb_ver', '-'))
+
+
+        for  key in DEFAULT_PRJ_PARAM_FIELDS:
+            self.__printout("%s: %s\n" % key[DEFAULT_PRJ_PARAM_LABEL], '-',
+                            conf_key.get(key[DEFAULT_PRJ_PARAM_KEY], '-'))
+
         self.__printout("\n")
 
         self.__printout("Bom Files:\n")
@@ -118,15 +121,12 @@ class Report(object):
     def info(self, s, prefix="> "):
         self.__printout(s, prefix=prefix, color='green')
 
-
 def write_xls(
         items,
         file_list,
         config,
-        handler,
-        hw_ver="0",
-        pcb="A",
-        name="MyProject",
+        merged_bom_outfilename,
+        prj_param_dict=DEFAULT_PRJ_PARAM_DICT,
         diff=False,
         extra_data=None,
         statistics=None,
@@ -162,7 +162,7 @@ def write_xls(
                 B_pcb_diff = extra_data[1].get("pcb_version", "-")
 
     # Create a workbook and add a worksheet.
-    workbook = xlsxwriter.Workbook(handler)
+    workbook = xlsxwriter.Workbook(merged_bom_outfilename)
     worksheet = workbook.add_worksheet()
 
     def_fmt = workbook.add_format({'valign': 'vcenter'})
@@ -260,10 +260,10 @@ def write_xls(
         info = [
             'Component Variation',
             '',
-            'Date: %s' % report_date.strftime('%d/%m/%Y'),
+            'Generation Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
-            'Project: %s' % name,
+            'Project Name: %s' % prj_param_dict.get("prj_name", '-'),
             '',
             'File A:',
             '   Hw_rev:  %s' % A_hw_diff,
@@ -278,16 +278,15 @@ def write_xls(
         info = [
             'Bill of Materials',
             '',
-            'Date: %s' % report_date.strftime('%d/%m/%Y'),
+            'Generation Date: %s' % report_date.strftime('%d/%m/%Y'),
             '',
             '',
-            'Project: %s' % name,
-            'Hardware_version: %s' % hw_ver,
-            'PCB_version: %s' % pcb,
-            '',
-            'BOM files:',
         ]
+        for  key in DEFAULT_PRJ_PARAM_FIELDS:
+            info.append("%s: %s" % (key[DEFAULT_PRJ_PARAM_LABEL],
+                            prj_param_dict.get(key[DEFAULT_PRJ_PARAM_KEY], '-')))
 
+        info.append('BOM files:')
         for i in file_list:
             info.append("- %s" % i)
 
@@ -399,21 +398,6 @@ def write_xls(
                     row += 1
 
     workbook.close()
-
-
-class UTF8Recoder:
-    """
-    Iterator that reads an encoded stream and reencodes the input to UTF-8
-    """
-
-    def __init__(self, f, encoding):
-        self.reader = codecs.getreader(encoding)(f)
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        return self.reader.next().encode("utf-8")
 
 
 class DataReader(object):

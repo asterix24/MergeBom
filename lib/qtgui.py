@@ -166,14 +166,18 @@ class MergeBomGUI(QDialog):
 
     def __merge_bom_hook(self, bom_list):
         # Get prj info from view table
-        d = {}
+        param = {}
         for i in range(self.param_table_view.rowCount()):
-            d[self.param_table_view.item(i, 0).text()] = self.param_table_view.item(i, 1).text()
+            param[self.param_table_view.item(i, 0).text()] = self.param_table_view.item(i, 1).text()
 
         m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
                      logger=self.logger)
 
         for bom in bom_list:
+            if self.delete_merged.isChecked():
+                for i in bom_list:
+                    os.remove(i)
+
             out_dir_path = self.merge_same_dir_path.text()
             if self.merge_same_dir.isChecked():
                 out_dir_path = os.path.dirname(bom)
@@ -184,21 +188,13 @@ class MergeBomGUI(QDialog):
                 return
 
             out = os.path.join(out_dir_path, outfilename)
-            print(out)
             write_xls(m.merge(),
                      list(map(os.path.basename, bom_list)),
                      self.config,
                      out,
-                     hw_ver=d.get('prj_hw_ver', "-"),
-                     pcb=d.get('prj_pcb', "-"),
-                     name=d.get('prj_name', "-"),
+                     param,
                      diff=False,
                      statistics=m.statistics())
-
-            if self.delete_merged.isChecked():
-                for i in bom_list:
-                    os.remove(i)
-
 
     @pyqtSlot()
     def __deploy_bom_select(self):
