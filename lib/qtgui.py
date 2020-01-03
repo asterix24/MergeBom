@@ -4,12 +4,16 @@
 import sys
 import os
 from lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
+from lib.cfg import MERGED_FILE_TEMPLATE
+from lib.cfg import CfgMergeBom
+from lib.report import Report, write_xls
+from mergebom_class import *
 
 from PyQt5.QtCore import QDateTime, Qt, pyqtSlot
-from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QComboBox, QDateTimeEdit, QDialog, QGroupBox, QHBoxLayout,
-                             QLabel, QLineEdit, QPushButton, QRadioButton, QScrollBar, QSlider, QSpinBox,
-                             QStyleFactory, QTableWidget, QVBoxLayout, QWidget, QInputDialog, QLineEdit,
-                             QFileDialog, QListWidget, QTableWidgetItem, QHeaderView)
+from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, QGroupBox,
+                             QHBoxLayout, QLabel, QLineEdit, QPushButton, QStyleFactory,
+                             QTableWidget, QVBoxLayout, QWidget, QFileDialog, QListWidget,
+                             QTableWidgetItem, QHeaderView)
 
 from PyQt5.QtGui import QIcon, QFont
 
@@ -33,8 +37,8 @@ class MergeBomGUI(QDialog):
         self.q1_layout = QVBoxLayout()
         self.q2_layout = QVBoxLayout()
         self.log_layout = QVBoxLayout()
-        self.sub_layout.addLayout(self.q1_layout)
-        self.sub_layout.addLayout(self.q2_layout)
+        self.sub_layout.addLayout(self.q1_layout, 15)
+        self.sub_layout.addLayout(self.q2_layout, 85)
 
         # Q1 right quadrant
         self.wk_path = QLineEdit(os.path.expanduser('~/'))
@@ -47,6 +51,20 @@ class MergeBomGUI(QDialog):
         self.merge_all = QPushButton("Merge All")
         self.merge_all.setDefault(True)
         self.merge_all.clicked.connect(self.__merge_bom_all)
+
+        self.merge_only_csv = QCheckBox("CSV Filter", self)
+        self.merge_only_csv.setChecked(True)
+        self.merge_only_csv.stateChanged.connect(self.__filterCheckbox)
+        self.merge_same_dir = QCheckBox("Merge in same directory", self)
+        self.merge_same_dir.stateChanged.connect(self.__check_same_dir)
+        self.merge_same_dir_path = QLineEdit(os.path.expanduser('~/'))
+        self.delete_merged = QCheckBox("Delete Mergeded", self)
+        self.merge_bom_outname_label = QLabel("Merged out file name:")
+        self.merge_bom_outname = QLineEdit("merged_bom.xlsx")
+        self.merge_bom_outname.setEnabled(False)
+        self.merge_autoname = QCheckBox("Autoname out file", self)
+        self.merge_autoname.setChecked(True)
+        self.merge_autoname.stateChanged.connect(self.__autoname_out_file)
 
         self.deploy_sel = QPushButton("Deploy Select")
         self.deploy_sel.setDefault(True)
@@ -61,6 +79,13 @@ class MergeBomGUI(QDialog):
         self.merge_cmd_box.setLayout(vbox)
         vbox.addWidget(self.merge_sel)
         vbox.addWidget(self.merge_all)
+        vbox.addWidget(self.merge_only_csv)
+        vbox.addWidget(self.merge_same_dir)
+        vbox.addWidget(self.merge_same_dir_path)
+        vbox.addWidget(self.delete_merged)
+        vbox.addWidget(self.merge_bom_outname_label)
+        vbox.addWidget(self.merge_bom_outname)
+        vbox.addWidget(self.merge_autoname)
 
         self.deploy_cmd_box = QGroupBox("Deploy Commands")
         self.deploy_cmd_box.setEnabled(False)
@@ -93,8 +118,12 @@ class MergeBomGUI(QDialog):
 
         self.label_param = QLabel("Workspace: --")
         self.q2_layout.addWidget(self.label_param)
+        self.q2_layout.addWidget(QLabel("Project list:"))
         self.q2_layout.addWidget(self.param_prj_list_view, 25)
-        self.q2_layout.addWidget(self.param_table_view, 75)
+        self.q2_layout.addWidget(QLabel("Project params:"))
+        self.q2_layout.addWidget(self.param_table_view, 60)
+        self.q2_layout.addWidget(QLabel("BOM list:"))
+        self.q2_layout.addWidget(self.param_bom_list_view, 15)
 
 
         l_logo = QLabel(LOGO)
@@ -102,7 +131,7 @@ class MergeBomGUI(QDialog):
         l_logo.setAlignment(Qt.AlignCenter)
 
         self.log_panel = QPlainTextEdit(self)
-        self.log_panel.setEnabled(False)
+        self.log_panel.setReadOnly(True)
         self.log_layout.addWidget(self.log_panel)
 
         self.main_layout.addWidget(l_logo)
@@ -111,17 +140,65 @@ class MergeBomGUI(QDialog):
         self.setLayout(self.main_layout)
 
         self.setWindowTitle("Merge BOM GUI")
+        self.setGeometry(50, 50, 640, 480)
         QApplication.setStyle(QStyleFactory.create('Fusion'))
         QApplication.setPalette(QApplication.style().standardPalette())
 
+        # Init MergeBOM class
+        self.logger = Report(terminal=False)
+        #logger.write_logo()
+
+        self.config = CfgMergeBom(logger=self.logger)
+
     @pyqtSlot()
     def __merge_bom_select(self):
-        self.log_panel.setEnabled(True)
-        pass
+        bom_list = [i.text() for i in self.param_bom_list_view.selectedItems()]
+
+        self.__merge_bom_hook(bom_list)
 
     @pyqtSlot()
     def __merge_bom_all(self):
-        pass
+        bom_list = []
+        for i in range(self.param_bom_list_view.count()):
+            bom_list.append(self.param_bom_list_view.item(i).text())
+
+        self.__merge_bom_hook(bom_list)
+
+    def __merge_bom_hook(self, bom_list):
+        # Get prj info from view table
+        d = {}
+        for i in range(self.param_table_view.rowCount()):
+            d[self.param_table_view.item(i, 0).text()] = self.param_table_view.item(i, 1).text()
+
+        m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
+                     logger=self.logger)
+
+        for bom in bom_list:
+            out_dir_path = self.merge_same_dir_path.text()
+            if self.merge_same_dir.isChecked():
+                out_dir_path = os.path.dirname(bom)
+
+            outfilename = self.merge_bom_outname.text()
+            if outfilename == "" or outfilename is None:
+                self.log_panel.appendPlainText("Invalid out file name.")
+                return
+
+            out = os.path.join(out_dir_path, outfilename)
+            print(out)
+            write_xls(m.merge(),
+                     list(map(os.path.basename, bom_list)),
+                     self.config,
+                     out,
+                     hw_ver=d.get('prj_hw_ver', "-"),
+                     pcb=d.get('prj_pcb', "-"),
+                     name=d.get('prj_name', "-"),
+                     diff=False,
+                     statistics=m.statistics())
+
+            if self.delete_merged.isChecked():
+                for i in bom_list:
+                    os.remove(i)
+
 
     @pyqtSlot()
     def __deploy_bom_select(self):
@@ -132,12 +209,33 @@ class MergeBomGUI(QDialog):
         pass
 
     @pyqtSlot()
+    def __autoname_out_file(self):
+        if not self.merge_autoname.isChecked():
+            self.merge_bom_outname.setText("merged_bom.xlsx")
+            self.merge_bom_outname.setEnabled(True)
+        else:
+            self.merge_bom_outname.setEnabled(False)
+
+    @pyqtSlot()
+    def __filterCheckbox(self):
+        prjs = self.param_prj_list_view.selectedItems()
+        if len(prjs) == 1:
+            self.__on_click_list(prjs[0])
+
+    @pyqtSlot()
+    def __check_same_dir(self):
+        if self.merge_same_dir.isChecked():
+            self.merge_same_dir_path.setEnabled(False)
+        else:
+            self.merge_same_dir_path.setEnabled(True)
+
+    @pyqtSlot()
     def __select_wk_file(self):
         app = FileDialog(rootpath=self.wk_path.text())
         line = app.selection()
-        print(line)
-        wk_file_name, _ = os.path.splitext(os.path.basename(line))
-        if line is not None:
+
+        if line is not None and line != "":
+            wk_file_name, _ = os.path.splitext(os.path.basename(line))
             self.wk_path.setText(line)
             self.__update_src_panel(line)
             self.merge_cmd_box.setEnabled(True)
@@ -180,10 +278,13 @@ class MergeBomGUI(QDialog):
 
         self.param_bom_list_view.clear()
         root = self.prj_and_data[current_prj][0]
-        l = find_bomfiles(root, current_prj, True)
-        self.param_bom_list_view.addItems(l)
-        l = find_bomfiles(os.path.join(root, "Assembly"), current_prj, False)
-        self.param_bom_list_view.addItems(l)
+
+        for pths in [root, os.path.join(root, "Assembly")]:
+            l = find_bomfiles(pths, current_prj,
+                              self.merge_only_csv.isChecked())
+            self.param_bom_list_view.addItems(l[1])
+
+        self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % current_prj)
 
 
 
