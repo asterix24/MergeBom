@@ -278,15 +278,15 @@ if __name__ == "__main__":
         header_data = m.header_data()
 
     write_xls(items,
-                     file_list,
-                     config,
-                     os.path.join(options.working_dir, options.out_filename),
-                     hw_ver=options.prj_hw_ver,
-                     pcb=options.prj_pcb,
-                     name=options.prj_name,
-                     diff=diff_mode,
-                     extra_data=extra_data,
-                     statistics=m.statistics(),
-                     headers=header_data)
+             file_list,
+             config,
+             os.path.join(options.working_dir, options.out_filename),
+             hw_ver=options.prj_hw_ver,
+             pcb=options.prj_pcb,
+             name=options.prj_name,
+             diff=diff_mode,
+             extra_data=extra_data,
+             statistics=m.statistics(),
+             headers=header_data)
 
 
