@@ -4,9 +4,9 @@
 import sys
 import os
 from lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
-from lib.cfg import MERGED_FILE_TEMPLATE
+from lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE
 from lib.cfg import CfgMergeBom
-from lib.report import Report, write_xls
+from lib.report import ReportBase, write_xls
 from mergebom_class import *
 
 from PyQt5.QtCore import QDateTime, Qt, pyqtSlot
@@ -17,6 +17,16 @@ from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, Q
 
 from PyQt5.QtGui import QIcon, QFont
 
+class Report(ReportBase):
+    def __init__(self, logWidget):
+        super(Report, self).__init__()
+        self.logWidget = logWidget
+
+    def printout(self, s, prefix="", color=""):
+        self.logWidget.insertPlainText("%s%s" % (prefix, s))
+
+    def write_logo(self):
+        self.printout(LOGO_SIMPLE, color='green')
 
 class MergeBomGUI(QDialog):
     """
@@ -132,6 +142,7 @@ class MergeBomGUI(QDialog):
 
         self.log_panel = QPlainTextEdit(self)
         self.log_panel.setReadOnly(True)
+        self.log_panel.setFont(QFont("MesloLGS NF", 10))
         self.log_layout.addWidget(self.log_panel)
 
         self.main_layout.addWidget(l_logo)
@@ -145,9 +156,8 @@ class MergeBomGUI(QDialog):
         QApplication.setPalette(QApplication.style().standardPalette())
 
         # Init MergeBOM class
-        self.logger = Report(terminal=False)
-        #logger.write_logo()
-
+        self.logger = Report(self.log_panel)
+        self.logger.write_logo()
         self.config = CfgMergeBom(logger=self.logger)
 
     @pyqtSlot()
@@ -242,16 +252,18 @@ class MergeBomGUI(QDialog):
             print("Workspace path is invalid or None")
             return
 
+        self.param_prj_list_view.clear()
         root, ext = os.path.splitext(os.path.basename(line))
         self.label_param.setText("Workspace: %s" % root)
 
         data = extrac_projects(line)
         root_path = os.path.dirname(line)
         for prj in data:
-            n, d = get_parameterFromPrj(
-                prj[0], os.path.join(root_path, prj[1]))
-            self.prj_and_data[n] = [root_path, d]
-            self.param_prj_list_view.addItem(n)
+            n, d = get_parameterFromPrj(prj[0], os.path.join(root_path, prj[1]))
+
+            if n != "":
+                self.prj_and_data[n] = [root_path, d]
+                self.param_prj_list_view.addItem(n)
 
     def __on_click_list(self, item):
         current_prj = None

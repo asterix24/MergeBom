@@ -29,7 +29,7 @@ import sys
 import glob
 import configparser
 
-MERGEBOM_VER = "1.1.0"
+MERGEBOM_VER = "2.0.0"
 
 LOGO_SIMPLE = """
 
@@ -323,9 +323,7 @@ def get_parameterFromPrj(prj_name, prj_file):
     Get paramet from Altium project.
     """
     d = {}
-    print(prj_file)
     if not os.path.exists(prj_file):
-        print("File not exist")
         return "", {}
 
     prj_config = configparser.RawConfigParser()
