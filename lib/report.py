@@ -37,19 +37,69 @@ from lib.cfg import CfgMergeBom
 from termcolor import colored
 
 
-class Report(object):
+
+class ReportBase(object):
     """
     Merge Bom report generator.
     """
-
-    def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
-                 terminal=True, report_date=None):
-        self.terminal = terminal
-        self.report = None
-        self.log_on_file = log_on_file
+    def __init__(self, report_date=None):
         self.report_date = report_date
         if report_date is None:
             self.report_date = datetime.datetime.now()
+
+    def write_header(self, conf_key, file_list):
+        """
+        Write BOM Header info in report file.
+        """
+
+        self.printout("Report file.\n")
+        self.printout("MergeBom Version: %s\n" % MERGEBOM_VER)
+
+        self.printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
+        self.printout("." * 80)
+        self.printout("\n")
+        self.printout("\n")
+        self.printout(":" * 80)
+
+
+        for  key in DEFAULT_PRJ_PARAM_FIELDS:
+            self.printout("%s: %s\n" % key[DEFAULT_PRJ_PARAM_LABEL], '-',
+                            conf_key.get(key[DEFAULT_PRJ_PARAM_KEY], '-'))
+
+        self.printout("\n")
+
+        self.printout("Bom Files:\n")
+        for i in file_list:
+            self.printout(" - %s\n" % i)
+
+        self.printout("\n== Check Merged items: ==\n")
+        self.printout("-" * 80)
+        self.printout("\n")
+
+    def write_stats(self, stats):
+        """
+        Write BOM component Statistics
+        """
+        self.printout("Total: %s\n" % stats['total'])
+
+    def warning(self, s, prefix=">> "):
+        self.printout(s, prefix=prefix, color='yellow')
+
+    def error(self, s, prefix="!! "):
+        self.printout(s, prefix=prefix, color='red')
+
+    def info(self, s, prefix="> "):
+        self.printout(s, prefix=prefix, color='green')
+
+class Report(ReportBase):
+    def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
+                 terminal=True, report_date=None):
+
+        super(Report, self).__init__(report_date=report_date)
+
+        self.terminal = terminal
+        self.log_on_file = log_on_file
+        self.report = None
         if self.log_on_file:
             self.report = open(logfile, 'w+')
 
@@ -58,7 +108,7 @@ class Report(object):
             self.report.flush()
             self.report.close()
 
-    def __printout(self, s, prefix="", color=""):
+    def printout(self, s, prefix="", color=""):
         s = "%s%s" % (prefix, s)
         if self.terminal:
             out = s
@@ -75,51 +125,8 @@ class Report(object):
         logo = LOGO_SIMPLE
         if self.terminal and not self.log_on_file:
             logo = LOGO
-        self.__printout(logo, color='green')
+        self.printout(logo, color='green')
 
-    def write_header(self, conf_key, file_list):
-        """
-        Write BOM Header info in report file.
-        """
-
-        self.__printout("Report file.\n")
-        self.__printout("MergeBom Version: %s\n" % MERGEBOM_VER)
-
-        self.__printout("Date: %s\n" % self.report_date.strftime('%d/%m/%Y'))
-        self.__printout("." * 80)
-        self.__printout("\n")
-        self.__printout("\n")
-        self.__printout(":" * 80)
-
-
-        for  key in DEFAULT_PRJ_PARAM_FIELDS:
-            self.__printout("%s: %s\n" % key[DEFAULT_PRJ_PARAM_LABEL], '-',
-                            conf_key.get(key[DEFAULT_PRJ_PARAM_KEY], '-'))
-
-        self.__printout("\n")
-
-        self.__printout("Bom Files:\n")
-        for i in file_list:
-            self.__printout(" - %s\n" % i)
-
-        self.__printout("\n== Check Merged items: ==\n")
-        self.__printout("-" * 80)
-        self.__printout("\n")
-
-    def write_stats(self, stats):
-        """
-        Write BOM component Statistics
-        """
-        self.__printout("Total: %s\n" % stats['total'])
-
-    def warning(self, s, prefix=">> "):
-        self.__printout(s, prefix=prefix, color='yellow')
-
-    def error(self, s, prefix="!! "):
-        self.__printout(s, prefix=prefix, color='red')
-
-    def info(self, s, prefix="> "):
-        self.__printout(s, prefix=prefix, color='green')
 
 def write_xls(
         items,
@@ -432,7 +439,6 @@ class DataReader(object):
                         values.append(str(curr.value))
 
                 if len(values) != 0:
-                    print(values)
                     data.append(values)
 
             return data
