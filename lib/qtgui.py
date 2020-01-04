@@ -46,9 +46,9 @@ class MergeBomGUI(QDialog):
         self.sub_layout = QHBoxLayout()
         self.q1_layout = QVBoxLayout()
         self.q2_layout = QVBoxLayout()
-        self.log_layout = QVBoxLayout()
-        self.sub_layout.addLayout(self.q1_layout, 15)
-        self.sub_layout.addLayout(self.q2_layout, 85)
+        self.sub_top_q2_layout = QHBoxLayout()
+        self.sub_layout.addLayout(self.q1_layout, 10)
+        self.sub_layout.addLayout(self.q2_layout, 90)
 
         # Q1 right quadrant
         self.wk_path = QLineEdit(os.path.expanduser('~/'))
@@ -126,28 +126,34 @@ class MergeBomGUI(QDialog):
         self.param_table_view.setColumnCount(2)
         self.param_table_view.setHorizontalHeaderLabels(["Param", "Value"])
 
+        self.log_panel = QPlainTextEdit(self)
+        self.log_panel.setReadOnly(True)
+        self.log_panel.setFont(QFont("MesloLGS NF", 10))
+
         self.label_param = QLabel("Workspace: --")
         self.q2_layout.addWidget(self.label_param)
-        self.q2_layout.addWidget(QLabel("Project list:"))
-        self.q2_layout.addWidget(self.param_prj_list_view, 25)
-        self.q2_layout.addWidget(QLabel("Project params:"))
-        self.q2_layout.addWidget(self.param_table_view, 60)
+
+        sub_vbox = QVBoxLayout()
+        sub_vbox.addWidget(QLabel("Project list:"))
+        sub_vbox.addWidget(self.param_prj_list_view)
+        sub_vbox2 = QVBoxLayout()
+        sub_vbox2.addWidget(QLabel("Project params:"))
+        sub_vbox2.addWidget(self.param_table_view)
+        self.sub_top_q2_layout.addLayout(sub_vbox, 40)
+        self.sub_top_q2_layout.addLayout(sub_vbox2, 60)
+        self.q2_layout.addLayout(self.sub_top_q2_layout, 50)
+
         self.q2_layout.addWidget(QLabel("BOM list:"))
-        self.q2_layout.addWidget(self.param_bom_list_view, 15)
+        self.q2_layout.addWidget(self.param_bom_list_view, 20)
+        self.q2_layout.addWidget(self.log_panel, 30)
 
 
         l_logo = QLabel(LOGO)
         l_logo.setFont(QFont("MesloLGS NF", 10))
         l_logo.setAlignment(Qt.AlignCenter)
 
-        self.log_panel = QPlainTextEdit(self)
-        self.log_panel.setReadOnly(True)
-        self.log_panel.setFont(QFont("MesloLGS NF", 10))
-        self.log_layout.addWidget(self.log_panel)
-
         self.main_layout.addWidget(l_logo)
         self.main_layout.addLayout(self.sub_layout)
-        self.main_layout.addLayout(self.log_layout)
         self.setLayout(self.main_layout)
 
         self.setWindowTitle("Merge BOM GUI")
@@ -216,11 +222,11 @@ class MergeBomGUI(QDialog):
 
     @pyqtSlot()
     def __autoname_out_file(self):
-        if not self.merge_autoname.isChecked():
+        if self.merge_autoname.isChecked():
+            self.merge_bom_outname.setEnabled(False)
+        else:
             self.merge_bom_outname.setText("merged_bom.xlsx")
             self.merge_bom_outname.setEnabled(True)
-        else:
-            self.merge_bom_outname.setEnabled(False)
 
     @pyqtSlot()
     def __filterCheckbox(self):
@@ -284,6 +290,7 @@ class MergeBomGUI(QDialog):
             self.param_table_view.setItem(n, 0, tt)
             self.param_table_view.setItem(n, 1, QTableWidgetItem(d[i]))
 
+        self.param_table_view.resizeRowsToContents()
         self.param_bom_list_view.clear()
         root = self.prj_and_data[current_prj][0]
 
@@ -292,7 +299,8 @@ class MergeBomGUI(QDialog):
                               self.merge_only_csv.isChecked())
             self.param_bom_list_view.addItems(l[1])
 
-        self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % current_prj)
+        if self.merge_autoname.isChecked():
+            self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % current_prj)
 
 
 
