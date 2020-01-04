@@ -50,11 +50,8 @@ class MergeBomGUI(QDialog):
         self.sub_layout.addLayout(self.q1_layout, 10)
         self.sub_layout.addLayout(self.q2_layout, 90)
 
-        # Q1 right quadrant
-        self.wk_path = QLineEdit(os.path.expanduser('~/'))
-        btn = QPushButton("Select")
-        btn.setDefault(True)
 
+        # Q1 right quadrant
         self.merge_sel = QPushButton("Merge Select")
         self.merge_sel.setDefault(True)
         self.merge_sel.clicked.connect(self.__merge_bom_select)
@@ -104,9 +101,6 @@ class MergeBomGUI(QDialog):
         vbox.addWidget(self.deploy_sel)
         vbox.addWidget(self.deploy_all)
 
-        btn.clicked.connect(self.__select_wk_file)
-        self.q1_layout.addWidget(self.wk_path)
-        self.q1_layout.addWidget(btn)
         self.q1_layout.addWidget(self.merge_cmd_box)
         self.q1_layout.addWidget(self.deploy_cmd_box)
 
@@ -130,14 +124,11 @@ class MergeBomGUI(QDialog):
         self.log_panel.setReadOnly(True)
         self.log_panel.setFont(QFont("MesloLGS NF", 10))
 
-        self.label_param = QLabel("Workspace: --")
-        self.q2_layout.addWidget(self.label_param)
-
         sub_vbox = QVBoxLayout()
-        sub_vbox.addWidget(QLabel("Project list:"))
+        sub_vbox.addWidget(QLabel("Projects in wk:"))
         sub_vbox.addWidget(self.param_prj_list_view)
         sub_vbox2 = QVBoxLayout()
-        sub_vbox2.addWidget(QLabel("Project params:"))
+        sub_vbox2.addWidget(QLabel("Merge Param:"))
         sub_vbox2.addWidget(self.param_table_view)
         self.sub_top_q2_layout.addLayout(sub_vbox, 40)
         self.sub_top_q2_layout.addLayout(sub_vbox2, 60)
@@ -152,7 +143,20 @@ class MergeBomGUI(QDialog):
         l_logo.setFont(QFont("MesloLGS NF", 10))
         l_logo.setAlignment(Qt.AlignCenter)
 
+        # Altium workspace selection
+        self.wk_path = QLineEdit(os.path.expanduser('~/'))
+        btn = QPushButton("Select")
+        btn.setDefault(True)
+        btn.clicked.connect(self.__select_wk_file)
+        self.label_param = QLabel("Workspace: --")
+
+        top_hbox = QHBoxLayout()
+        top_hbox.addWidget(self.wk_path)
+        top_hbox.addWidget(btn)
+
         self.main_layout.addWidget(l_logo)
+        self.main_layout.addWidget(self.label_param)
+        self.main_layout.addLayout(top_hbox)
         self.main_layout.addLayout(self.sub_layout)
         self.setLayout(self.main_layout)
 
@@ -260,7 +264,7 @@ class MergeBomGUI(QDialog):
 
         self.param_prj_list_view.clear()
         root, ext = os.path.splitext(os.path.basename(line))
-        self.label_param.setText("Workspace: %s" % root)
+        self.label_param.setText("Workspace: %s" % root.upper())
 
         data = extrac_projects(line)
         root_path = os.path.dirname(line)
