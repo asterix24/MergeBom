@@ -44,6 +44,7 @@ class MergeBomGUI(QDialog):
     def __init__(self, parent=None):
         super(MergeBomGUI, self).__init__(parent)
 
+        self.tmp_bom_list = []
         self.prj_and_data = {}
         self.param_prj_list_view = None
         self.param_bom_list_view = None
@@ -244,6 +245,18 @@ class MergeBomGUI(QDialog):
         prjs = self.param_prj_list_view.selectedItems()
         if len(prjs) == 1:
             self.__on_click_list(prjs[0])
+        else:
+            if self.merge_only_csv.isChecked():
+                csv_l = []
+                for i in self.tmp_bom_list:
+                    _, ext = os.path.splitext(i)
+                    if ext == "*.csv":
+                        csv_l.append(bom)
+                self.param_bom_list_view.clear()
+                self.param_bom_list_view.addItems(csv_l)
+            else:
+                self.param_bom_list_view.addItems(self.tmp_bom_list)
+
 
     @pyqtSlot()
     def __check_same_dir(self):
@@ -293,6 +306,7 @@ class MergeBomGUI(QDialog):
                 self.deploy_cmd_box.setEnabled(True)
 
             elif file_type == SUPPORTED_FILE_TYPE[2]: # bom files
+                self.tmp_bom_list = []
                 self.param_prj_list_view.clear()
                 root_path = os.path.dirname(line[0])
                 self.selected_file.setText(root_path)
@@ -304,10 +318,11 @@ class MergeBomGUI(QDialog):
                     tt.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     self.param_table_view.setItem(n, 0, tt)
                     self.param_table_view.setItem(n, 1,
-                                                  QTableWidgetItem(DEFAULT_PRJ_PARAM_DICT[i]))
+                                QTableWidgetItem(DEFAULT_PRJ_PARAM_DICT[i]))
 
+                self.tmp_bom_list = line
                 self.merge_cmd_box.setEnabled(True)
-                self.deploy_cmd_box.setEnabled(True)
+                self.merge_only_csv.setChecked(False)
 
             else:
                 self.logger.warning("Unsupport file type.")
