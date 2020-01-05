@@ -4,7 +4,7 @@
 import sys
 import os
 from lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
-from lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE
+from lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
 from lib.cfg import CfgMergeBom
 from lib.report import ReportBase, write_xls
 from mergebom_class import *
@@ -16,6 +16,13 @@ from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, Q
                              QTableWidgetItem, QHeaderView)
 
 from PyQt5.QtGui import QIcon, QFont
+
+SUPPORTED_FILE_TYPE = [
+    "Altium WorkSpace (*.DsnWrk)",
+    "Altium Project (*.PrjPCB)",
+    "BOM files (*.xlsx *.xls *.csv)",
+]
+
 
 class Report(ReportBase):
     def __init__(self, logWidget):
@@ -125,7 +132,7 @@ class MergeBomGUI(QDialog):
         self.log_panel.setFont(QFont("MesloLGS NF", 10))
 
         sub_vbox = QVBoxLayout()
-        sub_vbox.addWidget(QLabel("Projects in wk:"))
+        sub_vbox.addWidget(QLabel("Projects:"))
         sub_vbox.addWidget(self.param_prj_list_view)
         sub_vbox2 = QVBoxLayout()
         sub_vbox2.addWidget(QLabel("Merge Param:"))
@@ -144,14 +151,14 @@ class MergeBomGUI(QDialog):
         l_logo.setAlignment(Qt.AlignCenter)
 
         # Altium workspace selection
-        self.wk_path = QLineEdit(os.path.expanduser('~/'))
+        self.selected_file = QLineEdit(os.path.expanduser('~/'))
         btn = QPushButton("Select")
         btn.setDefault(True)
         btn.clicked.connect(self.__select_wk_file)
         self.label_param = QLabel("Workspace: --")
 
         top_hbox = QHBoxLayout()
-        top_hbox.addWidget(self.wk_path)
+        top_hbox.addWidget(self.selected_file)
         top_hbox.addWidget(btn)
 
         self.main_layout.addWidget(l_logo)
@@ -247,15 +254,63 @@ class MergeBomGUI(QDialog):
 
     @pyqtSlot()
     def __select_wk_file(self):
-        app = FileDialog(rootpath=self.wk_path.text())
+        app = FileDialog(mode="multiopen", rootpath=self.selected_file.text())
         line = app.selection()
+        file_type = app.file_type()
 
-        if line is not None and line != "":
-            wk_file_name, _ = os.path.splitext(os.path.basename(line))
-            self.wk_path.setText(line)
-            self.__update_src_panel(line)
-            self.merge_cmd_box.setEnabled(True)
-            self.deploy_cmd_box.setEnabled(True)
+        if line is not None and len(line) > 0:
+            if file_type == SUPPORTED_FILE_TYPE[0]: # workspace
+                self.param_prj_list_view.clear()
+                if len(line) > 1:
+                    self.logger.warning("You should select only one Altium Workspace")
+                    return
+
+                line = line[0]
+                wk_file_name, _ = os.path.splitext(os.path.basename(line))
+                self.selected_file.setText(line)
+                self.__update_src_panel(line)
+                self.merge_cmd_box.setEnabled(True)
+                self.deploy_cmd_box.setEnabled(True)
+
+            elif file_type == SUPPORTED_FILE_TYPE[1]: # altium prj
+                root_path = os.path.dirname(line[0])
+                self.selected_file.setText(root_path)
+                for prj in line:
+                    root, _ = os.path.splitext(os.path.basename(prj))
+                    n, d = get_parameterFromPrj(root, prj)
+                    if n != "":
+                        self.prj_and_data[n] = [root_path, d]
+
+                        new_item = True
+                        for i in range(self.param_prj_list_view.count()):
+                            if self.param_prj_list_view.item(i).text() == n:
+                                new_item = False
+
+                        if new_item:
+                            self.param_prj_list_view.addItem(n)
+
+                self.merge_cmd_box.setEnabled(True)
+                self.deploy_cmd_box.setEnabled(True)
+
+            elif file_type == SUPPORTED_FILE_TYPE[2]: # bom files
+                self.param_prj_list_view.clear()
+                root_path = os.path.dirname(line[0])
+                self.selected_file.setText(root_path)
+
+                self.param_table_view.clearContents()
+                self.param_table_view.setRowCount(len(DEFAULT_PRJ_PARAM_DICT))
+                for n, i in enumerate(DEFAULT_PRJ_PARAM_DICT):
+                    tt = QTableWidgetItem(i)
+                    tt.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                    self.param_table_view.setItem(n, 0, tt)
+                    self.param_table_view.setItem(n, 1,
+                                                  QTableWidgetItem(DEFAULT_PRJ_PARAM_DICT[i]))
+
+                self.merge_cmd_box.setEnabled(True)
+                self.deploy_cmd_box.setEnabled(True)
+
+            else:
+                self.logger.warning("Unsupport file type.")
 
     def __update_src_panel(self, line):
         if line is None:
@@ -298,7 +353,8 @@ class MergeBomGUI(QDialog):
         self.param_bom_list_view.clear()
         root = self.prj_and_data[current_prj][0]
 
-        for pths in [root, os.path.join(root, "Assembly")]:
+        for pths in [root, os.path.join(root, "Assembly"),
+                        os.path.join(root, "..", "Assembly")]:
             l = find_bomfiles(pths, current_prj,
                               self.merge_only_csv.isChecked())
             self.param_bom_list_view.addItems(l[1])
@@ -307,25 +363,21 @@ class MergeBomGUI(QDialog):
             self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % current_prj)
 
 
-
-FILE_FILTERS = {
-    'workspace': "Altium WorkSpace (*.DsnWrk);;Altium Project (*.PrjPCB);;All Files (*)"
-}
-
+FILE_FILTERS = ";;".join(SUPPORTED_FILE_TYPE)
 
 class FileDialog(QWidget):
     """
     Common Dialog to select file from filesystem
     """
 
-    def __init__(self, title="Open File", ext_filter="workspace", mode='open', rootpath=os.path.expanduser("~")):
+    def __init__(self, title="Open File", mode='open', rootpath=os.path.expanduser("~")):
         super().__init__()
         self.title = title
         self.mode = mode
-        self.filter = ext_filter
         self.rootpath = rootpath
 
         self.file_path = None
+        self.filetype = None
 
         self.left = 10
         self.top = 10
@@ -338,9 +390,7 @@ class FileDialog(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        if self.mode == 'save':
-            self.__save_file_dialog()
-        elif self.mode == 'multiopen':
+        if self.mode == 'multiopen':
             self.__open_file_names_dialog()
         else:
             self.__open_file_name_dialog()
@@ -353,29 +403,30 @@ class FileDialog(QWidget):
         """
         return self.file_path
 
+    def file_type(self):
+        """
+        Return selected path
+        """
+        return self.filetype
+
     def __open_file_name_dialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getOpenFileName(
-            self, self.title, self.rootpath, FILE_FILTERS[self.filter], options=options)
+        filename, filter_type = QFileDialog.getOpenFileName(
+            self, self.title, self.rootpath, FILE_FILTERS, options=options)
+
         if filename:
             self.file_path = filename
+            self.filetype = filter_type
 
     def __open_file_names_dialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        files, _ = QFileDialog.getOpenFileNames(
-            self, self.title, self.rootpath, FILE_FILTERS[self.filter], options=options)
+        files, filter_type = QFileDialog.getOpenFileNames(
+            self, self.title, self.rootpath, FILE_FILTERS, options=options)
         if files:
             self.file_path = files
-
-    def __save_file_dialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getSaveFileName(
-            self, self.title, self.rootpath, FILE_FILTERS[self.filter], options=options)
-        if filename:
-            self.file_path = filename
+            self.filetype = filter_type
 
 
 def main_app():
