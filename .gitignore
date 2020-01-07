@@ -9,3 +9,6 @@ History/
 venv/
 .vscode/
 mergebom_report.txt
+.ycm_extra_conf.py
+.envrc
+tags
