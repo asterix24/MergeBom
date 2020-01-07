@@ -1,6 +1,7 @@
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
-from lib.qtgui import MergeBomGUI
 import sys
+
+from src.main.python.lib.qtgui import MergeBomGUI
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 if __name__ == '__main__':
     appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext

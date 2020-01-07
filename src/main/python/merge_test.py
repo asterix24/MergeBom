@@ -26,8 +26,8 @@ import tempfile
 import argparse
 import glob
 
-from lib import cfg, report, common
-from mergebom_class import *
+from src.main.python.lib import cfg, report, common
+from src.main.python.mergebom_class import *
 import tempfile
 from datetime import datetime
 

@@ -35,6 +35,7 @@ class Report(ReportBase):
     def write_logo(self):
         self.printout(LOGO_SIMPLE, color='green')
 
+
 class MergeBomGUI(QDialog):
     """
     GUI frontend of mergebom script.
@@ -49,7 +50,6 @@ class MergeBomGUI(QDialog):
         self.param_prj_list_view = None
         self.param_bom_list_view = None
 
-
         self.main_layout = QVBoxLayout()
         self.sub_layout = QHBoxLayout()
         self.q1_layout = QVBoxLayout()
@@ -57,7 +57,6 @@ class MergeBomGUI(QDialog):
         self.sub_top_q2_layout = QHBoxLayout()
         self.sub_layout.addLayout(self.q1_layout, 10)
         self.sub_layout.addLayout(self.q2_layout, 90)
-
 
         # Q1 right quadrant
         self.merge_sel = QPushButton("Merge Select")
@@ -146,7 +145,6 @@ class MergeBomGUI(QDialog):
         self.q2_layout.addWidget(self.param_bom_list_view, 20)
         self.q2_layout.addWidget(self.log_panel, 30)
 
-
         l_logo = QLabel(LOGO)
         l_logo.setFont(QFont("MesloLGS NF", 10))
         l_logo.setAlignment(Qt.AlignCenter)
@@ -196,7 +194,8 @@ class MergeBomGUI(QDialog):
         # Get prj info from view table
         param = {}
         for i in range(self.param_table_view.rowCount()):
-            param[self.param_table_view.item(i, 0).text()] = self.param_table_view.item(i, 1).text()
+            param[self.param_table_view.item(i, 0).text(
+            )] = self.param_table_view.item(i, 1).text()
 
         m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
                      logger=self.logger)
@@ -218,15 +217,14 @@ class MergeBomGUI(QDialog):
             try:
                 out = os.path.join(out_dir_path, outfilename)
                 write_xls(m.merge(),
-                         list(map(os.path.basename, bom_list)),
-                         self.config,
-                         out,
-                         param,
-                         diff=False,
-                         statistics=m.statistics())
+                          list(map(os.path.basename, bom_list)),
+                          self.config,
+                          out,
+                          param,
+                          diff=False,
+                          statistics=m.statistics())
             except Exception:
                 self.logger.error("Error while merging..\n")
-
 
     @pyqtSlot()
     def __deploy_bom_select(self):
@@ -261,7 +259,6 @@ class MergeBomGUI(QDialog):
             else:
                 self.param_bom_list_view.addItems(self.tmp_bom_list)
 
-
     @pyqtSlot()
     def __check_same_dir(self):
         if self.merge_same_dir.isChecked():
@@ -276,10 +273,11 @@ class MergeBomGUI(QDialog):
         file_type = app.file_type()
 
         if line is not None and len(line) > 0:
-            if file_type == SUPPORTED_FILE_TYPE[0]: # workspace
+            if file_type == SUPPORTED_FILE_TYPE[0]:  # workspace
                 self.param_prj_list_view.clear()
                 if len(line) > 1:
-                    self.logger.warning("You should select only one Altium Workspace")
+                    self.logger.warning(
+                        "You should select only one Altium Workspace")
                     return
 
                 line = line[0]
@@ -289,7 +287,7 @@ class MergeBomGUI(QDialog):
                 self.merge_cmd_box.setEnabled(True)
                 self.deploy_cmd_box.setEnabled(True)
 
-            elif file_type == SUPPORTED_FILE_TYPE[1]: # altium prj
+            elif file_type == SUPPORTED_FILE_TYPE[1]:  # altium prj
                 root_path = os.path.dirname(line[0])
                 self.selected_file.setText(root_path)
                 for prj in line:
@@ -309,7 +307,7 @@ class MergeBomGUI(QDialog):
                 self.merge_cmd_box.setEnabled(True)
                 self.deploy_cmd_box.setEnabled(True)
 
-            elif file_type == SUPPORTED_FILE_TYPE[2]: # bom files
+            elif file_type == SUPPORTED_FILE_TYPE[2]:  # bom files
                 self.tmp_bom_list = []
                 self.param_prj_list_view.clear()
                 root_path = os.path.dirname(line[0])
@@ -322,7 +320,7 @@ class MergeBomGUI(QDialog):
                     tt.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                     self.param_table_view.setItem(n, 0, tt)
                     self.param_table_view.setItem(n, 1,
-                                QTableWidgetItem(DEFAULT_PRJ_PARAM_DICT[i]))
+                                                  QTableWidgetItem(DEFAULT_PRJ_PARAM_DICT[i]))
 
                 self.tmp_bom_list = line
                 self.merge_cmd_box.setEnabled(True)
@@ -343,7 +341,8 @@ class MergeBomGUI(QDialog):
         data = extrac_projects(line)
         root_path = os.path.dirname(line)
         for prj in data:
-            n, d = get_parameterFromPrj(prj[0], os.path.join(root_path, prj[1]))
+            n, d = get_parameterFromPrj(
+                prj[0], os.path.join(root_path, prj[1]))
 
             if n != "":
                 self.prj_and_data[n] = [root_path, d]
@@ -373,7 +372,7 @@ class MergeBomGUI(QDialog):
         root = self.prj_and_data[current_prj][0]
 
         for pths in [root, os.path.join(root, "Assembly"),
-                        os.path.join(root, "..", "Assembly")]:
+                     os.path.join(root, "..", "Assembly")]:
             l = find_bomfiles(pths, current_prj,
                               self.merge_only_csv.isChecked())
             self.param_bom_list_view.addItems(l[1])
@@ -383,6 +382,7 @@ class MergeBomGUI(QDialog):
 
 
 FILE_FILTERS = ";;".join(SUPPORTED_FILE_TYPE)
+
 
 class FileDialog(QWidget):
     """

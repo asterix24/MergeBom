@@ -139,7 +139,8 @@ class MergeBom(object):
                     if row[designator].lower() == 'designator':
                         continue
                 except IndexError:
-                    logger.warning("Skip row for missed data, could be invalid row.. [%s]\n" % row)
+                    logger.warning(
+                        "Skip row for missed data, could be invalid row.. [%s]\n" % row)
                     continue
 
                 if filter(lambda x: x, row):
@@ -193,7 +194,8 @@ class MergeBom(object):
                         s += "%s, %s, %s\n" % (c.group(), designator,
                                                table_dict[designator])
                         self.logger.error(s)
-                        raise Exception("Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
+                        raise Exception(
+                            "Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
                     if group_key == '':
                         self.logger.warning(
@@ -210,7 +212,8 @@ class MergeBom(object):
                     s = "GROUP key not FOUND!\n"
                     s += "%s\n" % designator
                     self.logger.error(s)
-                    raise Exception("Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
+                    raise Exception(
+                        "Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
     def table_grouped(self):
         return self.grouped_items
@@ -327,7 +330,8 @@ class MergeBom(object):
                                                 raw_value
 
                             except IndexError:
-                                raise Exception("Error: Impossible to update extra column. This as bug!")
+                                raise Exception(
+                                    "Error: Impossible to update extra column. This as bug!")
                     else:
                         row = [item[QUANTITY]] + \
                             [0] * len(self.files) + \
@@ -363,7 +367,8 @@ class MergeBom(object):
         for category in self.categories:
             if category in self.table:
                 for n, item in enumerate(self.table[category]):
-                    self.table[category][n][self.TABLE_DESIGNATOR] = order_designator(item[self.TABLE_DESIGNATOR], self.logger)
+                    self.table[category][n][self.TABLE_DESIGNATOR] = order_designator(
+                        item[self.TABLE_DESIGNATOR], self.logger)
 
                 # Convert all designator in a number to be ordered
                 if category in ["R", "C", "L", "Y"]:
@@ -393,7 +398,8 @@ class MergeBom(object):
     def diff(self):
         if len(self.table_list) > 2:
             self.logger.error("To much file ti compare!\n")
-            raise Exception("Error: Diff Mode is supported between two file, and no more.")
+            raise Exception(
+                "Error: Diff Mode is supported between two file, and no more.")
 
         diff = {}
         self.logger.warning("%s\n" % self.files.items())

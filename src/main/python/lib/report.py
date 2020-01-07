@@ -36,11 +36,11 @@ from src.main.python.lib.cfg import DEFAULT_PRJ_PARAM_DICT, DEFAULT_PRJ_PARAM_KE
 from src.main.python.lib.cfg import CfgMergeBom
 
 
-
 class ReportBase(object):
     """
     Merge Bom report generator.
     """
+
     def __init__(self, report_date=None):
         self.report_date = report_date
         if report_date is None:
@@ -60,10 +60,9 @@ class ReportBase(object):
         self.printout("\n")
         self.printout(":" * 80)
 
-
-        for  key in DEFAULT_PRJ_PARAM_FIELDS:
+        for key in DEFAULT_PRJ_PARAM_FIELDS:
             self.printout("%s: %s\n" % key[DEFAULT_PRJ_PARAM_LABEL], '-',
-                            conf_key.get(key[DEFAULT_PRJ_PARAM_KEY], '-'))
+                          conf_key.get(key[DEFAULT_PRJ_PARAM_KEY], '-'))
 
         self.printout("\n")
 
@@ -89,6 +88,7 @@ class ReportBase(object):
 
     def info(self, s, prefix="> "):
         self.printout(s, prefix=prefix, color='green')
+
 
 class Report(ReportBase):
     def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
@@ -288,9 +288,9 @@ def write_xls(
             '',
             '',
         ]
-        for  key in DEFAULT_PRJ_PARAM_FIELDS:
+        for key in DEFAULT_PRJ_PARAM_FIELDS:
             info.append("%s: %s" % (key[DEFAULT_PRJ_PARAM_LABEL],
-                            prj_param_dict.get(key[DEFAULT_PRJ_PARAM_KEY], '-')))
+                                    prj_param_dict.get(key[DEFAULT_PRJ_PARAM_KEY], '-')))
 
         info.append('BOM files:')
         for i in file_list:

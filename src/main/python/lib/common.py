@@ -18,8 +18,10 @@
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
 
+import math
 import re
 from src.main.python.lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETTER
+
 
 def order_designator(ref_str, logger):
     ref_str = ref_str.replace(" ", "")
@@ -33,13 +35,15 @@ def order_designator(ref_str, logger):
 
     return ", ".join(d)
 
+
 def value_toFloat(l, unit, logger):
     acc = 0
     value = "0"
     mult = 1
     div = 1
     if unit not in CATEGORY_TO_UNIT:
-        s = "Unknow category [%s] allowed are[%s]\n" % (unit, CATEGORY_TO_UNIT.keys())
+        s = "Unknow category [%s] allowed are[%s]\n" % (
+            unit, CATEGORY_TO_UNIT.keys())
         logger.error(s)
         raise Exception(s)
 
@@ -79,7 +83,8 @@ def value_toFloat(l, unit, logger):
                 flag = True
                 continue
             except ValueError as e:
-                s = "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (l, acc, mult, value, div, e)
+                s = "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
+                    l, acc, mult, value, div, e)
                 logger.error(s)
                 raise Exception(s)
 
@@ -104,8 +109,6 @@ def value_toFloat(l, unit, logger):
         return -2, l, note
 
     return value, CATEGORY_TO_UNIT[unit], note
-
-import math
 
 
 def eng_string(x):
@@ -179,4 +182,3 @@ def value_toStr(l, logger):
     if note:
         space = " "
     return "%s%s%s%s%s" % (sign, number, unit, space, " ".join(note))
-
