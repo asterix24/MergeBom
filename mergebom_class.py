@@ -49,7 +49,7 @@ def dump(d):
 
 
 class MergeBom(object):
-    def __init__(self, list_bom_files, config, is_csv=False, logger=None, terminal=True):
+    def __init__(self, list_bom_files, config, logger, is_csv=False, terminal=True):
         """
         Data structure
 
@@ -76,15 +76,7 @@ class MergeBom(object):
         self.extra_column = []
         self.stats = {}
         self.terminal = terminal
-
-        if logger is None:
-            print()
-            print("Error you should specify a logger class")
-            print()
-            sys.exit(1)
-
         self.logger = logger
-
         self.config = config
         self.categories = self.config.categories()
 
@@ -143,7 +135,7 @@ class MergeBom(object):
                 for i in VALID_KEYS:
                     self.logger.warning(" %s\n" % i)
 
-                sys.exit(1)
+                raise Exception("Error: missing Header in bom file.")
 
             table_dict = {}
             for row in data:
@@ -202,10 +194,11 @@ class MergeBom(object):
                     group_key = self.config.check_category(c.group().upper())
 
                     if group_key is None:
-                        self.logger.error("GROUP key not FOUND!\n")
-                        self.logger.error("%s, %s, %s\n" % (c.group(), designator,
-                                                            table_dict[designator]))
-                        sys.exit(1)
+                        s = "GROUP key not FOUND!\n"
+                        s += "%s, %s, %s\n" % (c.group(), designator,
+                                               table_dict[designator])
+                        self.logger.error(s)
+                        raise Exception("Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
                     if group_key == '':
                         self.logger.warning(
@@ -219,9 +212,10 @@ class MergeBom(object):
                         self.grouped_items[group_key] = [
                             table_dict[designator]]
                 else:
-                    self.logger.error("GROUP key not FOUND!\n")
-                    self.logger.error(designator)
-                    sys.exit(1)
+                    s = "GROUP key not FOUND!\n"
+                    s += "%s\n" % designator
+                    self.logger.error(s)
+                    raise Exception("Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
     def table_grouped(self):
         return self.grouped_items
@@ -338,9 +332,7 @@ class MergeBom(object):
                                                 raw_value
 
                             except IndexError:
-                                print(
-                                    "Error! Impossible to update extra column. This as bug!")
-                                sys.exit(1)
+                                raise Exception("Error: Impossible to update extra column. This as bug!")
                     else:
                         row = [item[QUANTITY]] + \
                             [0] * len(self.files) + \
@@ -406,7 +398,8 @@ class MergeBom(object):
     def diff(self):
         if len(self.table_list) > 2:
             self.logger.error("To much file ti compare!\n")
-            sys.exit(1)
+            raise Exception("Error: Diff Mode is supported between two file, and no more.")
+
         diff = {}
         self.logger.warning("%s\n" % self.files.items())
         for i in self.files.items():

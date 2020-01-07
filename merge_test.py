@@ -748,10 +748,23 @@ class TestMergeBom(unittest.TestCase):
             "test/category_sysexit.xls",
         ]
 
-        with self.assertRaises(SystemExit):
+        check = "Error: MISSING GROUP key! you MUST add it to config\n"
+        check += "GROUP key not FOUND!\n"
+        check += "EAS, EASY0, ['category_sysexit.xls', 1, 'EASY0', 'bug di EASY', '16MHz', 'CRYSTAL_3.2X1.5MM_2P_SMD']\n"
+
+        try:
             print("Test should make sys Exit for not founded key.")
             m = MergeBom(file_list, self.config, logger=self.logger)
             d = m.merge()
+        except Exception as e:
+            s = "%s" % e
+            print("+"*80)
+            print(s)
+            print("+"*80)
+            print(check)
+            print("+"*80)
+
+            self.assertEqual(s.strip(), check.strip())
 
         file_list = [
             "test/category.xls",

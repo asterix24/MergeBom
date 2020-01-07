@@ -215,14 +215,18 @@ class MergeBomGUI(QDialog):
                 self.log_panel.appendPlainText("Invalid out file name.")
                 return
 
-            out = os.path.join(out_dir_path, outfilename)
-            write_xls(m.merge(),
-                     list(map(os.path.basename, bom_list)),
-                     self.config,
-                     out,
-                     param,
-                     diff=False,
-                     statistics=m.statistics())
+            try:
+                out = os.path.join(out_dir_path, outfilename)
+                write_xls(m.merge(),
+                         list(map(os.path.basename, bom_list)),
+                         self.config,
+                         out,
+                         param,
+                         diff=False,
+                         statistics=m.statistics())
+            except Exception:
+                self.logger.error("Error while merging..\n")
+
 
     @pyqtSlot()
     def __deploy_bom_select(self):
