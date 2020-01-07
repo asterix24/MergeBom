@@ -20,7 +20,6 @@
 
 import sys
 import os
-import re
 import argparse
 from datetime import datetime
 
@@ -53,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--out-filename", dest="out_filename",
                         help="Out file name", default=None)
 
-    parser.add_argument("-l","--log-on-file", dest="log_on_file", action="store_true",
+    parser.add_argument("-l", "--log-on-file", dest="log_on_file", action="store_true",
                         help="Log all output in file (by default megebom_report.txt)", default=True)
     parser.add_argument("-p", "--working-dir", dest="working_dir",
                         help="Mergebom working directory", default="./")
@@ -85,7 +84,7 @@ if __name__ == "__main__":
                         help="Display hw verision in file name if it is avaible.", default=False)
 
     # Diff Mode
-    parser.add_argument("-d","--diff", dest="diff", action="store_true",
+    parser.add_argument("-d", "--diff", dest="diff", action="store_true",
                         help="Generate diff from two specified BOMs", default=False)
 
     parser.add_argument('file_to_merge', metavar='N', nargs='*',
@@ -102,11 +101,12 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if options.report_date_timestamp is not None:
-        options.report_date_timestamp = datetime.strptime(options.report_date_timestamp, '%d/%m/%Y')
+        options.report_date_timestamp = datetime.strptime(
+            options.report_date_timestamp, '%d/%m/%Y')
 
-    logger = Report(log_on_file = options.log_on_file,
-                           terminal = True,
-                           report_date = options.report_date_timestamp)
+    logger = Report(log_on_file=options.log_on_file,
+                    terminal=True,
+                    report_date=options.report_date_timestamp)
     logger.write_logo()
 
     config = CfgMergeBom(options.merge_cfg, logger=logger)
@@ -114,7 +114,8 @@ if __name__ == "__main__":
     # ===== AltiumWorkspace =============
     if options.workspace_file is not None:
         if options.diff:
-            logger.error("Invalid switch [--diff], could not run diff mode when merge from altium workspase")
+            logger.error(
+                "Invalid switch [--diff], could not run diff mode when merge from altium workspase")
             sys.exit(1)
 
         bom_dataset = cfg.cfg_altiumWorkspace(options.workspace_file,
@@ -184,7 +185,8 @@ if __name__ == "__main__":
             param = item[2]
 
             if len(bom) > 1:
-                logger.warning("There are more than one bom to merge, what wolud I do?\n")
+                logger.warning(
+                    "There are more than one bom to merge, what wolud I do?\n")
                 logger.info("Found following files:\n")
                 for i in bom:
                     logger.info(i)
@@ -209,16 +211,17 @@ if __name__ == "__main__":
             m = MergeBom(bom, config, is_csv=options.csv_file, logger=logger)
             out_merge_file = "%s%s.xlsx" % (options.bom_prefix, name)
             wk_path = os.path.dirname(options.workspace_file)
-            out = os.path.join(wk_path, options.bom_search_dir, name, out_merge_file)
+            out = os.path.join(
+                wk_path, options.bom_search_dir, name, out_merge_file)
             write_xls(m.merge(),
-                     map(os.path.basename, bom),
-                     config,
-                     out,
-                     param,
-                     diff=False,
-                     extra_data=None,
-                     statistics=m.statistics(),
-                     headers=cfg.VALID_KEYS)
+                      map(os.path.basename, bom),
+                      config,
+                      out,
+                      param,
+                      diff=False,
+                      extra_data=None,
+                      statistics=m.statistics(),
+                      headers=cfg.VALID_KEYS)
 
             if options.replace_original:
                 for i in bom:
@@ -243,12 +246,15 @@ if __name__ == "__main__":
                                                                options.prj_hw_ver)
 
     if options.prj_hw_ver is None:
-        logger.warning("Could be nice to specify a hardware version for better tracking.")
+        logger.warning(
+            "Could be nice to specify a hardware version for better tracking.")
 
     if options.prj_name is None:
-        logger.warning("Could be nice to specify a project name for better tracking.")
+        logger.warning(
+            "Could be nice to specify a project name for better tracking.")
 
-    m = MergeBom(options.file_to_merge, config, is_csv=options.csv_file, logger=logger)
+    m = MergeBom(options.file_to_merge, config,
+                 is_csv=options.csv_file, logger=logger)
 
     items = m.merge()
     file_list = list(map(os.path.basename, options.file_to_merge))
@@ -276,13 +282,11 @@ if __name__ == "__main__":
     }
 
     write_xls(items,
-             file_list,
-             config,
-             os.path.join(options.working_dir, options.out_filename),
-             param,
-             diff=diff_mode,
-             extra_data=extra_data,
-             statistics=m.statistics(),
-             headers=header_data)
-
-
+              file_list,
+              config,
+              os.path.join(options.working_dir, options.out_filename),
+              param,
+              diff=diff_mode,
+              extra_data=extra_data,
+              statistics=m.statistics(),
+              headers=header_data)
