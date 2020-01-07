@@ -8,6 +8,7 @@ from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_P
 from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.report import ReportBase, write_xls
 from src.main.python.mergebom_class import *
+import src.main.python.resources
 
 from PyQt5.QtCore import QDateTime, Qt, pyqtSlot
 from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, QGroupBox,
@@ -15,7 +16,7 @@ from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, Q
                              QTableWidget, QVBoxLayout, QWidget, QFileDialog, QListWidget,
                              QTableWidgetItem, QHeaderView)
 
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
 
 SUPPORTED_FILE_TYPE = [
     "Altium WorkSpace (*.DsnWrk)",
@@ -50,6 +51,7 @@ class MergeBomGUI(QDialog):
         self.param_prj_list_view = None
         self.param_bom_list_view = None
 
+        QFontDatabase.addApplicationFont(":/fonts/MesloLGS NF Regular.ttf")
         self.main_layout = QVBoxLayout()
         self.sub_layout = QHBoxLayout()
         self.q1_layout = QVBoxLayout()
