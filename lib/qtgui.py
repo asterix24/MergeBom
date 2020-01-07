@@ -426,7 +426,7 @@ class FileDialog(QWidget):
 
     def __open_file_name_dialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         filename, filter_type = QFileDialog.getOpenFileName(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
 
@@ -436,7 +436,7 @@ class FileDialog(QWidget):
 
     def __open_file_names_dialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         files, filter_type = QFileDialog.getOpenFileNames(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
         if files:
