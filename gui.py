@@ -4,6 +4,6 @@
 MergeBom Gui frontend
 """
 
-from lib.qtgui import main_app
+from src.main.python.lib.qtgui import main_app
 
 main_app()

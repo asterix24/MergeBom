@@ -23,18 +23,17 @@ MergeBOM Report module.
 Utils to generate and read excel BOM files.
 """
 
-import codecs
 import sys
 import re
 import datetime
 import xlrd
 import xlsxwriter
 import csv
-from lib.cfg import VALID_KEYS, LOGO_SIMPLE, LOGO, NP_REGEXP
-from lib.cfg import DEFAULT_PRJ_PARAM_FIELDS
-from lib.cfg import DEFAULT_PRJ_PARAM_DICT, DEFAULT_PRJ_PARAM_KEY, DEFAULT_PRJ_PARAM_LABEL
-from lib.cfg import CfgMergeBom
 from termcolor import colored
+from src.main.python.lib.cfg import VALID_KEYS, LOGO_SIMPLE, LOGO, NP_REGEXP
+from src.main.python.lib.cfg import DEFAULT_PRJ_PARAM_FIELDS
+from src.main.python.lib.cfg import DEFAULT_PRJ_PARAM_DICT, DEFAULT_PRJ_PARAM_KEY, DEFAULT_PRJ_PARAM_LABEL
+from src.main.python.lib.cfg import CfgMergeBom
 
 
 

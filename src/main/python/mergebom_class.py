@@ -18,17 +18,12 @@
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
 
-import sys
 import os
 import re
-import datetime
-import tempfile
-import shutil
-import pprint
-from lib.common import value_toStr, value_toFloat, order_designator
-from lib.report import DataReader
-from lib.cfg import CfgMergeBom
-from lib.cfg import VALID_KEYS, NOT_POPULATE_KEY, EXTRA_KEYS, NP_REGEXP, VALID_KEYS_CODES
+from src.main.python.lib.common import value_toStr, value_toFloat, order_designator
+from src.main.python.lib.report import DataReader
+from src.main.python.lib.cfg import CfgMergeBom
+from src.main.python.lib.cfg import VALID_KEYS, NOT_POPULATE_KEY, EXTRA_KEYS, NP_REGEXP, VALID_KEYS_CODES
 
 # Exchange data layout after file import
 FILENAME = 0

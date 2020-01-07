@@ -18,12 +18,8 @@
 # Copyright 2015 Daniele Basile <asterix24@gmail.com>
 #
 
-import sys
-import os
 import re
-import datetime
-
-from lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETTER
+from src.main.python.lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETTER
 
 def order_designator(ref_str, logger):
     ref_str = ref_str.replace(" ", "")
@@ -31,8 +27,10 @@ def order_designator(ref_str, logger):
     try:
         d = sorted(l, key=lambda x: int(re.search('[0-9]+', x).group()))
     except TypeError:
-        logger.error("Could not order Designators [%s]\n" % l)
-        sys.exit(1)
+        s = "Could not order Designators [%s]\n" % l
+        logger.error(s)
+        raise Exception(s)
+
     return ", ".join(d)
 
 def value_toFloat(l, unit, logger):
@@ -41,9 +39,9 @@ def value_toFloat(l, unit, logger):
     mult = 1
     div = 1
     if unit not in CATEGORY_TO_UNIT:
-        logger.error("Unknow category [%s] allowed are[%s]\n" % (
-            unit, CATEGORY_TO_UNIT.keys()))
-        sys.exit(1)
+        s = "Unknow category [%s] allowed are[%s]\n" % (unit, CATEGORY_TO_UNIT.keys())
+        logger.error(s)
+        raise Exception(s)
 
     # K is always chilo .. so fix case
     l = l.replace("K", "k")
@@ -81,9 +79,9 @@ def value_toFloat(l, unit, logger):
                 flag = True
                 continue
             except ValueError as e:
-                logger.error("l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
-                    l, acc, mult, value, div, e))
-                sys.exit(1)
+                s = "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (l, acc, mult, value, div, e)
+                logger.error(s)
+                raise Exception(s)
 
         # skip measure unit, we use only numbers
         if re.search("[a-zA-z]", c) is not None:
@@ -139,8 +137,9 @@ def value_toStr(l, logger):
     try:
         value, unit, note = l
     except ValueError as e:
-        logger.error("Unpack error %s {%s}\n" % (l, e))
-        sys.exit(1)
+        s = "Unpack error %s {%s}\n" % (l, e)
+        logger.error(s)
+        raise Exception(s)
 
     if value in [-1, -2]:
         return "%s %s" % (unit, " ".join(note))

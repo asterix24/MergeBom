@@ -20,15 +20,14 @@
 
 import sys
 import os
-import glob
-import getopt
-import argparse
 import re
-from lib.cfg import MERGEBOM_VER
-from lib.cfg import CfgMergeBom
-from lib.report import Report, write_xls
-from mergebom_class import *
+import argparse
 from datetime import datetime
+
+from src.main.python.lib.cfg import MERGEBOM_VER
+from src.main.python.lib.cfg import CfgMergeBom
+from src.main.python.lib.report import Report, write_xls
+from src.main.python.mergebom_class import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

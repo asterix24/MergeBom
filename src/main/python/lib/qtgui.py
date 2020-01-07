@@ -3,11 +3,11 @@
 
 import sys
 import os
-from lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
-from lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
-from lib.cfg import CfgMergeBom
-from lib.report import ReportBase, write_xls
-from mergebom_class import *
+from src.main.python.lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
+from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
+from src.main.python.lib.cfg import CfgMergeBom
+from src.main.python.lib.report import ReportBase, write_xls
+from src.main.python.mergebom_class import *
 
 from PyQt5.QtCore import QDateTime, Qt, pyqtSlot
 from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, QGroupBox,
