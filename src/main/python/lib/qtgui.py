@@ -3,7 +3,8 @@
 
 import sys
 import os
-from src.main.python.lib.cfg import LOGO, extrac_projects, get_parameterFromPrj, find_bomfiles
+from src.main.python.lib.cfg import LOGO, MERGEBOM_VER
+from src.main.python.lib.cfg import extrac_projects, get_parameterFromPrj, find_bomfiles
 from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
 from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.report import ReportBase, write_xls
@@ -70,10 +71,13 @@ class MergeBomGUI(QDialog):
 
         self.merge_only_csv = QCheckBox("CSV Filter", self)
         self.merge_only_csv.setChecked(True)
-        self.merge_only_csv.stateChanged.connect(self.__filterCheckbox)
+        self.merge_only_csv.stateChanged.connect(self.__filter_checkbox)
         self.merge_same_dir = QCheckBox("Merge in same directory", self)
         self.merge_same_dir.stateChanged.connect(self.__check_same_dir)
         self.merge_same_dir_path = QLineEdit(os.path.expanduser('~/'))
+        self.merge_same_dir_path_select = QPushButton("Select")
+        self.merge_same_dir_path_select.clicked.connect(
+            self.__select_merge_path)
         self.delete_merged = QCheckBox("Delete Mergeded", self)
         self.merge_bom_outname_label = QLabel("Merged out file name:")
         self.merge_bom_outname = QLineEdit("merged_bom.xlsx")
@@ -81,13 +85,6 @@ class MergeBomGUI(QDialog):
         self.merge_autoname = QCheckBox("Autoname out file", self)
         self.merge_autoname.setChecked(True)
         self.merge_autoname.stateChanged.connect(self.__autoname_out_file)
-
-        self.deploy_sel = QPushButton("Deploy Select")
-        self.deploy_sel.setDefault(True)
-        self.deploy_sel.clicked.connect(self.__deploy_bom_select)
-        self.deploy_all = QPushButton("Deploy All")
-        self.deploy_all.setDefault(True)
-        self.deploy_all.clicked.connect(self.__deploy_bom_all)
 
         self.merge_cmd_box = QGroupBox("MergeBOM Commands")
         self.merge_cmd_box.setEnabled(False)
@@ -98,10 +95,25 @@ class MergeBomGUI(QDialog):
         vbox.addWidget(self.merge_only_csv)
         vbox.addWidget(self.merge_same_dir)
         vbox.addWidget(self.merge_same_dir_path)
+        vbox.addWidget(self.merge_same_dir_path_select)
         vbox.addWidget(self.delete_merged)
         vbox.addWidget(self.merge_bom_outname_label)
         vbox.addWidget(self.merge_bom_outname)
         vbox.addWidget(self.merge_autoname)
+
+        self.deploy_sel = QPushButton("Deploy Select")
+        self.deploy_sel.setDefault(True)
+        self.deploy_sel.clicked.connect(self.__deploy_bom_select)
+        self.deploy_all = QPushButton("Deploy All")
+        self.deploy_all.setDefault(True)
+        self.deploy_all.clicked.connect(self.__deploy_bom_all)
+        self.deploy_path_label = QLabel("Deploy Path:")
+        self.deploy_path = QLineEdit(os.path.join(
+            os.path.expanduser('~/'), "Dropbox", "FileProgetto"))
+        self.deploy_path_select = QPushButton("Select")
+        self.deploy_path_select.clicked.connect(self.__select_deploy_path)
+        self.deploy_customer_name_label = QLabel("Customer Name:")
+        self.deploy_customer_name = QLineEdit("Customer")
 
         self.deploy_cmd_box = QGroupBox("Deploy Commands")
         self.deploy_cmd_box.setEnabled(False)
@@ -109,13 +121,29 @@ class MergeBomGUI(QDialog):
         self.deploy_cmd_box.setLayout(vbox)
         vbox.addWidget(self.deploy_sel)
         vbox.addWidget(self.deploy_all)
+        vbox.addWidget(self.deploy_path_label)
+        vbox.addWidget(self.deploy_path)
+        vbox.addWidget(self.deploy_path_select)
+        vbox.addWidget(self.deploy_customer_name_label)
+        vbox.addWidget(self.deploy_customer_name)
 
-        self.q1_layout.addWidget(self.merge_cmd_box)
         self.q1_layout.addWidget(self.deploy_cmd_box)
-
+        self.q1_layout.addWidget(self.merge_cmd_box)
         self.q1_layout.addStretch(1)
 
         # Q2 left quadrant
+
+        # Altium workspace selection
+        self.selected_file = QLineEdit(os.path.expanduser('~/'))
+        btn = QPushButton("Select")
+        btn.setDefault(True)
+        btn.clicked.connect(self.__select_wk_file)
+        self.label_param = QLabel(
+            "Select Altium workspace, project or BOM files: --")
+        top_hbox = QHBoxLayout()
+        top_hbox.addWidget(self.selected_file)
+        top_hbox.addWidget(btn)
+
         self.param_prj_list_view = QListWidget()
         self.param_prj_list_view.itemClicked.connect(self.__on_click_list)
         self.param_prj_list_view.currentTextChanged.connect(
@@ -141,8 +169,10 @@ class MergeBomGUI(QDialog):
         sub_vbox2.addWidget(self.param_table_view)
         self.sub_top_q2_layout.addLayout(sub_vbox, 40)
         self.sub_top_q2_layout.addLayout(sub_vbox2, 60)
-        self.q2_layout.addLayout(self.sub_top_q2_layout, 50)
 
+        self.q2_layout.addWidget(self.label_param)
+        self.q2_layout.addLayout(top_hbox)
+        self.q2_layout.addLayout(self.sub_top_q2_layout, 50)
         self.q2_layout.addWidget(QLabel("BOM list:"))
         self.q2_layout.addWidget(self.param_bom_list_view, 20)
         self.q2_layout.addWidget(self.log_panel, 30)
@@ -150,21 +180,12 @@ class MergeBomGUI(QDialog):
         l_logo = QLabel(LOGO)
         l_logo.setFont(QFont("MesloLGS NF", 10))
         l_logo.setAlignment(Qt.AlignCenter)
-
-        # Altium workspace selection
-        self.selected_file = QLineEdit(os.path.expanduser('~/'))
-        btn = QPushButton("Select")
-        btn.setDefault(True)
-        btn.clicked.connect(self.__select_wk_file)
-        self.label_param = QLabel("Workspace: --")
-
-        top_hbox = QHBoxLayout()
-        top_hbox.addWidget(self.selected_file)
-        top_hbox.addWidget(btn)
+        l_version = QLabel("~ asterix24 ~\n- %s -\n" % MERGEBOM_VER)
+        l_version.setFont(QFont("MesloLGS NF", 14))
+        l_version.setAlignment(Qt.AlignCenter)
 
         self.main_layout.addWidget(l_logo)
-        self.main_layout.addWidget(self.label_param)
-        self.main_layout.addLayout(top_hbox)
+        self.main_layout.addWidget(l_version)
         self.main_layout.addLayout(self.sub_layout)
         self.setLayout(self.main_layout)
 
@@ -225,8 +246,9 @@ class MergeBomGUI(QDialog):
                           param,
                           diff=False,
                           statistics=m.statistics())
-            except Exception:
+            except Exception as merge_excp:
                 self.logger.error("Error while merging..\n")
+                self.logger.error(merge_excp)
 
     @pyqtSlot()
     def __deploy_bom_select(self):
@@ -245,7 +267,7 @@ class MergeBomGUI(QDialog):
             self.merge_bom_outname.setEnabled(True)
 
     @pyqtSlot()
-    def __filterCheckbox(self):
+    def __filter_checkbox(self):
         prjs = self.param_prj_list_view.selectedItems()
         if len(prjs) == 1:
             self.__on_click_list(prjs[0])
@@ -255,7 +277,7 @@ class MergeBomGUI(QDialog):
                 for i in self.tmp_bom_list:
                     _, ext = os.path.splitext(i)
                     if ext == "*.csv":
-                        csv_l.append(bom)
+                        csv_l.append(i)
                 self.param_bom_list_view.clear()
                 self.param_bom_list_view.addItems(csv_l)
             else:
@@ -265,8 +287,24 @@ class MergeBomGUI(QDialog):
     def __check_same_dir(self):
         if self.merge_same_dir.isChecked():
             self.merge_same_dir_path.setEnabled(False)
+            self.merge_same_dir_path_select.setEnabled(False)
         else:
             self.merge_same_dir_path.setEnabled(True)
+            self.merge_same_dir_path_select.setEnabled(True)
+
+    @pyqtSlot()
+    def __select_merge_path(self):
+        app = FileDialog(mode="dir", rootpath=self.merge_same_dir_path.text())
+        d = app.directory()
+        if d is not None and d != "":
+            self.merge_same_dir_path.setText(d)
+
+    @pyqtSlot()
+    def __select_deploy_path(self):
+        app = FileDialog(mode="dir", rootpath=self.deploy_path.text())
+        d = app.directory()
+        if d is not None and d != "":
+            self.deploy_path.setText(d)
 
     @pyqtSlot()
     def __select_wk_file(self):
@@ -276,14 +314,14 @@ class MergeBomGUI(QDialog):
 
         if line is not None and len(line) > 0:
             if file_type == SUPPORTED_FILE_TYPE[0]:  # workspace
+                print(line)
                 self.param_prj_list_view.clear()
                 if len(line) > 1:
                     self.logger.warning(
-                        "You should select only one Altium Workspace")
+                        "You should select only one Altium Workspace\n")
                     return
 
                 line = line[0]
-                wk_file_name, _ = os.path.splitext(os.path.basename(line))
                 self.selected_file.setText(line)
                 self.__update_src_panel(line)
                 self.merge_cmd_box.setEnabled(True)
@@ -308,6 +346,8 @@ class MergeBomGUI(QDialog):
 
                 self.merge_cmd_box.setEnabled(True)
                 self.deploy_cmd_box.setEnabled(True)
+                self.label_param.setText(
+                    "Altium Project: %s" % root_path.upper())
 
             elif file_type == SUPPORTED_FILE_TYPE[2]:  # bom files
                 self.tmp_bom_list = []
@@ -327,6 +367,8 @@ class MergeBomGUI(QDialog):
                 self.tmp_bom_list = line
                 self.merge_cmd_box.setEnabled(True)
                 self.merge_only_csv.setChecked(False)
+                self.label_param.setText(
+                    "BOM Files path: %s" % root_path.upper())
 
             else:
                 self.logger.warning("Unsupport file type.")
@@ -337,7 +379,7 @@ class MergeBomGUI(QDialog):
             return
 
         self.param_prj_list_view.clear()
-        root, ext = os.path.splitext(os.path.basename(line))
+        root, _ = os.path.splitext(os.path.basename(line))
         self.label_param.setText("Workspace: %s" % root.upper())
 
         data = extrac_projects(line)
@@ -399,6 +441,7 @@ class FileDialog(QWidget):
 
         self.file_path = None
         self.filetype = None
+        self.dir_name = None
 
         self.left = 10
         self.top = 10
@@ -408,11 +451,16 @@ class FileDialog(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        """
+        init
+        """
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         if self.mode == 'multiopen':
             self.__open_file_names_dialog()
+        elif self.mode == 'dir':
+            self.__open_directory_dialog()
         else:
             self.__open_file_name_dialog()
 
@@ -430,9 +478,23 @@ class FileDialog(QWidget):
         """
         return self.filetype
 
+    def directory(self):
+        """
+        Return selected path
+        """
+        return self.dir_name
+
+    def __open_directory_dialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        dirname = QFileDialog.getExistingDirectory(
+            self, self.title, self.rootpath, options=options)
+        if dirname:
+            self.dir_name = dirname
+
     def __open_file_name_dialog(self):
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog
         filename, filter_type = QFileDialog.getOpenFileName(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
 
@@ -442,9 +504,10 @@ class FileDialog(QWidget):
 
     def __open_file_names_dialog(self):
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog
         files, filter_type = QFileDialog.getOpenFileNames(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
+        print(files)
         if files:
             self.file_path = files
             self.filetype = filter_type
