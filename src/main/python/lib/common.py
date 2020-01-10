@@ -20,6 +20,9 @@
 
 import math
 import re
+import shutil
+import os
+import tempfile
 from src.main.python.lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETTER
 
 
@@ -182,3 +185,22 @@ def value_toStr(l, logger):
     if note:
         space = " "
     return "%s%s%s%s%s" % (sign, number, unit, space, " ".join(note))
+
+
+FILE_TO_SKIP = [
+    "Status File.txt"
+]
+
+
+def copyGerberZip(gerber_name, src_path, dest_path):
+    tmp = tempfile.mkdtemp()
+    tmp_dir = os.path.join(tmp, gerber_name)
+    os.mkdir(tmp_dir)
+
+    for j in os.listdir(src_path):
+        if j in FILE_TO_SKIP:
+            continue
+        shutil.copy(os.path.join(src_path, j), tmp_dir)
+
+    shutil.make_archive(os.path.join(
+        dest_path, gerber_name), 'zip', tmp, gerber_name)

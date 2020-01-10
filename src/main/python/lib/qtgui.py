@@ -3,10 +3,14 @@
 
 import sys
 import os
+import shutil
 from src.main.python.lib.cfg import LOGO, MERGEBOM_VER
 from src.main.python.lib.cfg import extrac_projects, get_parameterFromPrj, find_bomfiles
 from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
+from src.main.python.lib.cfg import TEMPLATE_PCB_NAME, TEMPLATE_PRJ_NAME, TEMPLATE_HW_DIR
+from src.main.python.lib.cfg import VERSION_FILE, DEFAULT_PRJ_DIR
 from src.main.python.lib.cfg import CfgMergeBom
+from src.main.python.lib.common import copyGerberZip
 from src.main.python.lib.report import ReportBase, write_xls
 from src.main.python.mergebom_class import *
 import src.main.python.resources
@@ -27,6 +31,10 @@ SUPPORTED_FILE_TYPE = [
 
 
 class Report(ReportBase):
+    """
+    Report class
+    """
+
     def __init__(self, logWidget):
         super(Report, self).__init__()
         self.logWidget = logWidget
@@ -101,12 +109,12 @@ class MergeBomGUI(QDialog):
         vbox.addWidget(self.merge_bom_outname)
         vbox.addWidget(self.merge_autoname)
 
-        self.deploy_sel = QPushButton("Deploy Select")
+        self.deploy_sel = QPushButton("Deploy Selected Prj")
         self.deploy_sel.setDefault(True)
-        self.deploy_sel.clicked.connect(self.__deploy_bom_select)
-        self.deploy_all = QPushButton("Deploy All")
+        self.deploy_sel.clicked.connect(self.__deploy_prj_select)
+        self.deploy_all = QPushButton("Deploy All Prj")
         self.deploy_all.setDefault(True)
-        self.deploy_all.clicked.connect(self.__deploy_bom_all)
+        self.deploy_all.clicked.connect(self.__deploy_all_prj)
         self.deploy_path_label = QLabel("Deploy Path:")
         self.deploy_path = QLineEdit(os.path.join(
             os.path.expanduser('~/'), "Dropbox", "FileProgetto"))
@@ -114,6 +122,8 @@ class MergeBomGUI(QDialog):
         self.deploy_path_select.clicked.connect(self.__select_deploy_path)
         self.deploy_customer_name_label = QLabel("Customer Name:")
         self.deploy_customer_name = QLineEdit("Customer")
+        self.deploy_rev_name_label = QLabel("Revision:")
+        self.deploy_rev_name = QLineEdit("0")
 
         self.deploy_cmd_box = QGroupBox("Deploy Commands")
         self.deploy_cmd_box.setEnabled(False)
@@ -126,6 +136,8 @@ class MergeBomGUI(QDialog):
         vbox.addWidget(self.deploy_path_select)
         vbox.addWidget(self.deploy_customer_name_label)
         vbox.addWidget(self.deploy_customer_name)
+        vbox.addWidget(self.deploy_rev_name_label)
+        vbox.addWidget(self.deploy_rev_name)
 
         self.q1_layout.addWidget(self.deploy_cmd_box)
         self.q1_layout.addWidget(self.merge_cmd_box)
@@ -251,12 +263,126 @@ class MergeBomGUI(QDialog):
                 self.logger.error(merge_excp)
 
     @pyqtSlot()
-    def __deploy_bom_select(self):
-        pass
+    def __deploy_prj_select(self):
+        search_path = os.path.dirname(self.selected_file.text())
+        for i in self.param_prj_list_view.selectedItems():
+            self.__deploy_project(i.text(), search_path)
 
     @pyqtSlot()
-    def __deploy_bom_all(self):
-        pass
+    def __deploy_all_prj(self):
+        search_path = os.path.dirname(self.selected_file.text())
+        for i in range(self.param_prj_list_view.count()):
+            self.__deploy_project(
+                self.param_prj_list_view.item(i).text(), search_path)
+
+    def __deploy_project(self, project_name, search_path):
+        """
+        Deploy folder structure
+
+        Customer
+        |  - version.txt
+        |  - Readme.txt
+        | - MainPrj1
+                |  - Hw-Rev.0
+                    | - Progetto-rev.12
+                        | - Gerber
+                                | - pcb-progetto-rev.A
+                                | - ..
+                        | - schematics.pdf
+                        | - ...
+                        | - version.txt
+                    | - Progetto3-rev.0
+                        | - Gerber
+                                | - pcb-progetto-rev.A
+                                | - ..
+                        | - schematics.pdf
+                        | - ...
+                        | - version.txt
+        | - MainPrj2
+                |  - Hw-Rev.1-Prototype
+                    | - Progetto-rev.3
+                        | - Gerber
+                                | - pcb-progetto-rev.A
+                                | - ..
+                        | - schematics.pdf
+                        | - ...
+                        | - version.txt
+                    | - Progetto3-rev.7
+                        | - Gerber
+                                | - pcb-progetto-rev.A
+                                | - ..
+                        | - schematics.pdf
+                        | - ...
+                        | - version.txt
+        """
+        customer_name = self.deploy_customer_name.text()
+        if customer_name is None or customer_name == "":
+            self.logger.error("Invalid customer name\n")
+            return
+
+        deploy_path = self.deploy_path.text()
+        if deploy_path is None or deploy_path == "":
+            self.logger.error("Invalid deploy path\n")
+            return
+
+        # Get prj info from view table
+        param = {}
+        for i in range(self.param_table_view.rowCount()):
+            param[self.param_table_view.item(i, 0).text(
+            )] = self.param_table_view.item(i, 1).text()
+
+        # make directory tree
+        status = param.get("prj_status", "")
+        if status:
+            status = "-%s" % status
+
+        if self.deploy_rev_name.text() is None or self.deploy_rev_name.text() == "":
+            self.logger.error("Invalid hw revision for deploing.\n")
+            return
+
+        name_hw = TEMPLATE_HW_DIR % (self.deploy_rev_name.text(), status)
+        name_prj = TEMPLATE_PRJ_NAME % (param.get("prj_prefix", ""),
+                                        project_name,
+                                        param.get("prj_hw_ver", "NONE"))
+        name_gerber = TEMPLATE_PCB_NAME % (param.get("prj_prefix", ""),
+                                           project_name,
+                                           param.get("prj_pcb", "NONE"))
+
+        gerber_dir = os.path.join(deploy_path, customer_name,
+                                  name_hw, name_prj, "Gerber")
+
+        prj_dir = os.path.join(deploy_path, customer_name,
+                               name_hw, name_prj)
+
+        try:
+            os.makedirs(gerber_dir)
+        except FileExistsError:
+            self.logger.warning("Deploy directory exists\n")
+
+        for item in DEFAULT_PRJ_DIR:
+            folder, dst, src = item
+            dst_name = dst % (project_name, param.get("prj_hw_ver", "NONE"))
+            src_name = src
+            if folder != "Pdf":
+                src_name = src % project_name
+
+            src_file = os.path.join(search_path, src_name)
+            dst_file = os.path.join(prj_dir, dst_name)
+
+            self.logger.info("Copy project files:\n")
+            self.logger.info("From: %s\n" % src_file)
+            self.logger.info("To: %s\n" % dst_file)
+
+        try:
+            shutil.copy2(src_file, dst_file)
+        except FileNotFoundError as cp_excp:
+            self.logger.error("Unable to copy file:%s\n" % cp_excp)
+
+        src_path = os.path.join(search_path, "Gerber", project_name)
+        try:
+            copyGerberZip(name_gerber, src_path, gerber_dir)
+        except FileNotFoundError as cp_excp:
+            self.logger.error("Unable find gerber file:%s\n" % cp_excp)
 
     @pyqtSlot()
     def __autoname_out_file(self):
@@ -314,7 +440,6 @@ class MergeBomGUI(QDialog):
 
         if line is not None and len(line) > 0:
             if file_type == SUPPORTED_FILE_TYPE[0]:  # workspace
-                print(line)
                 self.param_prj_list_view.clear()
                 if len(line) > 1:
                     self.logger.warning(
@@ -347,7 +472,7 @@ class MergeBomGUI(QDialog):
                 self.merge_cmd_box.setEnabled(True)
                 self.deploy_cmd_box.setEnabled(True)
                 self.label_param.setText(
-                    "Altium Project: %s" % root_path.upper())
+                    "Altium Project: %s" % os.path.basename(line[0].upper()))
 
             elif file_type == SUPPORTED_FILE_TYPE[2]:  # bom files
                 self.tmp_bom_list = []
@@ -375,7 +500,7 @@ class MergeBomGUI(QDialog):
 
     def __update_src_panel(self, line):
         if line is None:
-            print("Workspace path is invalid or None")
+            self.logger.info("Workspace path is invalid or None")
             return
 
         self.param_prj_list_view.clear()
@@ -507,7 +632,6 @@ class FileDialog(QWidget):
         options |= QFileDialog.DontUseNativeDialog
         files, filter_type = QFileDialog.getOpenFileNames(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
-        print(files)
         if files:
             self.file_path = files
             self.filetype = filter_type

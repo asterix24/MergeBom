@@ -78,6 +78,22 @@ DEFAULT_PRJ_PARAM_DICT = {
     "prj_prefix": "--",
 }
 
+TEMPLATE_PCB_NAME = "pcb-%s%s-Rev-%s"  # pcb-{prefix}{subprjname}-Rev-{PCB-ver}
+TEMPLATE_PRJ_NAME = "%s%s-Rev.%s"        # {prefix}{subprjname}-Rev.{hw-ver}
+TEMPLATE_HW_DIR = "Hw-Rev.%s%s"
+VERSION_FILE = "version.txt"
+
+DEFAULT_PRJ_DIR = [
+    ("Pdf",      'schematic-%s_R%s.pdf',  "schematic.PDF"),
+    ("Assembly", 'bom-%s_R%s.xlsx',       'bom-%s.xlsx'),
+    ("Assembly", 'assembly-%s_R%s.pdf',   '%s.PDF'),
+    ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
+]
+
+FILE_TO_SKIP = [
+    "Status File.txt"
+]
+
 ENG_LETTER = {
     'G': (1e9, 1e8),
     'M': (1e6, 1e5),
