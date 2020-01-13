@@ -117,7 +117,7 @@ class MergeBomGUI(QDialog):
         self.deploy_all.clicked.connect(self.__deploy_all_prj)
         self.deploy_path_label = QLabel("Deploy Path:")
         self.deploy_path = QLineEdit(os.path.join(
-            os.path.expanduser('~/'), "Dropbox", "FileProgetto"))
+            os.path.expanduser('~/'), "Dropbox", "Produzione", "FileProgetto"))
         self.deploy_path_select = QPushButton("Select")
         self.deploy_path_select.clicked.connect(self.__select_deploy_path)
         self.deploy_customer_name_label = QLabel("Customer Name:")
@@ -402,7 +402,7 @@ class MergeBomGUI(QDialog):
                 csv_l = []
                 for i in self.tmp_bom_list:
                     _, ext = os.path.splitext(i)
-                    if ext == "*.csv":
+                    if ext == ".csv":
                         csv_l.append(i)
                 self.param_bom_list_view.clear()
                 self.param_bom_list_view.addItems(csv_l)
