@@ -4,6 +4,7 @@
 import sys
 import os
 import shutil
+import glob
 from src.main.python.lib.cfg import LOGO, MERGEBOM_VER
 from src.main.python.lib.cfg import extrac_projects, get_parameterFromPrj, find_bomfiles
 from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT
@@ -182,10 +183,19 @@ class MergeBomGUI(QDialog):
         self.sub_top_q2_layout.addLayout(sub_vbox, 40)
         self.sub_top_q2_layout.addLayout(sub_vbox2, 60)
 
+        self.bom_list_search_path = QLineEdit()
+        self.bom_list_search_select = QPushButton("Search Path")
+        self.bom_list_search_select.setDefault(True)
+        self.bom_list_search_select.clicked.connect(self.__select_bom_search_path)
+        sub_vbox3 = QHBoxLayout()
+        sub_vbox3.addWidget(QLabel("BOM list:"))
+        sub_vbox3.addWidget(self.bom_list_search_path)
+        sub_vbox3.addWidget(self.bom_list_search_select)
+
         self.q2_layout.addWidget(self.label_param)
         self.q2_layout.addLayout(top_hbox)
         self.q2_layout.addLayout(self.sub_top_q2_layout, 50)
-        self.q2_layout.addWidget(QLabel("BOM list:"))
+        self.q2_layout.addLayout(sub_vbox3)
         self.q2_layout.addWidget(self.param_bom_list_view, 20)
         self.q2_layout.addWidget(self.log_panel, 30)
 
@@ -232,8 +242,12 @@ class MergeBomGUI(QDialog):
             param[self.param_table_view.item(i, 0).text(
             )] = self.param_table_view.item(i, 1).text()
 
-        m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
-                     logger=self.logger)
+        try:
+            m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
+                        logger=self.logger)
+        except FileNotFoundError as file_excp:
+            self.logger.error("Error while merging..\n")
+            self.logger.error(file_excp)
 
         for bom in bom_list:
             if self.delete_merged.isChecked():
@@ -419,6 +433,18 @@ class MergeBomGUI(QDialog):
             self.merge_same_dir_path_select.setEnabled(True)
 
     @pyqtSlot()
+    def __select_bom_search_path(self):
+        root = os.path.dirname(self.selected_file.text())
+        if self.bom_list_search_path is not None or self.bom_list_search_path.text() != "":
+            self.logger.info("Search bom files in: %s\n" % self.bom_list_search_path.text())
+            root = self.bom_list_search_path.text()
+        app = FileDialog(mode="dir", rootpath=root)
+        d = app.directory()
+        if d is not None and d != "":
+            self.bom_list_search_path.setText(d)
+            self.__on_click_list(self.param_prj_list_view.selectedItems())
+
+    @pyqtSlot()
     def __select_merge_path(self):
         app = FileDialog(mode="dir", rootpath=self.merge_same_dir_path.text())
         d = app.directory()
@@ -500,7 +526,7 @@ class MergeBomGUI(QDialog):
 
     def __update_src_panel(self, line):
         if line is None:
-            self.logger.info("Workspace path is invalid or None")
+            self.logger.info("Workspace path is invalid or None\n")
             return
 
         self.param_prj_list_view.clear()
@@ -521,6 +547,10 @@ class MergeBomGUI(QDialog):
         current_prj = None
         if type(item) == str:
             current_prj = item
+        elif type(item) == list:
+            if len(item) == 0:
+                return
+            current_prj = item[0].text()
         else:
             current_prj = item.text()
 
@@ -540,10 +570,20 @@ class MergeBomGUI(QDialog):
         self.param_bom_list_view.clear()
         root = self.prj_and_data[current_prj][0]
 
-        for pths in [root, os.path.join(root, "Assembly"),
-                     os.path.join(root, "..", "Assembly")]:
-            l = find_bomfiles(pths, current_prj,
-                              self.merge_only_csv.isChecked())
+        flt = "*.xlsx"
+        if self.merge_only_csv.isChecked():
+            flt = "*.csv"
+
+        search_dirs = [root, os.path.join(root, "Assembly"), os.path.join(root, "..", "Assembly")]
+        if self.bom_list_search_path is not None or self.bom_list_search_path.text() != "":
+            self.logger.info("Search bom files in: %s\n" % self.bom_list_search_path.text())
+            pth = os.path.join(self.bom_list_search_path.text(), flt)
+            bom_list = glob.glob(pth)
+            self.param_bom_list_view.addItems(bom_list)
+        else:
+            for pths in search_dirs:
+                l = find_bomfiles(pths, current_prj,
+                                self.merge_only_csv.isChecked())
             self.param_bom_list_view.addItems(l[1])
 
         if self.merge_autoname.isChecked():
@@ -611,7 +651,7 @@ class FileDialog(QWidget):
 
     def __open_directory_dialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         dirname = QFileDialog.getExistingDirectory(
             self, self.title, self.rootpath, options=options)
         if dirname:
@@ -619,7 +659,7 @@ class FileDialog(QWidget):
 
     def __open_file_name_dialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         filename, filter_type = QFileDialog.getOpenFileName(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
 
@@ -629,7 +669,7 @@ class FileDialog(QWidget):
 
     def __open_file_names_dialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         files, filter_type = QFileDialog.getOpenFileNames(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
         if files:
