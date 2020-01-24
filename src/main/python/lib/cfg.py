@@ -88,6 +88,7 @@ DEFAULT_PRJ_DIR = [
     ("Assembly", 'bom-%s_R%s.xlsx',       'bom-%s.xlsx'),
     ("Assembly", 'assembly-%s_R%s.pdf',   '%s.PDF'),
     ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
+    ("Assembly", 'pick-place-%s_R%s_pannel.txt', 'Pick Place for %s_pannel.txt'),
 ]
 
 FILE_TO_SKIP = [

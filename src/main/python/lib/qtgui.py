@@ -279,17 +279,21 @@ class MergeBomGUI(QDialog):
     @pyqtSlot()
     def __deploy_prj_select(self):
         search_path = os.path.dirname(self.selected_file.text())
+        wk_name = os.path.basename(self.selected_file.text())
+        wk_name, _ = os.path.splitext(wk_name)
         for i in self.param_prj_list_view.selectedItems():
-            self.__deploy_project(i.text(), search_path)
+            self.__deploy_project(wk_name, i.text(), search_path)
 
     @pyqtSlot()
     def __deploy_all_prj(self):
         search_path = os.path.dirname(self.selected_file.text())
+        wk_name = os.path.basename(self.selected_file.text())
+        wk_name, _ = os.path.splitext(wk_name)
         for i in range(self.param_prj_list_view.count()):
-            self.__deploy_project(
+            self.__deploy_project(wk_name,
                 self.param_prj_list_view.item(i).text(), search_path)
 
-    def __deploy_project(self, project_name, search_path):
+    def __deploy_project(self, wk_name, project_name, search_path):
         """
         Deploy folder structure
 
@@ -362,10 +366,14 @@ class MergeBomGUI(QDialog):
                                            project_name,
                                            param.get("prj_pcb", "NONE"))
 
-        gerber_dir = os.path.join(deploy_path, customer_name,
+        name_gerber = TEMPLATE_PCB_NAME % (param.get("prj_prefix", ""),
+                                           project_name,
+                                           param.get("prj_pcb", "NONE"))
+
+        gerber_dir = os.path.join(deploy_path, customer_name, wk_name,
                                   name_hw, name_prj, "Gerber")
 
-        prj_dir = os.path.join(deploy_path, customer_name,
+        prj_dir = os.path.join(deploy_path, customer_name, wk_name,
                                name_hw, name_prj)
 
         try:
@@ -376,27 +384,30 @@ class MergeBomGUI(QDialog):
         for item in DEFAULT_PRJ_DIR:
             folder, dst, src = item
             dst_name = dst % (project_name, param.get("prj_hw_ver", "NONE"))
-            src_name = src
+            src_name = os.path.join(folder, project_name, src)
             if folder != "Pdf":
-                src_name = src % project_name
+                src_name = os.path.join(folder, project_name, src % project_name)
 
             src_file = os.path.join(search_path, src_name)
             dst_file = os.path.join(prj_dir, dst_name)
+            try:
+                self.logger.info("Copy project files:\n")
+                self.logger.info("From: %s\n" % src_file)
+                self.logger.info("To: %s\n" % dst_file)
+                shutil.copy2(src_file, dst_file)
+            except FileNotFoundError as cp_excp:
+                self.logger.error("Unable to copy file:%s\n" % cp_excp)
 
-            self.logger.info("Copy project files:\n")
-            self.logger.info("From: %s\n" % src_file)
+        for item in [(project_name, name_gerber),
+                        ("%s_pannel" % project_name, "%s_pannel" % name_gerber)]:
+            self.logger.info("Copy Gerber files:\n")
+            self.logger.info("From: %s\n" % item[0])
             self.logger.info("To: %s\n" % dst_file)
-
-        try:
-            shutil.copy2(src_file, dst_file)
-        except FileNotFoundError as cp_excp:
-            self.logger.error("Unable to copy file:%s\n" % cp_excp)
-
-        src_path = os.path.join(search_path, "Gerber", project_name)
-        try:
-            copyGerberZip(name_gerber, src_path, gerber_dir)
-        except FileNotFoundError as cp_excp:
-            self.logger.error("Unable find gerber file:%s\n" % cp_excp)
+            src_path = os.path.join(search_path, "Gerber", item[0])
+            try:
+                copyGerberZip(item[1], src_path, gerber_dir)
+            except FileNotFoundError as cp_excp:
+                self.logger.error("Unable find gerber file:%s\n" % cp_excp)
 
     @pyqtSlot()
     def __autoname_out_file(self):
