@@ -188,7 +188,8 @@ def value_toStr(l, logger):
 
 
 FILE_TO_SKIP = [
-    "Status File.txt"
+    "Status File.txt",
+    "__Previews"
 ]
 
 
