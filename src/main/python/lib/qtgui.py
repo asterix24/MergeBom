@@ -17,7 +17,7 @@ from src.main.python.mergebom_class import *
 import src.main.python.resources
 
 from PyQt5.QtCore import QDateTime, Qt, pyqtSlot
-from PyQt5.QtWidgets import (QApplication, QPlainTextEdit, QCheckBox, QDialog, QGroupBox,
+from PyQt5.QtWidgets import (QApplication, QTextEdit, QCheckBox, QDialog, QGroupBox,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton, QStyleFactory,
                              QTableWidget, QVBoxLayout, QWidget, QFileDialog, QListWidget,
                              QTableWidgetItem, QHeaderView)
@@ -41,7 +41,12 @@ class Report(ReportBase):
         self.logWidget = logWidget
 
     def printout(self, s, prefix="", color=""):
-        self.logWidget.insertPlainText("%s%s" % (prefix, s))
+        s = s.replace('\n', "<br>")
+        line = "%s%s" % (prefix, s)
+        if color != "":
+            line = "<font color=\"%s\">%s%s</font>" % (color, prefix, s)
+        self.logWidget.insertHtml(line)
+        self.logWidget.verticalScrollBar().setValue(self.logWidget.verticalScrollBar().maximum())
 
     def write_logo(self):
         self.printout(LOGO_SIMPLE, color='green')
@@ -170,7 +175,7 @@ class MergeBomGUI(QDialog):
         self.param_table_view.setColumnCount(2)
         self.param_table_view.setHorizontalHeaderLabels(["Param", "Value"])
 
-        self.log_panel = QPlainTextEdit(self)
+        self.log_panel = QTextEdit(self)
         self.log_panel.setReadOnly(True)
         self.log_panel.setFont(QFont("MesloLGS NF", 10))
 
@@ -218,7 +223,7 @@ class MergeBomGUI(QDialog):
 
         # Init MergeBOM class
         self.logger = Report(self.log_panel)
-        self.logger.write_logo()
+        self.logger.info("Mergbom start..\n")
         self.config = CfgMergeBom(logger=self.logger)
 
     @pyqtSlot()
@@ -271,10 +276,11 @@ class MergeBomGUI(QDialog):
                           out,
                           param,
                           diff=False,
-                          statistics=m.statistics())
+                          statistics=m.statistics(),
+                          headers=m.header_data())
             except Exception as merge_excp:
                 self.logger.error("Error while merging..\n")
-                self.logger.error(merge_excp)
+                self.logger.error(str(merge_excp))
 
     @pyqtSlot()
     def __deploy_prj_select(self):
