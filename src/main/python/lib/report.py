@@ -81,7 +81,7 @@ class ReportBase(object):
         self.printout("Total: %s\n" % stats['total'])
 
     def warning(self, s, prefix=">> "):
-        self.printout(s, prefix=prefix, color='yellow')
+        self.printout(s, prefix=prefix, color='purple')
 
     def error(self, s, prefix="!! "):
         self.printout(s, prefix=prefix, color='red')
@@ -168,7 +168,11 @@ def write_xls(
                 B_pcb_diff = extra_data[1].get("pcb_version", "-")
 
     # Create a workbook and add a worksheet.
-    workbook = xlsxwriter.Workbook(merged_bom_outfilename)
+    try:
+        workbook = xlsxwriter.Workbook(merged_bom_outfilename)
+    except PermissionError:
+        raise Exception("Unable to open excel file, check if is already open.")
+
     worksheet = workbook.add_worksheet()
 
     def_fmt = workbook.add_format({'valign': 'vcenter'})

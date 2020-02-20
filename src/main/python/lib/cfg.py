@@ -121,8 +121,10 @@ VALID_KEYS = [
 ]
 
 VALID_KEYS_CODES = [
+    u'Layer',
     u'CODE',
     u'NOTE',
+    u'NP_Value',
 ]
 
 EXTRA_KEYS = [

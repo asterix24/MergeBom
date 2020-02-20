@@ -25,7 +25,7 @@ from src.main.python.lib.report import DataReader
 from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.cfg import VALID_KEYS, NOT_POPULATE_KEY, EXTRA_KEYS, NP_REGEXP, VALID_KEYS_CODES
 
-# Exchange data layout after file import
+# Internal data table layout after file import
 FILENAME = 0
 QUANTITY = 1
 DESIGNATOR = 2
@@ -105,7 +105,7 @@ class MergeBom(object):
                             item = item.replace(w, '')
                             item = "%s %s" % (w.capitalize(), item.strip())
                             self.extra_column.append((item, n))
-                            # print "%s %s" % (item, n)
+                            self.logger.info("Found extra header: %s\n" % item)
 
                     # search extra data, like project name and revision
                     k = ""
@@ -295,8 +295,6 @@ class MergeBom(object):
                         key = item[DESCRIPTION] + \
                             item[COMMENT] + item[FOOTPRINT]
 
-                    # print key
-                    # print "<<", item[DESIGNATOR]
                     self.stats[category] += 1
                     self.stats['total'] += 1
 
@@ -312,26 +310,27 @@ class MergeBom(object):
                         tmp[key][self.TABLE_DESIGNATOR] = order_designator(
                             tmp[key][self.TABLE_DESIGNATOR], self.logger)
 
-                        for ex in self.extra_column:
+                        for n, ex in enumerate(self.extra_column):
                             # We add 1 because the table now contain also the
                             # file name, see init function in code that import
                             # data.
-                            col_id = ex[1] + 1
+                            col_id = FOOTPRINT + n + 1
                             try:
                                 raw_value = item[col_id].strip()
+                                if raw_value != "":
+                                    continue
+
                                 if tmp[key][col_id] == "":
                                     tmp[key][col_id] = raw_value
                                 else:
-                                    if raw_value != "":
-                                        words = re.findall(
-                                            r'\b\S+\b', tmp[key][col_id])
-                                        if not raw_value in words:
-                                            tmp[key][col_id] += "; " + \
-                                                raw_value
+                                    words = re.findall(r'\b\S+\b', tmp[key][col_id])
+                                    if not raw_value in words:
+                                        tmp[key][col_id] += "; " + \
+                                            raw_value
 
                             except IndexError:
                                 raise Exception(
-                                    "Error: Impossible to update extra column. This as bug!")
+                                    "Error: Unable to update extra column. This as bug!")
                     else:
                         row = [item[QUANTITY]] + \
                             [0] * len(self.files) + \
@@ -346,15 +345,16 @@ class MergeBom(object):
 
                         # Add extra column to row if they are present in source
                         # file
-                        for ex in self.extra_column:
+                        for n, ex in enumerate(self.extra_column):
                             # We add 1 because the table now contain also the
                             # file name, see init function in code that import
                             # data.
-                            row.append(item[ex[1] + 1])
+                            row.append(item[FOOTPRINT + n + 1])
 
+                            # We add 1 because the table now contain also the
+                            # file name, see init function in code that import
+                            # data.
                         tmp[key] = row
-                        # print "NEW", tmp[key], curr_file_index,
-                        # item[FILENAME]
 
                 self.table[category] = list(tmp.values())
 
@@ -375,7 +375,6 @@ class MergeBom(object):
                     for m in self.table[category]:
                         m[self.TABLE_COMMENT] = value_toFloat(
                             m[self.TABLE_COMMENT], category, self.logger)
-                        # print m[COMMENT], key
 
                 def foo(x):
                     if category in ["R", "C", "L", "Y"]:
@@ -391,7 +390,6 @@ class MergeBom(object):
                     for m in self.table[category]:
                         m[self.TABLE_COMMENT] = value_toStr(
                             m[self.TABLE_COMMENT], self.logger)
-                        # print m[self.TABLE_COMMENT], category
 
         return self.table
 
