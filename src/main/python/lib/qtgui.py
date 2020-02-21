@@ -10,7 +10,7 @@ from src.main.python.lib.cfg import LOGO, MERGEBOM_VER
 from src.main.python.lib.cfg import extrac_projects, get_parameterFromPrj, find_bomfiles, get_variantFromPrj
 from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT, MERGED_FILE_TEMPLATE_VARIANT
 from src.main.python.lib.cfg import TEMPLATE_PCB_NAME, TEMPLATE_PRJ_NAME, TEMPLATE_HW_DIR
-from src.main.python.lib.cfg import VERSION_FILE, DEFAULT_PRJ_DIR
+from src.main.python.lib.cfg import VERSION_FILE, DEFAULT_PRJ_DIR, DEFAULT_PRJ_DIR_VARIANT
 from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.common import copyGerberZip
 from src.main.python.lib.report import ReportBase, write_xls
@@ -199,12 +199,11 @@ class MergeBomGUI(QDialog):
         self.bom_list_search_select.setDefault(True)
         self.bom_list_search_select.clicked.connect(self.__select_bom_search_path)
         self.prj_variant = QComboBox()
-        self.prj_variant.currentIndexChanged.connect(self.__select_prj_variant)
+        self.prj_variant.activated.connect(self.__select_prj_variant)
 
 
         sub_vbox3 = QHBoxLayout()
         sub_vbox3.addWidget(QLabel("Prj Variant:"))
-        sub_vbox3.addWidget(self.prj_variant)
         sub_vbox3.addWidget(self.prj_variant)
         sub_vbox3.addWidget(QLabel("BOM list:"))
         sub_vbox3.addWidget(self.bom_list_search_path)
@@ -238,6 +237,11 @@ class MergeBomGUI(QDialog):
         self.logger = Report(self.log_panel)
         self.logger.info("Mergbom start..\n")
         self.config = CfgMergeBom(logger=self.logger)
+
+    def __fill_variant(self, prj):
+        self.prj_variant.clear()
+        self.prj_variant.addItem(NO_VARIANT)
+        self.prj_variant.addItems(self.prj_and_data[prj][2])
 
     @pyqtSlot()
     def __select_prj_variant(self):
@@ -433,15 +437,38 @@ class MergeBomGUI(QDialog):
             except FileNotFoundError as cp_excp:
                 self.logger.error("Unable find gerber file:%s\n" % cp_excp)
 
-    def __fill_variant(self, root_path, prj):
-        insert_blank = NO_VARIANT
-        for item in range(self.prj_variant.count()):
-            if insert_blank in self.prj_variant.itemText(item):
-                insert_blank = None
-                break
-        if insert_blank is not None:
-            self.prj_variant.addItem(insert_blank)
-        self.prj_variant.addItems(get_variantFromPrj(root_path, prj))
+        # if present deploy variants
+        for index in range(self.prj_variant.count()):
+            variant = self.prj_variant.itemText(index)
+            if variant == NO_VARIANT:
+                continue
+
+            for item in DEFAULT_PRJ_DIR_VARIANT:
+
+                folder, dst, src = item
+                dst_name = dst % (project_name, variant, param.get("prj_hw_ver", "NONE"))
+                src_name = os.path.join(folder, variant, src)
+                if folder != "Pdf":
+                    if "assembly" in dst:
+                        src_name = os.path.join(folder, variant, src % project_name)
+                    else:
+                        src_name = os.path.join(folder, variant, src % (project_name, variant))
+
+                dst_dir = os.path.join(prj_dir, variant)
+                try:
+                    os.makedirs(dst_dir)
+                except FileExistsError:
+                    self.logger.warning("Deploy directory exists\n")
+
+                src_file = os.path.join(search_path, src_name)
+                dst_file = os.path.join(dst_dir, dst_name)
+                try:
+                    self.logger.info("Copy project files:\n")
+                    self.logger.info("From: %s\n" % src_file)
+                    self.logger.info("To: %s\n" % dst_file)
+                    shutil.copy2(src_file, dst_file)
+                except FileNotFoundError as cp_excp:
+                    self.logger.error("Unable to copy file:%s\n" % cp_excp)
 
     @pyqtSlot()
     def __autoname_out_file(self):
@@ -455,6 +482,7 @@ class MergeBomGUI(QDialog):
     def __filter_checkbox(self):
         prjs = self.param_prj_list_view.selectedItems()
         if len(prjs) == 1:
+            # fill variant combobox
             self.__on_click_list(prjs[0])
         else:
             if self.merge_only_csv.isChecked():
@@ -472,6 +500,7 @@ class MergeBomGUI(QDialog):
         self.param_bom_list_view.clear()
         prjs = self.param_prj_list_view.selectedItems()
         if len(prjs) == 1:
+            # fill variant combobox
             self.__on_click_list(prjs[0])
 
 
@@ -535,8 +564,9 @@ class MergeBomGUI(QDialog):
                 for prj in line:
                     root, _ = os.path.splitext(os.path.basename(prj))
                     n, d = get_parameterFromPrj(root, prj)
-                    if n != "":
-                        self.prj_and_data[n] = [root_path, d]
+                    l = get_variantFromPrj(root, prj)
+                    if n !="":
+                        self.prj_and_data[n] = [root_path, d, l]
 
                         new_item = True
                         for i in range(self.param_prj_list_view.count()):
@@ -545,8 +575,6 @@ class MergeBomGUI(QDialog):
 
                         if new_item:
                             self.param_prj_list_view.addItem(n)
-
-                    self.__fill_variant(root, prj)
 
                 self.merge_cmd_box.setEnabled(True)
                 self.deploy_cmd_box.setEnabled(True)
@@ -589,13 +617,11 @@ class MergeBomGUI(QDialog):
         data = extrac_projects(line)
         root_path = os.path.dirname(line)
         for prj in data:
-            n, d = get_parameterFromPrj(
-                prj[0], os.path.join(root_path, prj[1]))
+            n, d = get_parameterFromPrj(prj[0], os.path.join(root_path, prj[1]))
+            l = get_variantFromPrj(prj[0], os.path.join(root_path, prj[1]))
             if n != "":
-                self.prj_and_data[n] = [root_path, d]
+                self.prj_and_data[n] = [root_path, d, l]
                 self.param_prj_list_view.addItem(n)
-
-            self.__fill_variant(prj[0], os.path.join(root_path, prj[1]))
 
     def __on_click_list(self, item):
         current_prj = None
@@ -610,7 +636,6 @@ class MergeBomGUI(QDialog):
 
         if current_prj == "":
             return
-
 
         d = self.prj_and_data[current_prj][1]
         self.param_table_view.clearContents()
@@ -653,6 +678,7 @@ class MergeBomGUI(QDialog):
                 self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE_VARIANT % (current_prj, variant))
 
         self.param_bom_list_view.addItems(d_boms.keys())
+        self.__fill_variant(current_prj)
 
 
 FILE_FILTERS = ";;".join(SUPPORTED_FILE_TYPE)
