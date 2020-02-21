@@ -22,7 +22,6 @@ import os
 import re
 from src.main.python.lib.common import value_toStr, value_toFloat, order_designator
 from src.main.python.lib.report import DataReader
-from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.cfg import VALID_KEYS, NOT_POPULATE_KEY, EXTRA_KEYS, NP_REGEXP, VALID_KEYS_CODES
 
 # Internal data table layout after file import
@@ -184,7 +183,7 @@ class MergeBom(object):
         for table_dict in self.table_list:
             for designator in table_dict.keys():
                 # Group found designator componets by its category
-                c = re.search('^[a-zA-Z_]{1,3}', designator)
+                c = re.search('^[a-zA-Z_]+', designator)
                 group_key = ''
                 if c is not None:
                     group_key = self.config.check_category(c.group().upper())

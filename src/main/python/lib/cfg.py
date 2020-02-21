@@ -122,6 +122,7 @@ VALID_KEYS = [
 
 VALID_KEYS_CODES = [
     u'Layer',
+    u'MountTechnology',
     u'CODE',
     u'NOTE',
     u'NP_Value',
@@ -135,6 +136,12 @@ EXTRA_KEYS = [
 ]
 
 CATEGORY_NAMES_DEFAULT = [
+    {
+        'name': 'Labeling',
+        'desc': 'Labeling and Info',
+        'group': [],
+        'ref': 'LABEL',
+    },
     {
         'name': 'Connectors',
         'desc': 'Connectors and holders',
