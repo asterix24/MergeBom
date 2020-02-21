@@ -232,6 +232,7 @@ NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
 MERGED_FILE_TEMPLATE = "bom-%s.xlsx"
+MERGED_FILE_TEMPLATE_VARIANT = "bom-%s_var-%s.xlsx"
 MERGED_FILE_TEMPLATE_HW = "%s%s_R%s.xlsx"
 MERGED_FILE_TEMPLATE_NOHW = "%s%s_merged.xlsx"
 
@@ -361,6 +362,24 @@ def get_parameterFromPrj(prj_name, prj_file):
         d[parametro] = val
 
     return prj_name, d
+
+def get_variantFromPrj(prj_name, prj_file):
+    """
+    Get paramet from Altium project.
+    """
+    variants = []
+    if not os.path.exists(prj_file):
+        return []
+
+    prj_config = configparser.RawConfigParser()
+    prj_config.read(prj_file)
+    for i in prj_config.sections():
+        if re.match(r'ProjectVariant[0-9]+', i) is None:
+            continue
+
+        variants.append(prj_config.get(i, 'Description'))
+
+    return variants
 
 
 def find_bomfiles(root_path, prj_name, csv_file):
