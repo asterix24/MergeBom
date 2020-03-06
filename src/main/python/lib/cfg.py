@@ -89,14 +89,17 @@ DEFAULT_PRJ_DIR = [
     ("Assembly", 'assembly-%s_R%s.pdf',   '%s.PDF'),
     ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
     ("Assembly", 'pick-place-%s_R%s_pannel.txt', 'Pick Place for %s_pannel.txt'),
+    ("Assembly", 'pick-place-%s_R%s_panel.txt', 'Pick Place for %s_panel.txt'),
 ]
 
 DEFAULT_PRJ_DIR_VARIANT = [
     ("Pdf",      'schematic-%s_var-%s_R%s.pdf',  "schematic.PDF"),
     ("Assembly", 'bom-%s_var-%s_R%s.xlsx',       'bom-%s_var-%s.xlsx'),
     ("Assembly", 'assembly-%s_var-%s_R%s.pdf',   '%s.PDF'),
+    ("Assembly", 'assembly-%s_var-%s_R%s_panel.pdf',   '%s_panel.PDF'),
     ("Assembly", 'pick-place-%s_var-%s_R%s.txt', 'Pick Place for %s(%s).txt'),
     ("Assembly", 'pick-place-%s_var-%s_R%s_pannel.txt', 'Pick Place for %s_pannel(%s).txt'),
+    ("Assembly", 'pick-place-%s_var-%s_R%s_panel.txt', 'Pick Place for %s_panel(%s).txt'),
 ]
 
 FILE_TO_SKIP = [
