@@ -87,6 +87,7 @@ DEFAULT_PRJ_DIR = [
     ("Pdf",      'schematic-%s_R%s.pdf',  "schematic.PDF"),
     ("Assembly", 'bom-%s_R%s.xlsx',       'bom-%s.xlsx'),
     ("Assembly", 'assembly-%s_R%s.pdf',   '%s.PDF'),
+    ("Assembly", 'assembly-%s_R%s_panel.pdf',   '%s_panel.PDF'),
     ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
     ("Assembly", 'pick-place-%s_R%s_pannel.txt', 'Pick Place for %s_pannel.txt'),
     ("Assembly", 'pick-place-%s_R%s_panel.txt', 'Pick Place for %s_panel.txt'),
@@ -134,6 +135,7 @@ VALID_KEYS = [
 VALID_KEYS_CODES = [
     u'Layer',
     u'MountTechnology',
+    u'Mounting_Technology',
     u'CODE',
     u'NOTE',
     u'NP_Value',
