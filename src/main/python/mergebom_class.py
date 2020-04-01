@@ -148,21 +148,40 @@ class MergeBom(object):
                     # In this way excel could resize row cell correctly
                     if re.findall("\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
+                    # but if all designator are separted by space without comma
+                    elif re.findall(r"\s+", row[designator]):
+                        row[designator].strip()
+                        row[designator] = re.sub(r"\s+", ", ", row[designator])
 
                     # Explode designator field to have one component for
                     # line
                     d = row[designator].split(',')
 
                     for reference in d:
+                        try:
+                            row_description = row[description]
+                        except IndexError:
+                            row_description = ""
+
+                        try:
+                            row_comment = row[comment]
+                        except IndexError:
+                            row_comment = ""
+
+                        try:
+                            row_footprint = row[footprint]
+                        except IndexError:
+                            row_footprint = ""
+
                         r = reference.replace(' ', '')
                         if r:
                             table_dict[r] = [
                                 os.path.basename(file_name),
                                 1,  # one item for a row
                                 r,  # designator
-                                row[description],
-                                row[comment],
-                                row[footprint]
+                                row_description,
+                                row_comment,
+                                row_footprint
                             ]
                             for ex in self.extra_column:
                                 table_dict[r].append(row[ex[1]])

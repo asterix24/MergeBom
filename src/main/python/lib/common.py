@@ -29,12 +29,15 @@ from src.main.python.lib.cfg import CATEGORY_TO_UNIT, NOT_POPULATE_KEY, ENG_LETT
 def order_designator(ref_str, logger):
     ref_str = ref_str.replace(" ", "")
     l = ref_str.split(",")
+    s = "Could not order Designators [%s]\n" % l
     try:
         d = sorted(l, key=lambda x: int(re.search('[0-9]+', x).group()))
     except TypeError:
-        s = "Could not order Designators [%s]\n" % l
         logger.error(s)
         raise Exception(s)
+    except AttributeError:
+        logger.error(s)
+        d = l
 
     return ", ".join(d)
 
