@@ -158,7 +158,7 @@ CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Connectors',
         'desc': 'Connectors and holders',
-        'group': ['X', 'P', 'SIM'],
+        'group': ['X', 'P', 'SIM', 'CN', 'JP'],
         'ref': 'J',
     },
     {
@@ -168,6 +168,10 @@ CATEGORY_NAMES_DEFAULT = [
             'SCR',
             'SPA',
             # Battery
+            'SCREW',
+            'WASHER',
+            'NUT',
+            'MEC',
             'BAT',
             'BUZ',  # Buzzer
             # Buttons
@@ -180,8 +184,8 @@ CATEGORY_NAMES_DEFAULT = [
     },
     {
         'name': 'Fuses',
-        'desc': 'Fuses discrete components',
-        'group': ['FU'],
+        'desc': 'Fuses discrete components, varistor',
+        'group': ['FU', 'VR'],
         'ref': 'F',
     },
     {
@@ -189,6 +193,12 @@ CATEGORY_NAMES_DEFAULT = [
         'desc': 'Resistor components',
         'group': ['RN', 'R_G'],
         'ref': 'R',
+    },
+    {
+        'name': 'Relays',
+        'desc': 'Relays components',
+        'group': [''],
+        'ref': 'RL',
     },
     {
         'name': 'Capacitors',
@@ -199,19 +209,19 @@ CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Diode',
         'desc': 'Diodes, Zener, Schottky, LED, Transil',
-        'group': ['DZ'],
+        'group': ['DZ', 'FC'],
         'ref': 'D',
     },
     {
         'name': 'Inductors',
-        'desc': 'L  Inductors, chokes',
-        'group': [],
+        'desc': 'L  Inductors, chokes, Ferrite',
+        'group': ['FB'],
         'ref': 'L',
     },
     {
         'name': 'Transistor',
-        'desc': 'Q Transistors, MOSFET',
-        'group': [],
+        'desc': 'Q Transistors, MOSFET, Triac',
+        'group': ['TRC'],
         'ref': 'Q',
     },
     {
@@ -517,3 +527,5 @@ if __name__ == "__main__":
     print(type(config), len(config))
     print(config.keys())
     print(config['category_names'])
+
+
