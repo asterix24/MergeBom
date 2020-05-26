@@ -179,7 +179,7 @@ CATEGORY_NAMES_DEFAULT = [
             'B',
             'SW',
             'MP',  # spacer and stud
-            'K'],
+            'K', 'M'],
         'ref': 'S',
     },
     {
@@ -365,7 +365,7 @@ def extrac_projects(wk_file):
 
     return l
 
-
+import io
 def get_parameterFromPrj(prj_name, prj_file):
     """
     Get paramet from Altium project.
@@ -375,11 +375,12 @@ def get_parameterFromPrj(prj_name, prj_file):
         return "", {}
 
     prj_config = configparser.RawConfigParser()
-    prj_config.read(prj_file)
+    with io.open(prj_file, 'r', encoding='utf_8_sig') as fp:
+        prj_config.readfp(fp)
+
     for i in prj_config.sections():
         if re.match(r'Parameter[0-9]+', i) is None:
             continue
-
         parametro = prj_config.get(i, 'Name')
         val = prj_config.get(i, 'Value')
         d[parametro] = val
@@ -395,11 +396,12 @@ def get_variantFromPrj(prj_name, prj_file):
         return []
 
     prj_config = configparser.RawConfigParser()
-    prj_config.read(prj_file)
+    with io.open(prj_file, 'r', encoding='utf_8_sig') as fp:
+        prj_config.readfp(fp)
+
     for i in prj_config.sections():
         if re.match(r'ProjectVariant[0-9]+', i) is None:
             continue
-
         variants.append(prj_config.get(i, 'Description'))
 
     return variants
