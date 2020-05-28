@@ -123,6 +123,23 @@ class TestMergeBom(unittest.TestCase):
                                         bom_prefix='bom-', bom_postfix="")
         self.assertEqual(check, param)
 
+
+
+        file_BOM2 = [
+            ('KK348',
+                [
+                    os.path.join('test','915031','Assembly','bom-KK348.csv')
+                ],
+                {}
+                )
+        ]
+
+
+        p = os.path.join('test','915031',"KK348.DsnWrk")
+
+        param = cfg.cfg_altiumWorkspace(p,True, "Assembly", self.logger,bom_postfix="",bom_prefix='bom-')
+        self.assertEqual(file_BOM2, param)
+
     def test_import(self):
         file_list = [
             "test/bom0.xlsx",
@@ -151,12 +168,12 @@ class TestMergeBom(unittest.TestCase):
                 [1, 1, u'J1', 'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD', u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm']
             ],
             'D': [
-                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
-                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
-                [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
-                [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red'],
-                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
+                [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
+                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
+                [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red'],
+                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
+                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
             ],
         }
 
@@ -190,33 +207,33 @@ class TestMergeBom(unittest.TestCase):
                 [10, 10, u'J8, J16, J20, J28, J75, J76, J77, J78, J79, J80', 'Connector', u'HEADER_1X2_2.54MM_THD', u'Pin Header, 2x1, 2.54mm, THD'],
             ],
             'U': [
-                [1, 1, u'U1', u'24C128', u'SOIC8', u'EEPROM'],
-                [8, 8, u'U19, U21, U22, U23, U25, U27, U28, U29', u'4N25', u'SOIC6_OPTO', u'Optocoupler'],
-                [4, 4, u'U14, U15, U16, U17', u'74HC4051', u'SOIC16', u'Analog Mux 8:1'],
-                [3, 3, u'U11, U20, U26', u'AD5624RBRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
-                [2, 2, u'U31, U33', u'AD799x', u'TSOP65P640X120-20L', u'ADC 10/12bit I2C'],
-                [6, 6, u'U32, U34, U35, U36, U37, U47', u'AD8418BRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
-                [1, 1, u'U6', u'ADS7951SBDBT', u'TSSOP50P640-30L', u'ADC'],
-                [2, 2, u'U3, U4', u'LM22670TJ-ADJ', u'TO-263-7', u'Switching regulator.'],
-                [1, 1, u'U2', u'LM22671MR-ADJ', u'SOIC8_PAD', u'DC-DC switch converter'],
-                [3, 3, u'U12, U18, U24', u'OPA4188AID', u'SOIC14', u'Quad Op Amp'],
-                [1, 1, u'U13', u'OPA4188AID', u'SOIC14', u'Op Amp'],
                 [1, 1, u'U5', u'REF3325AIDBZR', u'SOT-23', u'Shunt volt reference +2.5V'],
+                [6, 6, u'U32, U34, U35, U36, U37, U47', u'AD8418BRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
+                [1, 1, u'U2', u'LM22671MR-ADJ', u'SOIC8_PAD', u'DC-DC switch converter'],
+                [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK', u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
+                [8, 8, u'U19, U21, U22, U23, U25, U27, U28, U29', u'4N25', u'SOIC6_OPTO', u'Optocoupler'],
+                [3, 3, u'U12, U18, U24', u'OPA4188AID', u'SOIC14', u'Quad Op Amp'],
+                [1, 1, u'U1', u'24C128', u'SOIC8', u'EEPROM'],
+                [4, 4, u'U14, U15, U16, U17', u'74HC4051', u'SOIC16', u'Analog Mux 8:1'],
+                [2, 2, u'U31, U33', u'AD799x', u'TSOP65P640X120-20L', u'ADC 10/12bit I2C'],
+                [1, 1, u'U30', u'TLV431 SOT23', u'SOT-23', u'TLV431BQDBZT'],
+                [2, 2, u'U3, U4', u'LM22670TJ-ADJ', u'TO-263-7', u'Switching regulator.'],
+                [1, 1, u'U13', u'OPA4188AID', u'SOIC14', u'Op Amp'],
                 [6, 6, u'U38, U39, U42, U43, U44, U46', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 12V'],
                 [1, 1, u'U45', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 24V'],
-                [1, 1, u'U41', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele Altra marca 16A 12V'],
-                [1, 1, u'U30', u'TLV431 SOT23', u'SOT-23', u'TLV431BQDBZT'],
                 [1, 1, u'U40', u'ULN2803', u'SOIC18', u'BJT Darlinton Array'],
-                [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK', u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
+                [1, 1, u'U41', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele Altra marca 16A 12V'],
+                [1, 1, u'U6', u'ADS7951SBDBT', u'TSSOP50P640-30L', u'ADC'],
+                [3, 3, u'U11, U20, U26', u'AD5624RBRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
             ],
             'D': [
-                [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
                 [4, 4, u'D9, D10, D11, D12', u'BAS70-05', u'SOT-23', u'Schottky Barrier Double Diodes'],
-                [3, 3, u'D13, D14, D16', u'BAV99', u'SOT-23', u'BAV99 Diode'],
-                [2, 2, u'D1, D7', 'LED', u'0603_[1608]_K2-A1_LED', u'LED Green'],
-                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
                 [1, 1, u'D2', u'S2B', u'DO214AA_12', u'S2B Diode'],
+                [2, 2, u'D1, D7', 'LED', u'0603_[1608]_K2-A1_LED', u'LED Green'],
+                [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
                 [1, 1, u'D3', u'SMBJ28A', u'DO214AA_12', u'TRANSIL (SM6T12A)'],
+                [3, 3, u'D13, D14, D16', u'BAV99', u'SOT-23', u'BAV99 Diode'],
+                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
             ],
         }
 
@@ -239,7 +256,16 @@ class TestMergeBom(unittest.TestCase):
             "test/bom2.xlsx",
         ]
 
-        check = [[6,
+        check = [
+                 [3,
+                  3,
+                  0,
+                  0,
+                  u'C2, C3, C4',
+                  u'1uF',
+                  u'1206_[3216]',
+                  u'Ceramic X5R 35V, 50V'],
+                 [6,
                   2,
                   2,
                   2,
@@ -255,14 +281,6 @@ class TestMergeBom(unittest.TestCase):
                   u'100nF',
                   u'0603_[1608]',
                   u'Ceramic X7R 10V'],
-                 [3,
-                  3,
-                  0,
-                  0,
-                  u'C2, C3, C4',
-                  u'1uF',
-                  u'1206_[3216]',
-                  u'Ceramic X5R 35V, 50V'],
                  [2,
                   2,
                   0,
@@ -287,6 +305,54 @@ class TestMergeBom(unittest.TestCase):
                     print "T >", c
                     print "C <", j[m]
                     self.assertEqual(c, j[m])
+
+    def test_mergeMethod(self):
+        file_list = [
+            "test/TestFileMergeBOM.csv"
+        ]
+
+        check = {
+
+            'C' : [
+                [8, 8, u'C10, C11, C12, C13, C17, C21, C26, C30', '100nF', u'0805_[2012]', u'Ceramic 100V X7R'],
+                [3, 3, u'C101, C262, C264', '10uF', u'0805_[2012]', u'Ceramic 10V X5R'],
+                [1, 1, u'C22', '1uF', u'0805_[2012]', u'Ceramic 6.3V'],
+                [1, 1, u'C15', '1uF', u'0805_[2012]', u'Ceramic 100V'],
+                [12, 12, u'C73, C74, C75, C79, C80, C84, C85, C90, C91, C92, C97, C98', '22uF', u'0805_[2012]', u'Ceramic 6.3V X5R'],
+            ],
+
+            'D' : [
+                [1, 1, u'D3', u'SMAJ58A', u'DO214AA_K1-A2_SMB', u'TVS  58V'],
+                [1, 1, u'D10', u'NP ', u'SOD-323_K2-A1', u'Schottky Barrier Diode 40V 0.520mA (ZLLS400TA; BAT54J)'],
+                [3, 3, u'D4, D5, D11', 'LED', u'0603_[1608]_K1-A2_LED', u'Green LED'],
+                [4, 4, u'D6, D7, D8, D9', u'ZLLS400TA', u'SOD-323_K2-A1', u'Schottky Barrier Diode 40V 0.520mA (BAT54J)'],
+                [2, 2, u'D1, D2', u'HD06', u'Diode_bridge_smd', u'Diode Bridge 0.8A (MBS6)'],
+            ],
+
+            'J' : [
+                [1, 1, u'J2', 'Connector', u'ER8_SOCKET_10x2_0.8MM_5H_SMD', u'Header High Speed Stacked (ERF8-010-05.0-S-DV-K-TR;  ER8-20S-0.8SV-5H)'],
+                [1, 1, u'J1', 'Connector', u'RJ45_lan_transformer_poe_horizontal', u'RJ45 LAN Transformer PoE+ GigaBit (WE 7499511440; BEL FUSE0826-1X1T-GH-F;)'],
+                [2, 2, u'J5, J6', 'NP Connector', u'HEADER_2x5_1.27MM_SMD', u'Header, 5-Pin, Dual Row'],
+                [1, 1, u'J4', 'Connector', u'HEADER_2X10_1.27MM_SMD', u'Header, 2x10-Pin, Dual Row, 1.27mm'],
+                [1, 1, u'J3', 'Connector', u'HEADER_2x6_2MM_SMD', u'Header, 6-Socket, Dual Row']
+            ]
+
+
+        }
+
+        m = MergeBom(file_list, self.config, logger=self.logger,is_csv=True)
+        d = m.merge()
+        y = 0
+        for category in d.keys():
+            if(y == 2):
+                break
+            y = y+1
+            for n, i in enumerate(d[category]):
+                print "T >", i
+                print "C <", check[category][n]
+                self.assertEqual(i, check[category][n])
+                if(n == 4):
+                    break
 
     def test_groupFmt(self):
         file_list = [
@@ -401,7 +467,6 @@ class TestMergeBom(unittest.TestCase):
         m = MergeBom(file_list, self.config, logger=self.logger)
         k = m.diff()
 
-        print
         for i in k.keys():
             print i, ">>", k[i][0]
             print i, "<<", k[i][1]
@@ -610,6 +675,7 @@ class TestMergeBom(unittest.TestCase):
             for i,n in enumerate(uno):
                 if not( uno[i] == data[i]):
                     risultato=False
+
         else:
             risultato=False
         self.assertTrue(risultato)
@@ -621,7 +687,6 @@ class TestMergeBom(unittest.TestCase):
 
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.extra_data()
-        print d
         self.assertEqual(len(d), 1)
         self.assertEqual(d[0]['project'], "test")
         self.assertEqual(d[0]['pcb_version'], "c")
@@ -703,7 +768,7 @@ class TestMergeBom(unittest.TestCase):
                            "-d",
                            "-p", self.temp_dir,
                            os.path.join("test","diff_test_old.xlsx"),
-                           os.path.join("test","diff_test_new.xlsx")] 
+                           os.path.join("test","diff_test_new.xlsx")]
         print
         print " ".join(cmd)
         print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -749,8 +814,8 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         check = {'C': [
-                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
                     [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
+                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
                     [10, 10, u'C3, C4, C5, C6, C7, C8, C9, C10, C11, C12', '100nF',
                      '805', u'x7r', u'123; 456', u'altro', u'abc', u'code abc'],
                 ],
@@ -777,6 +842,7 @@ class TestMergeBom(unittest.TestCase):
                     self.assertEqual(c, j[m])
 
         outfilename = os.path.join(self.temp_dir, "extra_column_merged-R0.xlsx")
+
         cmd = ["python",
                "mergebom.py",
                "-prx", "extra_column",
@@ -785,9 +851,8 @@ class TestMergeBom(unittest.TestCase):
                "-pv", "S",
                "-n", "Test project",
                "test/column.xlsx"]
-        print " ".join(cmd)
-        print subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-
+        print (" ".join(cmd))
+        print (subprocess.check_output(cmd, stderr=subprocess.STDOUT))
         self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
 
     def test_cliCSV(self):
@@ -845,6 +910,7 @@ if __name__ == "__main__":
     suite.addTest(TestMergeBom("test_stats"))
     suite.addTest(TestMergeBom("test_notPopulate"))
     suite.addTest(TestMergeBom("test_otherColumn"))
+    suite.addTest(TestMergeBom("test_mergeMethod"))
     suite.addTest(TestMergeBom("test_categoryGroup"))
     suite.addTest(TestMergeBom("test_cliMerge"))
     suite.addTest(TestMergeBom("test_cliMergeDiff"))
@@ -854,8 +920,3 @@ if __name__ == "__main__":
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=options.verbose).run(suite)
-
-
-
-
-

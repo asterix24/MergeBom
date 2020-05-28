@@ -230,6 +230,7 @@ class CfgMergeBom(object):
 
         return None
 
+
     def categories(self):
         categories = []
         for item in self.category_names:
@@ -269,6 +270,8 @@ def cfg_version(filename):
 
 def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                         logger, bom_postfix="", bom_prefix="bom-"):
+
+
     """
     Alla funzione vengono passati i parametri:
         1. il path del file Workspace
@@ -285,7 +288,6 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         ProjectPath=camera-tbd\camera-tbd.PrjPcb
         [Project2]
         ProjectPath=usb-serial\usb-serial.PrjPcb
-
     """
 
     ret = []
@@ -348,22 +350,28 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         bom_name = "%s%s%s" % (bom_prefix, basename, bom_postfix)
         path_file = os.path.join(file_to_merge_path, basename)
         merge_file_item = os.path.join(path_file, bom_name) + '.csv'
+        merge_file_item_nopath = os.path.join(file_to_merge_path,bom_name)+ '.csv'
+
         if not csv_file:
             merge_file_item = os.path.join(path_file, bom_name) +'.xlsx'
+            merge_file_item_nopath = os.path.join(file_to_merge_path,bom_name)+'.xlsx'
 
         if os.path.exists(merge_file_item):
             file_BOM.append(merge_file_item)
+        elif os.path.exists(merge_file_item_nopath):
+            file_BOM.append(merge_file_item_nopath)
+
 
         # creo una tupla con il dizionario dei parametri e la lista dei file e lo metto all'interno di un'altra lista (ret):
         # ret[
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         #   ([file1.csv, file2.csv], {nomeparametro : parametro})
         # ]
-        if not (parametri_dict == {} and file_BOM == []):
+        if (parametri_dict == {} and file_BOM == []):
+            logger.error("Warning empty parameters\n")
+        else:
             ret.append((basename, file_BOM, parametri_dict))
-
     return ret
-
 
 if __name__ == "__main__":
     import toml
