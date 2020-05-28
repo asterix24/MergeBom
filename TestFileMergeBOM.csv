@@ -1,0 +1,600 @@
+Quantity,Designator,Comment,Footprint,Description
+,,,,
+1,C1,1nF X/Y 2kV,1808_[4520],Ceramic 250Vad X7R X1/Y1 (GA342DR7GF102KW)
+1,C2,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C3,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C4,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C5,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C6,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C7,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C8,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C9,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C10,100nF,0805_[2012],Ceramic 100V X7R
+1,C11,100nF,0805_[2012],Ceramic 100V X7R
+1,C12,100nF,0805_[2012],Ceramic 100V X7R
+1,C13,100nF,0805_[2012],Ceramic 100V X7R
+1,C14,2.2uF,0603_[1608],Ceramic 16V X5R 10%
+1,C15,1uF,0805_[2012],Ceramic 100V
+1,C16,2.2uF,0603_[1608],Ceramic 16V X5R 10%
+1,C17,100nF,0805_[2012],Ceramic 100V X7R
+1,C18,4.7uF,1210_[3225],Ceramic 100V X5R (CGA6M3X7S2A475K200AB)
+1,C19,4.7uF,1210_[3225],Ceramic 100V X5R (CGA6M3X7S2A475K200AB)
+1,C20,4.7uF,1210_[3225],Ceramic 100V X5R (CGA6M3X7S2A475K200AB)
+1,C21,100nF,0805_[2012],Ceramic 100V X7R
+1,C22,1uF,0805_[2012],Ceramic 6.3V
+1,C23,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C24,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C25,4.7nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C26,100nF,0805_[2012],Ceramic 100V X7R
+1,C27,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C28,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C29,100uF,1210_[3225],Ceramic 6.3V X5R
+1,C30,100nF,0805_[2012],Ceramic 100V X7R
+1,C31,10nF,0603_[1608],Ceramic 10V X7R
+1,C32,2.2uF,0603_[1608],Ceramic 16V X5R 10%
+1,C33,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C34,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C35,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C36,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C37,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C38,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C39,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C40,1nF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C41,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C42,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C43,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C44,1nF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C45,1nF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C46,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C47,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C48,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C49,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C50,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C51,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C52,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C53,NP,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C54,470nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C55,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C56,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C57,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C58,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C59,470nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C60,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C61,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C62,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C63,470nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C64,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C65,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C66,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C67,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C68,470nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C69,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C70,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C71,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C72,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C73,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C74,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C75,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C76,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C77,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C78,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C79,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C80,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C81,47uF,1210_[3225],Ceramic 6.3V X5R
+1,C82,NP,1210_[3225],Ceramic 6.3V
+1,C83,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C84,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C85,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C86,47uF,1210_[3225],Ceramic 6.3V X5R
+1,C87,NP,1210_[3225],Ceramic 6.3V
+1,C88,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C89,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C90,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C91,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C92,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C93,22uF,0603_[1608],Ceramic 6.3V X5R
+1,C94,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C95,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C96,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C97,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C98,22uF,0805_[2012],Ceramic 6.3V X5R
+1,C99,47uF,1210_[3225],Ceramic 100V X5R
+1,C100,NP,1210_[3225],Ceramic 6.3V
+1,C101,10uF,0805_[2012],Ceramic 10V X5R
+1,C102,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C103,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C104,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C105,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C106,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C107,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C108,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C109,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C110,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C111,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C112,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C113,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C114,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C115,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C116,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C117,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C118,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C119,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C120,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C121,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C122,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C123,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C124,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C125,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C126,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C127,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C128,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C129,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C130,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C131,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C132,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C133,2.2uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R 10%
+1,C134,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C135,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C136,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C137,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C138,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C139,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C140,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C141,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C142,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C143,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C144,2.2uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R 10%
+1,C145,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C146,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C147,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C148,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C149,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C150,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C151,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C152,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C153,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C154,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C155,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C156,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C157,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C158,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C159,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C160,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C161,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C162,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C163,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C164,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C165,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C166,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C167,2.2uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R 10%
+1,C168,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C169,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C170,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C171,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C172,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C173,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C174,10nF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X7R 10%
+1,C175,10nF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X7R 10%
+1,C176,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C177,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C178,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C179,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C180,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C181,2.2uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R 10%
+1,C182,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C183,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C184,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C185,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C186,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C187,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C188,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C189,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C190,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C191,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C192,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C193,4.7nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C194,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C195,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C196,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C197,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C198,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C199,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C200,100nF,0201_[0603]_CAP_SMALL,Ceramic 10V X5R 10%
+1,C201,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C202,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C203,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C204,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C205,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C206,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C207,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C208,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C209,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C210,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C211,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C212,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C213,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C214,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C215,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C216,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C217,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C218,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C219,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C220,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C221,1uF,0201_[0603]_CAP_SMALL,Ceramic 6.3V X5R
+1,C222,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C223,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C224,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C225,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C226,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C227,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C228,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C229,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C230,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C231,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C232,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C233,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C234,18pF,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C235,18pF,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C236,NP,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C237,NP,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C238,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C239,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C240,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C241,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C242,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C243,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C244,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C245,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C246,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C247,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C248,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C249,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C250,NP (100nF),0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C251,NP (100nF),0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C252,22uF,0603_[1608]_CAP_SMALL,Ceramic 6.3V X5R
+1,C253,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C254,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C255,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C256,4.7uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C257,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C258,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C259,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C260,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C261,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C262,10uF,0805_[2012],Ceramic 10V X5R
+1,C263,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C264,10uF,0805_[2012],Ceramic 10V X5R
+1,C265,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C266,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C267,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C268,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C269,220nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C270,470pF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C271,470pF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C272,470pF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C273,22pF,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C274,22pF,0402_[1005]_Cap_small,Ceramic COG 1%
+1,C275,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C276,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C277,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C278,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C279,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X5R
+1,C280,100nF,0402_[1005]_Cap_small,Ceramic 16V X7R 10%
+1,C281,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C282,4.7uF,0603_[1608],Ceramic 6.3V X5R
+1,C284,4.7uF,Diode_bridge_smd,Ceramic 6.3V X5R
+1,C283,1uF,0402_[1005]_Cap_small,Ceramic 6.3V X7R 10%
+1,D1,HD06,Diode_bridge_smd,Diode Bridge 0.8A (MBS6)
+1,D2,HD06,Diode_bridge_smd,Diode Bridge 0.8A (MBS6)
+1,D3,SMAJ58A,DO214AA_K1-A2_SMB,TVS  58V
+1,D4,+48V,0603_[1608]_K1-A2_LED,Green LED
+1,D5,+3.3V,0603_[1608]_K1-A2_LED,Green LED
+1,D6,ZLLS400TA,SOD-323_K2-A1,Schottky Barrier Diode 40V 0.520mA (BAT54J)
+1,D7,ZLLS400TA,SOD-323_K2-A1,Schottky Barrier Diode 40V 0.520mA (BAT54J)
+1,D8,ZLLS400TA,SOD-323_K2-A1,Schottky Barrier Diode 40V 0.520mA (BAT54J)
+1,D9,ZLLS400TA,SOD-323_K2-A1,Schottky Barrier Diode 40V 0.520mA (BAT54J)
+1,D10,NP,SOD-323_K2-A1,Schottky Barrier Diode 40V 0.520mA (ZLLS400TA; BAT54J)
+1,D11,CPU,0603_[1608]_K1-A2_LED,Green LED
+1,J1,RJ45_LAN_10/100/1000_POE_LED,RJ45_lan_transformer_poe_horizontal,RJ45 LAN Transformer PoE+ GigaBit (WE 7499511440; BEL FUSE 0826-1X1T-GH-F;)
+1,J2,SENSOR BUS,ER8_SOCKET_10x2_0.8MM_5H_SMD,Header High Speed Stacked (ERF8-010-05.0-S-DV-K-TR;  ER8-20S-0.8SV-5H)
+1,J3,SENSOR CMD,HEADER_2x6_2MM_SMD,"Header, 6-Socket, Dual Row"
+1,J4,SERVICE,HEADER_2X10_1.27MM_SMD,"Header, 2x10-Pin, Dual Row, 1.27mm"
+1,J5,NP (SD),HEADER_2x5_1.27MM_SMD,"Header, 5-Pin, Dual Row"
+1,J6,NP (JTAG),HEADER_2x5_1.27MM_SMD,"Header, 5-Pin, Dual Row"
+1,L1,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L2,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L3,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L4,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L5,8.2uH,INDUCT_SIZE_14.5X14.5X8MM,"Power Inductor 11A 6.5mohm (Sumita CDEP147NP-8R0MC-125, CDEP147NP-7R7MC-95;)"
+1,L6,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L8,470nH,WE-LQS_4025,Power Inductor 4A (WE 744040520047; WPN252012ER47MT) Note: different size WE  744040520047
+1,L9,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L11,470nH,WE-LQS_4025,Power Inductor 4A (WE 744040520047; WPN252012ER47MT) Note: different size WE  744040520047
+1,L12,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L14,1uH,WE-LQS_4025,Power Inductor 3.9A (WE 74405042010; WPN252012H1R0MT)  Note: Different size WE 74404052010
+1,L15,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L17,1uH,WE-LQS_4025,Power Inductor 3.9A (WE 74405042010; WPN252012H1R0MT)  Note: Different size WE 74404052010
+1,L18,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L20,1uH,WE-LQS_4025,Power Inductor 3.9A (WE 74405042010; WPN252012H1R0MT)  Note: Different size WE 74404052010
+1,L21,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L23,1uH,WE-LQS_4025,Power Inductor 3.9A (WE 74405042010; WPN252012H1R0MT)  Note: Different size WE 74404052010
+1,L24,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L26,1uH,WE-LQS_4025,Power Inductor 3.9A (WE 74405042010; WPN252012H1R0MT)  Note: Different size WE 74404052010
+1,L27,Ferrite 22ohm 6A,0805_[2012],Ferrite bead 22ohm 6A (WE 742792021)
+1,L28,Ferrite 240ohm 350mA,0201_[0603]_CAP_SMALL,Ferrite Bead 240ohm 350mA (Murata BLM03AX241SN1D; WE 742692004)
+1,L29,Ferrite 120ohm 2A,0603_[1608]_CAP_SMALL,Ferrite Bead 120ohm 2A (Murata BLM18PG121SH1; WE 742792625)
+1,L30,Ferrite 120ohm 2A,0603_[1608],Ferrite Bead 120ohm 2A (Murata BLM18PG121SH1; WE 742792625)
+1,L31,4.7uH,INDUCT_SIZE_3.0x3.0x1.2MM_SMD,Power Inductor 1A (TDK VLS3012T-4R7M1R0)
+1,L32,Ferrite 120ohm 2A,0603_[1608],Ferrite Bead 120ohm 2A (Murata BLM18PG121SH1; WE 742792625)
+1,L33,7.4uH,INDUCT_SIZE_12.5X12.5X5.6MM,WE744382720
+1,L34,Ferrite 120ohm 2A,0603_[1608],Ferrite Bead 120ohm 2A (Murata BLM18PG121SH1; WE 742792625)
+1,Q1,IRLML6401TRPBF,SOT-23,MOSFET-P
+1,Q2,RYU002N05,SOT-323,MOSFET-N SW 0.9V DRIVE 50V (BSS816NW)
+1,Q3,RYU002N05,SOT-323,MOSFET-N SW 0.9V DRIVE 50V (BSS816NW)
+1,Q4,RYU002N05,SOT-323,MOSFET-N SW 0.9V DRIVE 50V (BSS816NW)
+1,Q5,RYU002N05,SOT-323,MOSFET-N SW 0.9V DRIVE 50V (BSS816NW)
+1,R1,1M,2010_[5025],Resistor
+1,R2,NP,0402_[1005]_Res_small,Resistor
+1,R3,22R,0402_[1005]_Res_small,Resistor
+1,R4,22R,0402_[1005]_Res_small,Resistor
+1,R5,22R,0402_[1005]_Res_small,Resistor
+1,R6,22R,0402_[1005]_Res_small,Resistor
+1,R7,22R,0402_[1005]_Res_small,Resistor
+1,R8,22R,0402_[1005]_Res_small,Resistor
+1,R9,22R,0402_[1005]_Res_small,Resistor
+1,R10,24k9,0805_[2012],Resistor
+1,R11,90R9,0805_[2012],Resistor
+1,R12,22k,0603_[1608],Resistor
+1,R13,22k,0603_[1608],Resistor
+1,R14,220R,0402_[1005]_Res_small,Resistor
+1,R15,22R,0402_[1005]_Res_small,Resistor
+1,R16,10k,0402_[1005]_Res_small,Resistor
+1,R17,2R2,0805_[2012],Resistor
+1,R18,2R2,0805_[2012],Resistor
+1,R19,10k,0402_[1005]_Res_small,Resistor
+1,R20,47k,0402_[1005]_Res_small,Resistor
+1,R21,22k,0402_[1005]_Res_small,Resistor
+1,R22,470k,0402_[1005]_Res_small,Resistor
+1,R23,10k,0402_[1005]_Res_small,Resistor
+1,R24,NP,0402_[1005]_Res_small,Resistor
+1,R25,16k2,0402_[1005]_Res_small,Resistor
+1,R26,NP,0402_[1005]_Res_small,Resistor
+1,R27,10k,0402_[1005]_Res_small,Resistor
+1,R28,2k1,0805_[2012],Resistor
+1,R29,NP,0402_[1005]_Res_small,Resistor
+1,R30,10k,0402_[1005]_Res_small,Resistor
+1,R31,NP,0402_[1005]_Res_small,Resistor
+1,R32,2k2,0402_[1005]_Res_small,Resistor
+1,R34,130k,0402_[1005]_Res_small,Resistor
+1,R35,100k,0402_[1005]_Res_small,Resistor
+1,R36,140k,0402_[1005]_Res_small,Resistor
+1,R37,10k,0402_[1005]_Res_small,Resistor
+1,R38,56k,0402_[1005]_Res_small,Resistor
+1,R39,NP,0402_[1005]_Res_small,Resistor
+1,R40,0R,0402_[1005]_Res_small,Resistor
+1,R41,NP,0402_[1005]_Res_small,Resistor
+1,R42,715k,0402_[1005]_Res_small,Resistor
+1,R43,NP,0402_[1005]_Res_small,Resistor
+1,R44,240k,0402_[1005]_Res_small,Resistor
+1,R45,10k,0402_[1005]_Res_small,Resistor
+1,R46,360k,0402_[1005]_Res_small,Resistor
+1,R47,NP (100k),0402_[1005]_Res_small,Resistor
+1,R48,0R,0402_[1005]_Res_small,Resistor
+1,R49,100R,0402_[1005]_Res_small,Resistor
+1,R50,130k,0402_[1005]_Res_small,Resistor
+1,R51,220k,0402_[1005]_Res_small,Resistor
+1,R52,1M,0402_[1005]_Res_small,Resistor
+1,R53,10k,0402_[1005]_Res_small,Resistor
+1,R54,NP,0402_[1005]_Res_small,Resistor
+1,R55,0R,0402_[1005]_Res_small,Resistor
+1,R56,NP,0402_[1005]_Res_small,Resistor
+1,R57,100k,0402_[1005]_Res_small,Resistor
+1,R58,0R,0402_[1005]_Res_small,Resistor
+1,R59,0R,0402_[1005]_Res_small,Resistor
+1,R60,0R,0402_[1005]_Res_small,Resistor
+1,R61,0R,0402_[1005]_Res_small,Resistor
+1,R62,0R,0402_[1005]_Res_small,Resistor
+1,R63,10k,0402_[1005]_Res_small,Resistor
+1,R64,0R,0402_[1005]_Res_small,Resistor
+1,R65,0R,0402_[1005]_Res_small,Resistor
+1,R66,0R,0402_[1005]_Res_small,Resistor
+1,R67,0R,0402_[1005]_Res_small,Resistor
+1,R68,NP (56R),0402_[1005]_Res_small,Resistor
+1,R69,0R,0402_[1005]_Res_small,Resistor
+1,R70,0R,0402_[1005]_Res_small,Resistor
+1,R71,NP,0201_[0603]_RES_SMALL,Resistor
+1,R72,0R,0201_[0603]_RES_SMALL,Resistor
+1,R73,NP,0402_[1005]_Res_small,Resistor
+1,R74,10k,0402_[1005]_Res_small,Resistor
+1,R75,10k,0402_[1005]_Res_small,Resistor
+1,R76,4k7,0402_[1005]_Res_small,Resistor
+1,R77,4k7,0402_[1005]_Res_small,Resistor
+1,R78,4k7,0402_[1005]_Res_small,Resistor
+1,R79,4k7,0402_[1005]_Res_small,Resistor
+1,R80,10k,0402_[1005]_Res_small,Resistor
+1,R81,4k7,0402_[1005]_Res_small,Resistor
+1,R82,4k7,0402_[1005]_Res_small,Resistor
+1,R83,4k7,0402_[1005]_Res_small,Resistor
+1,R84,0R,0402_[1005]_Res_small,Resistor
+1,R85,0R,0402_[1005]_Res_small,Resistor
+1,R86,0R,0402_[1005]_Res_small,Resistor
+1,R87,0R,0402_[1005]_Res_small,Resistor
+1,R88,100k 1%,0402_[1005]_Res_small,Resistor
+1,R89,4k7,0402_[1005]_Res_small,Resistor
+1,R90,0R,0402_[1005]_Res_small,Resistor
+1,R91,NP (100k 1%),0402_[1005]_Res_small,Resistor
+1,R92,10k,0402_[1005]_Res_small,Resistor
+1,R93,NP,0201_[0603]_RES_SMALL,Resistor
+1,R94,1k5 1%,0402_[1005]_Res_small,Resistor
+1,R95,NP,0201_[0603]_RES_SMALL,Resistor
+1,R96,NP,0402_[1005],Resistor (1M 1%)
+1,R97,NP,0402_[1005],Resistor (1M 1%)
+1,R98,10k,0402_[1005]_Res_small,Resistor
+1,R99,10k,0402_[1005]_Res_small,Resistor
+1,R100,10k,0402_[1005]_Res_small,Resistor
+1,R101,240R 1%,0402_[1005]_Res_small,Resistor
+1,R102,240R 1%,0402_[1005]_Res_small,Resistor
+1,R103,240R 1%,0402_[1005]_Res_small,Resistor
+1,R104,150R,0402_[1005]_Res_small,Resistor
+1,R105,150R,0402_[1005]_Res_small,Resistor
+1,R106,NP (1k5 0.1%),0603_[1608]_RES_SMALL,Resistor
+1,R107,NP (1k5 0.1%),0603_[1608]_RES_SMALL,Resistor
+1,R108,0R,0402_[1005]_Res_small,Resistor
+1,R109,10k,0402_[1005]_Res_small,Resistor
+1,R110,10k,0402_[1005]_Res_small,Resistor
+1,R111,10k,0402_[1005]_Res_small,Resistor
+1,R112,10k,0402_[1005]_Res_small,Resistor
+1,R113,10k,0402_[1005]_Res_small,Resistor
+1,R114,10k,0402_[1005]_Res_small,Resistor
+1,R115,10k,0402_[1005]_Res_small,Resistor
+1,R116,10k,0402_[1005]_Res_small,Resistor
+1,R117,10k,0402_[1005]_Res_small,Resistor
+1,R118,10k,0402_[1005]_Res_small,Resistor
+1,R119,10k,0402_[1005]_Res_small,Resistor
+1,R120,10k,0402_[1005]_Res_small,Resistor
+1,R121,200R 1%,0402_[1005]_Res_small,Resistor
+1,R122,0R,0402_[1005]_Res_small,Resistor
+1,R123,0R,0402_[1005]_Res_small,Resistor
+1,R124,10k,0402_[1005]_Res_small,Resistor
+1,R125,10k,0402_[1005]_Res_small,Resistor
+1,R126,10k,0402_[1005]_Res_small,Resistor
+1,R127,10k,0402_[1005]_Res_small,Resistor
+1,R128,10k,0402_[1005]_Res_small,Resistor
+1,R129,1k5 1%,0402_[1005]_Res_small,Resistor
+1,R130,270R,0402_[1005]_Res_small,Resistor
+1,R131,0R,0402_[1005]_Res_small,Resistor
+1,R132,270R,0402_[1005]_Res_small,Resistor
+1,R133,0R,0402_[1005]_Res_small,Resistor
+1,R134,NP (2.49k),0402_[1005]_Res_small,Resistor
+1,R135,NP (1k2),0402_[1005]_Res_small,Resistor
+1,R136,2k37,0402_[1005]_Res_small,Resistor
+1,R137,NP,0402_[1005]_Res_small,Resistor
+1,R138,10k,0402_[1005]_Res_small,Resistor
+1,R139,10k,0402_[1005]_Res_small,Resistor
+1,R140,NP,0402_[1005]_Res_small,Resistor
+1,R141,10k,0402_[1005]_Res_small,Resistor
+1,R142,10k,0402_[1005]_Res_small,Resistor
+1,R143,10k,0402_[1005]_Res_small,Resistor
+1,R144,10k,0402_[1005]_Res_small,Resistor
+1,R145,10k,0402_[1005]_Res_small,Resistor
+1,R146,10k,0402_[1005]_Res_small,Resistor
+1,R147,0R,0402_[1005]_Res_small,Resistor
+1,R148,22R,0402_[1005]_Res_small,Resistor
+1,R149,22R,0402_[1005]_Res_small,Resistor
+1,R150,22R,0402_[1005]_Res_small,Resistor
+1,R151,22R,0402_[1005]_Res_small,Resistor
+1,R152,1k,0402_[1005]_Res_small,Resistor
+1,R153,NP,0402_[1005]_Res_small,Resistor
+1,R154,22R,0402_[1005]_Res_small,Resistor
+1,R155,22R,0402_[1005]_Res_small,Resistor
+1,R156,22R,0402_[1005]_Res_small,Resistor
+1,R157,22R,0402_[1005]_Res_small,Resistor
+1,R158,NP,0402_[1005]_Res_small,Resistor
+1,R159,22R,0402_[1005]_Res_small,Resistor
+1,R160,22R,0402_[1005]_Res_small,Resistor
+1,R161,1k,0402_[1005]_Res_small,Resistor
+1,R162,22R,0402_[1005]_Res_small,Resistor
+1,R163,22R,0402_[1005]_Res_small,Resistor
+1,R164,22R,0402_[1005]_Res_small,Resistor
+1,R165,22R,0402_[1005]_Res_small,Resistor
+1,R166,22R,0402_[1005]_Res_small,Resistor
+1,R167,22R,0402_[1005]_Res_small,Resistor
+1,R168,22R,0402_[1005]_Res_small,Resistor
+1,R169,NP,0402_[1005]_Res_small,Resistor
+1,R170,NP,0402_[1005]_Res_small,Resistor
+1,R171,1k,0402_[1005]_Res_small,Resistor
+1,R172,NP,0402_[1005]_Res_small,Resistor
+1,R173,NP,0402_[1005]_Res_small,Resistor
+1,R174,NP,0402_[1005]_Res_small,Resistor
+1,R175,NP,0402_[1005]_Res_small,Resistor
+1,R176,NP,0402_[1005]_Res_small,Resistor
+1,R177,NP,0402_[1005]_Res_small,Resistor
+1,R178,NP,0402_[1005]_Res_small,Resistor
+1,R179,1k,0402_[1005]_Res_small,Resistor
+1,R180,NP,0402_[1005]_Res_small,Resistor
+1,R181,NP,0402_[1005]_Res_small,Resistor
+1,R182,NP,0402_[1005]_Res_small,Resistor
+1,R183,1k,0402_[1005]_Res_small,Resistor
+1,R184,1k,0402_[1005]_Res_small,Resistor
+1,R185,NP,0402_[1005]_Res_small,Resistor
+1,R186,NP,0402_[1005]_Res_small,Resistor
+1,R187,NP,0402_[1005]_Res_small,Resistor
+1,R188,22R,0402_[1005]_Res_small,Resistor
+1,R189,100R 1%,0402_[1005]_Res_small,Resistor
+1,R190,22R,0402_[1005]_Res_small,Resistor
+1,R191,22R,0402_[1005]_Res_small,Resistor
+1,R192,22R,0402_[1005]_Res_small,Resistor
+1,R193,22R,0402_[1005]_Res_small,Resistor
+1,R194,22R,0402_[1005]_Res_small,Resistor
+1,R195,NP,0402_[1005]_Res_small,Resistor
+1,R196,22R,0402_[1005]_Res_small,Resistor
+1,R197,0R,0402_[1005]_Res_small,Resistor
+1,R198,22R,0402_[1005]_Res_small,Resistor
+1,R199,NP,0402_[1005]_Res_small,Resistor
+1,R200,22R,0402_[1005]_Res_small,Resistor
+1,R201,10k,0402_[1005]_Res_small,Resistor
+1,R202,22R,0402_[1005]_Res_small,Resistor
+1,R203,22R,0402_[1005]_Res_small,Resistor
+1,R204,22R,0402_[1005]_Res_small,Resistor
+1,R205,22R,0402_[1005]_Res_small,Resistor
+1,R206,22R,0402_[1005]_Res_small,Resistor
+1,R207,22R,0402_[1005]_Res_small,Resistor
+1,R208,22R,0402_[1005]_Res_small,Resistor
+1,R209,NP,0402_[1005]_Res_small,Resistor
+1,R210,NP,0402_[1005]_Res_small,Resistor
+1,R211,NP,0402_[1005]_Res_small,Resistor
+1,R212,NP,0402_[1005]_Res_small,Resistor
+1,R213,NP,0402_[1005]_Res_small,Resistor
+1,R214,NP,0402_[1005]_Res_small,Resistor
+1,R215,NP,0402_[1005]_Res_small,Resistor
+1,R216,NP,0402_[1005]_Res_small,Resistor
+1,R217,NP,0402_[1005]_Res_small,Resistor
+1,R218,NP,0402_[1005]_Res_small,Resistor
+1,R219,NP,0402_[1005]_Res_small,Resistor
+1,R220,NP,0402_[1005]_Res_small,Resistor
+1,R221,NP,0402_[1005]_Res_small,Resistor
+1,R222,NP,0402_[1005]_Res_small,Resistor
+1,R223,NP,0402_[1005]_Res_small,Resistor
+1,R224,NP,0402_[1005]_Res_small,Resistor
+1,R225,NP,0201_[0603]_RES_SMALL,Resistor
+1,R226,10k,0402_[1005]_Res_small,Resistor
+1,R227,10k,0402_[1005]_Res_small,Resistor
+1,R228,10k,0201_[0603]_RES_SMALL,Resistor
+1,R229,10k,0201_[0603]_RES_SMALL,Resistor
+1,R230,10k,0201_[0603]_RES_SMALL,Resistor
+1,R231,10k,0201_[0603]_RES_SMALL,Resistor
+1,R232,10k,0201_[0603]_RES_SMALL,Resistor
+1,R233,10k,0201_[0603]_RES_SMALL,Resistor
+1,R234,10k,0201_[0603]_RES_SMALL,Resistor
+1,R235,10k,0201_[0603]_RES_SMALL,Resistor
+1,R236,220R,0201_[0603]_RES_SMALL,Resistor
+1,R237,22R,0201_[0603]_RES_SMALL,Resistor
+1,R238,10k,0201_[0603]_RES_SMALL,Resistor
+1,R239,22R,0201_[0603]_RES_SMALL,Resistor
+1,R240,22R,0201_[0603]_RES_SMALL,Resistor
+1,R241,22R,0201_[0603]_RES_SMALL,Resistor
+1,R242,22R,0201_[0603]_RES_SMALL,Resistor
+1,R243,22R,0201_[0603]_RES_SMALL,Resistor
+1,R244,22R,0201_[0603]_RES_SMALL,Resistor
+1,R245,22R,0201_[0603]_RES_SMALL,Resistor
+1,R246,22R,0201_[0603]_RES_SMALL,Resistor
+1,R247,4k7,0603_[1608],Resistor
+1,SW1,IP SEL L,rotary_switch_vert,SMD Rotary Switch 10x10mm 2.54mm
+1,SW2,IP SEL H,rotary_switch_vert,SMD Rotary Switch 10x10mm 2.54mm
+1,U1,NP,QFN50P300X300X80_HS-11N,PoE+ Inteface 802.3af/at (MAX5969BETB+)
+1,U2,TPS2378DDA,SOIC8_PAD,PoE+ Inteface 802.3af/at
+1,U3,MIC28514T-E/PHA,QFN65P600X600X90_HS-33N,Voltage Regulator DC-DC Buck  Synchronous 5A
+1,U4,MCP1824T-ADJE/OT,SOT-23-5,Voltage Regualtor LDO Adjustable (LDCL015MR;)
+1,U5,MP2147GD,QFN50P200X300X100_HS-13N,Voltage Regulator DC-DC Buck 4A
+1,U6,MP2147GD,QFN50P200X300X100_HS-13N,Voltage Regulator DC-DC Buck 4A
+1,U7,UM805SE,SOT-143,Reset Monitor Open-drain Vth=2.93V (ST STM6315SDW1;)
+1,U8,MC34PF4210A1ES,QFN50P800X800X90_HS-57N,Power Management Integrated Circuit
+1,U9,MIMX8MQ6CVAHZAA,BGA621_0.65x0.43MM17x17MM,MIMX8MQ6CVAHZAA
+1,U10,MTFC4GACAJCN-1M WT,BGA153_0.5MM_11.5x13MM,MTFC4GACAJCN-1M WT
+1,U11,32.768kHz Oscillator,CRYSTAL_3.2X1.5MM_4P_SMD,32.768kHz Oscillator (EPSON  X1B0002110001 SG-3030CM; Abracom ASH7K-32.768KHz-T))
+1,U12,UM805SE,SOT-143,Reset Monitor Open-drain Vth=2.93V (ST STM6315SDW1;)
+1,U13,MT53B256M32D1NP-062 WT:C,BGA200_0.65X0.8MM10.1X14.6MM,MT53B256M32D1NP-062 WT:C
+1,U14,AR8031-AL1A,QFN40P600X600X75_HS-49N,Ethernet phy 10/100/1000G-BIT  Broadcom
+1,Y1,25MHz,CRYSTAL_3.2X2.5MM_4P_SMD,Cristal 25MHZ 20ppm 18pF
+1,Y2,NP,CRYSTAL_3.2X2.5MM_4P_SMD,Cristal 27MHZ 20ppm 18pF
+1,Y3,25MHz,CRYSTAL_3.2X2.5MM_4P_SMD,Cristal 25MHZ 20ppm 18pF
