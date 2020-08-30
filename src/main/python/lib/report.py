@@ -81,7 +81,7 @@ class ReportBase(object):
         self.printout("Total: %s\n" % stats['total'])
 
     def warning(self, s, prefix=">> "):
-        self.printout(s, prefix=prefix, color='purple')
+        self.printout(s, prefix=prefix, color='magenta')
 
     def error(self, s, prefix="!! "):
         self.printout(s, prefix=prefix, color='red')
