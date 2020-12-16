@@ -239,9 +239,12 @@ class MergeBomGUI(QDialog):
         self.config = CfgMergeBom(logger=self.logger)
 
     def __fill_variant(self, prj):
+        idx = self.prj_variant.currentIndex()
         self.prj_variant.clear()
         self.prj_variant.addItem(NO_VARIANT)
         self.prj_variant.addItems(self.prj_and_data[prj][2])
+        if idx > 0:
+            self.prj_variant.setCurrentIndex(idx)
 
     @pyqtSlot()
     def __select_prj_variant(self):
@@ -444,7 +447,6 @@ class MergeBomGUI(QDialog):
                 continue
 
             for item in DEFAULT_PRJ_DIR_VARIANT:
-
                 folder, dst, src = item
                 dst_name = dst % (project_name, variant, param.get("prj_hw_ver", "NONE"))
                 src_name = os.path.join(folder, variant, src)
@@ -661,7 +663,8 @@ class MergeBomGUI(QDialog):
             if variant != NO_VARIANT:
                 search_dirs = [os.path.join(root, "Assembly", current_prj, variant),
                 os.path.join(root, "Assembly", variant),
-                os.path.join(root, "..", "Assembly", current_prj, variant)]
+                os.path.join(root, "..", "Assembly", current_prj, variant),
+                os.path.join(root, "Assembly", "%s_var-%s" % (current_prj, variant))]
 
         if self.bom_list_search_path is None or self.bom_list_search_path.text() != "":
             search_dirs = [self.bom_list_search_path.text()]
