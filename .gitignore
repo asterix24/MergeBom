@@ -11,4 +11,5 @@ venv/
 mergebom_report.txt
 .ycm_extra_conf.py
 .envrc
+.venv/
 tags
