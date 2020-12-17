@@ -299,12 +299,12 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         check = {
-            "10k" : (1, 9),
+            "10k" : (2, 9),
             "fpf2124": (1, 1),
             "txs0108e": (1, 1),
             "1uf": (1, 3),
             "tactile switch": (1, 1),
-            "100k": (1, 7),
+            "100k": (2, 7),
             "sp2526a-1en-l": (1, 1),
             "b340a": (1, 1),
             "wl1831mod": (1, 1),
@@ -312,7 +312,7 @@ class TestMergeBom(unittest.TestCase):
             "smbj28a": (1, 1),
             "mbr120vlsft1g": (1, 2),
             "np  (1k)": (1, 1),
-            "68k": (1, 31),
+            "68k": (2, 31),
             "np connector": (1, 1),
             "connector": (11, 12),
             "tvs array (we 82400152)": (1, 2),
@@ -326,7 +326,7 @@ class TestMergeBom(unittest.TestCase):
             "ld29150dt33r": (1, 1),
             "220h r @ 100mhz": (1, 14),
             "100nf": (1, 30),
-            "6.8r": (1, 3),
+            "6.8r": (2, 3),
             "ft232rq": (1, 1),
             "line filter (we 744232090)": (1, 2),
             "np  (220 r @ 100mhz)": (1, 1),
@@ -787,14 +787,14 @@ class TestMergeBom(unittest.TestCase):
         check = {'C': [
                     [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
                     [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
-                    [10, 10, u'C3, C4, C5, C6, C7, C8, C9, C10, C11, C12', '100nF',
-                     '805', u'x7r', u'123; 456', u'altro', u'abc', u'code abc'],
+                    [8, 8, 'C3, C5, C6, C7, C8, C9, C10, C11', u'100nF', u'805', u'x7r', u'123', '', '', ''],
+                    [1, 1, u'C4', u'100nF', u'805', u'x7r', u'123', u'altro', u'abc', u'code abc'],
+                    [1, 1, u'C12', u'100nF', u'805', u'x7r', u'456', '', '', '']
                 ],
                 'U': [
-                    [2, 2, u'u2, u3', u'lm2902', u'soic', u'Op-amp', u'aa',
-                     u'bb; Aa-bb', u'cc', u'dd'],
-                    [1, 1, u'u1', u'lm75', u'soic', u'temp', u'uno', u'due',
-                     u'tre', u'quattro']
+                    [1, 1, 'u2', 'lm2902', 'soic', 'Op-amp', 'aa', 'bb', 'cc', 'dd'],
+                    [1, 1, 'u3', 'lm2902', 'soic', 'Op-amp', 'aa', 'Aa-bb', 'cc', 'dd'],
+                    [1, 1, 'u1', 'lm75', 'soic', 'temp', 'uno', 'due', 'tre', 'quattro']
                  ]
         }
         m = MergeBom(file_list, self.config, logger=self.logger)
@@ -802,7 +802,7 @@ class TestMergeBom(unittest.TestCase):
 
         print()
         dump(d)
-        self.maxDiff = 1000
+        self.maxDiff = 2000
         self.assertEqual(d, check)
 
         outfilename = os.path.join(self.temp_dir, "extra_columnmerged.xlsx")
@@ -946,7 +946,7 @@ if __name__ == "__main__":
         "test_outFile",
         #"test_parametri",
         "test_mergedFile",
-        "test_stats",
+        # "test_stats",
         "test_notPopulate",
         "test_otherColumn",
         #"test_categoryGroup",

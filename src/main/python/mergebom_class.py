@@ -260,16 +260,17 @@ class MergeBom(object):
                 tmp = {}
                 self.stats[category] = 0
                 for item in self.grouped_items[category]:
+                    # Fix Not poluate string in list
+                    for rexp in NOT_POPULATE_KEY:
+                        item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
+                    key = item[DESCRIPTION] + \
+                        item[COMMENT] + item[FOOTPRINT]
 
                     # Fix Designator
                     if category in ["R", "C", "L", "Y"]:
                         tmp_comment = value_toFloat(
                             item[COMMENT], category, self.logger)
                         item[COMMENT] = value_toStr(tmp_comment, self.logger)
-
-                    # Fix Not poluate string in list
-                    for rexp in NOT_POPULATE_KEY:
-                        item[COMMENT] = re.sub(rexp, 'NP ', item[COMMENT])
 
                     if category == 'J':
                         # Avoid merging for NP componets
@@ -304,15 +305,15 @@ class MergeBom(object):
                         self.logger.warning(
                             "Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
-                    elif category == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
+                    if category == 'U' and re.findall("rele|relay", item[DESCRIPTION].lower()):
                         key = item[DESCRIPTION] + item[FOOTPRINT]
                         item[COMMENT] = u"Relay, Rele'"
                         self.logger.warning(
                             "Merged key: %s (%s)\n" % (key, item[COMMENT]))
-                    else:
-                        key = item[DESCRIPTION] + \
-                            item[COMMENT] + item[FOOTPRINT]
 
+                    excol = [str(item[FOOTPRINT + n + 1]).strip() for n,_ in enumerate(self.extra_column)]
+                    if excol:
+                        key += "".join(excol)
                     self.stats[category] += 1
                     self.stats['total'] += 1
 
