@@ -31,7 +31,8 @@ SUPPORTED_FILE_TYPE = [
     "BOM files (*.xlsx *.xls *.csv)",
 ]
 
-NO_VARIANT="[No variant]"
+NO_VARIANT = "[No variant]"
+
 
 class Report(ReportBase):
     """
@@ -48,7 +49,8 @@ class Report(ReportBase):
         if color != "":
             line = "<font color=\"%s\">%s%s</font>" % (color, prefix, s)
         self.logWidget.insertHtml(line)
-        self.logWidget.verticalScrollBar().setValue(self.logWidget.verticalScrollBar().maximum())
+        self.logWidget.verticalScrollBar().setValue(
+            self.logWidget.verticalScrollBar().maximum())
 
     def write_logo(self):
         self.printout(LOGO_SIMPLE, color='green')
@@ -88,7 +90,7 @@ class MergeBomGUI(QDialog):
         self.merge_only_csv = QCheckBox("CSV Filter", self)
         self.merge_only_csv.setChecked(True)
         self.merge_only_csv.stateChanged.connect(self.__filter_checkbox)
-        self.merge_prj_files= QCheckBox("Only Prj BOM", self)
+        self.merge_prj_files = QCheckBox("Only Prj BOM", self)
         self.merge_prj_files.setChecked(True)
         self.merge_prj_files.stateChanged.connect(self.__filter_prj)
         self.merge_same_dir = QCheckBox("Merge in same directory", self)
@@ -197,10 +199,10 @@ class MergeBomGUI(QDialog):
         self.bom_list_search_path = QLineEdit()
         self.bom_list_search_select = QPushButton("Search Path")
         self.bom_list_search_select.setDefault(True)
-        self.bom_list_search_select.clicked.connect(self.__select_bom_search_path)
+        self.bom_list_search_select.clicked.connect(
+            self.__select_bom_search_path)
         self.prj_variant = QComboBox()
         self.prj_variant.activated.connect(self.__select_prj_variant)
-
 
         sub_vbox3 = QHBoxLayout()
         sub_vbox3.addWidget(QLabel("Prj Variant:"))
@@ -270,11 +272,12 @@ class MergeBomGUI(QDialog):
         # Get prj info from view table
         param = {}
         for i in range(self.param_table_view.rowCount()):
-            param[self.param_table_view.item(i, 0).text()] = self.param_table_view.item(i, 1).text()
+            param[self.param_table_view.item(i, 0).text(
+            )] = self.param_table_view.item(i, 1).text()
 
         try:
             m = MergeBom(bom_list, self.config, is_csv=self.merge_only_csv.isChecked(),
-                        logger=self.logger)
+                         logger=self.logger)
         except FileNotFoundError as file_excp:
             self.logger.error("Error while merging..\n")
             self.logger.error(file_excp)
@@ -322,7 +325,7 @@ class MergeBomGUI(QDialog):
         wk_name, _ = os.path.splitext(wk_name)
         for i in range(self.param_prj_list_view.count()):
             self.__deploy_project(wk_name,
-                self.param_prj_list_view.item(i).text(), search_path)
+                                  self.param_prj_list_view.item(i).text(), search_path)
 
     def __deploy_project(self, wk_name, project_name, search_path):
         """
@@ -417,7 +420,8 @@ class MergeBomGUI(QDialog):
             dst_name = dst % (project_name, param.get("prj_hw_ver", "NONE"))
             src_name = os.path.join(folder, project_name, src)
             if folder != "Pdf":
-                src_name = os.path.join(folder, project_name, src % project_name)
+                src_name = os.path.join(
+                    folder, project_name, src % project_name)
 
             src_file = os.path.join(search_path, src_name)
             dst_file = os.path.join(prj_dir, dst_name)
@@ -430,7 +434,7 @@ class MergeBomGUI(QDialog):
                 self.logger.error("Unable to copy file:%s\n" % cp_excp)
 
         for item in [(project_name, name_gerber),
-                        ("%s_pannel" % project_name, "%s_pannel" % name_gerber)]:
+                     ("%s_pannel" % project_name, "%s_pannel" % name_gerber)]:
             self.logger.info("Copy Gerber files:\n")
             self.logger.info("From: %s\n" % item[0])
             self.logger.info("To: %s\n" % dst_file)
@@ -448,13 +452,16 @@ class MergeBomGUI(QDialog):
 
             for item in DEFAULT_PRJ_DIR_VARIANT:
                 folder, dst, src = item
-                dst_name = dst % (project_name, variant, param.get("prj_hw_ver", "NONE"))
+                dst_name = dst % (project_name, variant,
+                                  param.get("prj_hw_ver", "NONE"))
                 src_name = os.path.join(folder, variant, src)
                 if folder != "Pdf":
                     if "assembly" in dst:
-                        src_name = os.path.join(folder, variant, src % project_name)
+                        src_name = os.path.join(
+                            folder, variant, src % project_name)
                     else:
-                        src_name = os.path.join(folder, variant, src % (project_name, variant))
+                        src_name = os.path.join(
+                            folder, variant, src % (project_name, variant))
 
                 dst_dir = os.path.join(prj_dir, variant)
                 try:
@@ -497,6 +504,7 @@ class MergeBomGUI(QDialog):
                 self.param_bom_list_view.addItems(csv_l)
             else:
                 self.param_bom_list_view.addItems(self.tmp_bom_list)
+
     @pyqtSlot()
     def __filter_prj(self):
         self.param_bom_list_view.clear()
@@ -504,7 +512,6 @@ class MergeBomGUI(QDialog):
         if len(prjs) == 1:
             # fill variant combobox
             self.__on_click_list(prjs[0])
-
 
     @pyqtSlot()
     def __check_same_dir(self):
@@ -567,7 +574,7 @@ class MergeBomGUI(QDialog):
                     root, _ = os.path.splitext(os.path.basename(prj))
                     n, d = get_parameterFromPrj(root, prj)
                     l = get_variantFromPrj(root, prj)
-                    if n !="":
+                    if n != "":
                         self.prj_and_data[n] = [root_path, d, l]
 
                         new_item = True
@@ -619,7 +626,8 @@ class MergeBomGUI(QDialog):
         data = extrac_projects(line)
         root_path = os.path.dirname(line)
         for prj in data:
-            n, d = get_parameterFromPrj(prj[0], os.path.join(root_path, prj[1]))
+            n, d = get_parameterFromPrj(
+                prj[0], os.path.join(root_path, prj[1]))
             l = get_variantFromPrj(prj[0], os.path.join(root_path, prj[1]))
             if n != "":
                 self.prj_and_data[n] = [root_path, d, l]
@@ -656,15 +664,24 @@ class MergeBomGUI(QDialog):
         if self.merge_only_csv.isChecked():
             flt = "*.csv"
 
+        # Get prj info from view table
+        param = {}
+        for i in range(self.param_table_view.rowCount()):
+            param[self.param_table_view.item(i, 0).text(
+            )] = self.param_table_view.item(i, 1).text()
+
         variant = self.prj_variant.currentText()
-        search_dirs = [root, os.path.join(root, "Assembly"), os.path.join(root, "..", "Assembly")]
+        search_dirs = [root, os.path.join(
+            root, "Assembly"), os.path.join(root, "..", "Assembly")]
         if self.merge_prj_files.isChecked():
-            search_dirs = [os.path.join(root, "Assembly", current_prj), os.path.join(root, "..", "Assembly", current_prj)]
+            search_dirs = [os.path.join(root, "Assembly", current_prj), os.path.join(
+                root, "..", "Assembly", current_prj)]
             if variant != NO_VARIANT:
                 search_dirs = [os.path.join(root, "Assembly", current_prj, variant),
-                os.path.join(root, "Assembly", variant),
-                os.path.join(root, "..", "Assembly", current_prj, variant),
-                os.path.join(root, "Assembly", "%s_var-%s" % (current_prj, variant))]
+                               os.path.join(root, "Assembly", variant),
+                               os.path.join(root, "..", "Assembly",
+                                            current_prj, variant),
+                               os.path.join(root, "Assembly", "%s_var-%s" % (current_prj, variant))]
 
         if self.bom_list_search_path is None or self.bom_list_search_path.text() != "":
             search_dirs = [self.bom_list_search_path.text()]
@@ -676,9 +693,11 @@ class MergeBomGUI(QDialog):
                 d_boms[os.path.join(path.parent, path.name)] = ""
 
         if self.merge_autoname.isChecked():
-            self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % current_prj)
+            self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE % (
+                current_prj, param.get("prj_hw_ver", "NOHWVER")))
             if variant != NO_VARIANT:
-                self.merge_bom_outname.setText(MERGED_FILE_TEMPLATE_VARIANT % (current_prj, variant))
+                self.merge_bom_outname.setText(
+                    MERGED_FILE_TEMPLATE_VARIANT % (current_prj, variant, param.get("prj_hw_ver", "NOHWVER")))
 
         self.param_bom_list_view.addItems(d_boms.keys())
         self.__fill_variant(current_prj)
@@ -745,7 +764,7 @@ class FileDialog(QWidget):
 
     def __open_directory_dialog(self):
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        # options |= QFileDialog.DontUseNativeDialog
         dirname = QFileDialog.getExistingDirectory(
             self, self.title, self.rootpath, options=options)
         if dirname:
@@ -753,7 +772,7 @@ class FileDialog(QWidget):
 
     def __open_file_name_dialog(self):
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        # options |= QFileDialog.DontUseNativeDialog
         filename, filter_type = QFileDialog.getOpenFileName(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
 
@@ -763,7 +782,7 @@ class FileDialog(QWidget):
 
     def __open_file_names_dialog(self):
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
+        # options |= QFileDialog.DontUseNativeDialog
         files, filter_type = QFileDialog.getOpenFileNames(
             self, self.title, self.rootpath, FILE_FILTERS, options=options)
         if files:

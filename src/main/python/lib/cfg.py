@@ -69,12 +69,12 @@ DEFAULT_PRJ_PARAM_FIELDS = [
 DEFAULT_PRJ_PARAM_DICT = {
     "prj_date": "--/--/----",
     "prj_hw_ver": "0",
-    "prj_pcb":  "A",
+    "prj_pcb": "A",
     "prj_name": "MyProject",
     "prj_license": "Copyright to me",
     "prj_name_long": "My usefull project",
-    "prj_pn":  "--",
-    "prj_status":  "Prototype",
+    "prj_pn": "--",
+    "prj_status": "Prototype",
     "prj_prefix": "--",
 }
 
@@ -84,23 +84,25 @@ TEMPLATE_HW_DIR = "Hw-Rev.%s%s"
 VERSION_FILE = "version.txt"
 
 DEFAULT_PRJ_DIR = [
-    ("Pdf",      'schematic-%s_R%s.pdf',  "schematic.PDF"),
-    ("Assembly", 'bom-%s_R%s.xlsx',       'bom-%s.xlsx'),
-    ("Assembly", 'assembly-%s_R%s.pdf',   '%s.PDF'),
-    ("Assembly", 'assembly-%s_R%s_panel.pdf',   '%s_panel.PDF'),
+    ("Pdf", 'schematic-%s_R%s.pdf', "schematic.PDF"),
+    ("Assembly", 'bom-%s_R%s.xlsx', 'bom-%s.xlsx'),
+    ("Assembly", 'assembly-%s_R%s.pdf', '%s.PDF'),
+    ("Assembly", 'assembly-%s_R%s_panel.pdf', '%s_panel.PDF'),
     ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
     ("Assembly", 'pick-place-%s_R%s_pannel.txt', 'Pick Place for %s_pannel.txt'),
     ("Assembly", 'pick-place-%s_R%s_panel.txt', 'Pick Place for %s_panel.txt'),
 ]
 
 DEFAULT_PRJ_DIR_VARIANT = [
-    ("Pdf",      'schematic-%s_var-%s_R%s.pdf',  "schematic.PDF"),
-    ("Assembly", 'bom-%s_var-%s_R%s.xlsx',       'bom-%s_var-%s.xlsx'),
-    ("Assembly", 'assembly-%s_var-%s_R%s.pdf',   '%s.PDF'),
-    ("Assembly", 'assembly-%s_var-%s_R%s_panel.pdf',   '%s_panel.PDF'),
+    ("Pdf", 'schematic-%s_var-%s_R%s.pdf', "schematic.PDF"),
+    ("Assembly", 'bom-%s_var-%s_R%s.xlsx', 'bom-%s_var-%s.xlsx'),
+    ("Assembly", 'assembly-%s_var-%s_R%s.pdf', '%s.PDF'),
+    ("Assembly", 'assembly-%s_var-%s_R%s_panel.pdf', '%s_panel.PDF'),
     ("Assembly", 'pick-place-%s_var-%s_R%s.txt', 'Pick Place for %s(%s).txt'),
-    ("Assembly", 'pick-place-%s_var-%s_R%s_pannel.txt', 'Pick Place for %s_pannel(%s).txt'),
-    ("Assembly", 'pick-place-%s_var-%s_R%s_panel.txt', 'Pick Place for %s_panel(%s).txt'),
+    ("Assembly", 'pick-place-%s_var-%s_R%s_pannel.txt',
+     'Pick Place for %s_pannel(%s).txt'),
+    ("Assembly", 'pick-place-%s_var-%s_R%s_panel.txt',
+     'Pick Place for %s_panel(%s).txt'),
 ]
 
 FILE_TO_SKIP = [
@@ -254,8 +256,8 @@ CATEGORY_NAMES_DEFAULT = [
 NOT_POPULATE_KEY = ["NP", "NM"]
 NP_REGEXP = r"^NP\s"
 
-MERGED_FILE_TEMPLATE = "bom-%s.xlsx"
-MERGED_FILE_TEMPLATE_VARIANT = "bom-%s_var-%s.xlsx"
+MERGED_FILE_TEMPLATE = "bom-%s_R%s.xlsx"
+MERGED_FILE_TEMPLATE_VARIANT = "bom-%s_var-%s_R%s.xlsx"
 MERGED_FILE_TEMPLATE_HW = "%s%s_R%s.xlsx"
 MERGED_FILE_TEMPLATE_NOHW = "%s%s_merged.xlsx"
 
@@ -365,7 +367,10 @@ def extrac_projects(wk_file):
 
     return l
 
+
 import io
+
+
 def get_parameterFromPrj(prj_name, prj_file):
     """
     Get paramet from Altium project.
@@ -386,6 +391,7 @@ def get_parameterFromPrj(prj_name, prj_file):
         d[parametro] = val
 
     return prj_name, d
+
 
 def get_variantFromPrj(prj_name, prj_file):
     """
@@ -529,5 +535,3 @@ if __name__ == "__main__":
     print(type(config), len(config))
     print(config.keys())
     print(config['category_names'])
-
-
