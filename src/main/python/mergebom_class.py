@@ -292,6 +292,26 @@ class MergeBom(object):
 
                         self.logger.warning("Merged key: %s (%s)\n" %
                                             (key, item[COMMENT]))
+                    if category == 'S':
+                        # Avoid merging for NP componets
+                        skip_merge = False
+                        m = re.findall(NP_REGEXP, item[COMMENT])
+                        if m:
+                            skip_merge = True
+                            self.logger.error(
+                                "Not Mechanical part, leave unmerged..[%s] [%s] match%s\n" %
+                                (item[COMMENT], item[DESIGNATOR], m))
+                            item[COMMENT] = "NP Part"
+
+                        if skip_merge:
+                            key = item[DESCRIPTION] + \
+                                item[COMMENT] + item[FOOTPRINT]
+                        else:
+                            key = item[DESCRIPTION] + item[FOOTPRINT]
+                            item[COMMENT] = "Mechanical part"
+
+                        self.logger.warning("Merged key: %s (%s)\n" %
+                                            (key, item[COMMENT]))
 
                     if category == 'D' and "LED" in item[FOOTPRINT]:
                         key = item[DESCRIPTION] + item[FOOTPRINT]
@@ -311,7 +331,8 @@ class MergeBom(object):
                         self.logger.warning(
                             "Merged key: %s (%s)\n" % (key, item[COMMENT]))
 
-                    excol = [str(item[FOOTPRINT + n + 1]).strip() for n,_ in enumerate(self.extra_column)]
+                    excol = [str(item[FOOTPRINT + n + 1]).strip()
+                             for n, _ in enumerate(self.extra_column)]
                     if excol:
                         key += "".join(excol)
                     self.stats[category] += 1
@@ -342,7 +363,8 @@ class MergeBom(object):
                                 if tmp[key][col_id] == "":
                                     tmp[key][col_id] = raw_value
                                 else:
-                                    words = re.findall(r'\b\S+\b', tmp[key][col_id])
+                                    words = re.findall(
+                                        r'\b\S+\b', tmp[key][col_id])
                                     if not raw_value in words:
                                         tmp[key][col_id] += "; " + \
                                             raw_value
