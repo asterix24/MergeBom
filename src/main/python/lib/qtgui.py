@@ -9,8 +9,8 @@ from pathlib import Path
 from src.main.python.lib.cfg import LOGO, MERGEBOM_VER
 from src.main.python.lib.cfg import extrac_projects, get_parameterFromPrj, find_bomfiles, get_variantFromPrj
 from src.main.python.lib.cfg import MERGED_FILE_TEMPLATE, LOGO_SIMPLE, DEFAULT_PRJ_PARAM_DICT, MERGED_FILE_TEMPLATE_VARIANT
-from src.main.python.lib.cfg import TEMPLATE_PCB_NAME, TEMPLATE_PRJ_NAME, TEMPLATE_HW_DIR
-from src.main.python.lib.cfg import VERSION_FILE, DEFAULT_PRJ_DIR, DEFAULT_PRJ_DIR_VARIANT
+from src.main.python.lib.cfg import TEMPLATE_PCB_NAME, TEMPLATE_PCB_NAME_PANEL, TEMPLATE_PCB_NAME_PANNEL, TEMPLATE_PRJ_NAME, TEMPLATE_HW_DIR
+from src.main.python.lib.cfg import VERSION_FILE, DEFAULT_PRJ_DIR
 from src.main.python.lib.cfg import CfgMergeBom
 from src.main.python.lib.common import copyGerberZip
 from src.main.python.lib.report import ReportBase, write_xls
@@ -396,90 +396,80 @@ class MergeBomGUI(QDialog):
         name_prj = TEMPLATE_PRJ_NAME % (param.get("prj_prefix", ""),
                                         project_name,
                                         param.get("prj_hw_ver", "NONE"))
-        name_gerber = TEMPLATE_PCB_NAME % (param.get("prj_prefix", ""),
-                                           project_name,
-                                           param.get("prj_pcb", "NONE"))
-
-        name_gerber = TEMPLATE_PCB_NAME % (param.get("prj_prefix", ""),
-                                           project_name,
-                                           param.get("prj_pcb", "NONE"))
-
         gerber_dir = os.path.join(deploy_path, customer_name, wk_name,
                                   name_hw, name_prj, "Gerber")
-
         prj_dir = os.path.join(deploy_path, customer_name, wk_name,
                                name_hw, name_prj)
-
         try:
             os.makedirs(gerber_dir)
         except FileExistsError:
             self.logger.warning("Deploy directory exists\n")
 
-        for item in DEFAULT_PRJ_DIR:
-            folder, dst, src = item
-            dst_name = dst % (project_name, param.get("prj_hw_ver", "NONE"))
-            src_name = os.path.join(folder, project_name, src)
-            if folder != "Pdf":
-                src_name = os.path.join(
-                    folder, project_name, src % project_name)
+        # Copy assembly files and Pdf
+        try:
+            for item in DEFAULT_PRJ_DIR:
+                folder, src_pattern = item
+                src_path = os.path.join(search_path, folder, project_name)
+                for src_file in Path(src_path).glob(src_pattern):
+                    self.logger.info("Copy %s files:\n" % folder)
+                    self.logger.info("From: %s\n" % src_file)
+                    self.logger.info("To: %s\n" % prj_dir)
+                    shutil.copy(src_file, prj_dir)
+        except FileNotFoundError as cp_excp:
+            self.logger.error("Unable to copy file:%s\n" % cp_excp)
 
-            src_file = os.path.join(search_path, src_name)
-            dst_file = os.path.join(prj_dir, dst_name)
-            try:
-                self.logger.info("Copy project files:\n")
-                self.logger.info("From: %s\n" % src_file)
-                self.logger.info("To: %s\n" % dst_file)
-                shutil.copy2(src_file, dst_file)
-            except FileNotFoundError as cp_excp:
-                self.logger.error("Unable to copy file:%s\n" % cp_excp)
-
-        for item in [(project_name, name_gerber),
-                     ("%s_pannel" % project_name, "%s_pannel" % name_gerber)]:
-            self.logger.info("Copy Gerber files:\n")
-            self.logger.info("From: %s\n" % item[0])
-            self.logger.info("To: %s\n" % dst_file)
-            src_path = os.path.join(search_path, "Gerber", item[0])
-            try:
-                copyGerberZip(item[1], src_path, gerber_dir)
-            except FileNotFoundError as cp_excp:
-                self.logger.error("Unable find gerber file:%s\n" % cp_excp)
-
-        # if present deploy variants
+        # Copy assembly files and Pdf Variants
         for index in range(self.prj_variant.count()):
             variant = self.prj_variant.itemText(index)
             if variant == NO_VARIANT:
                 continue
+            try:
+                for item in DEFAULT_PRJ_DIR:
+                    folder, src_pattern = item
+                    src_path = os.path.join(
+                        search_path, folder, "%s_var-%s" % (project_name, variant))
+                    dst_dir = os.path.join(prj_dir, variant)
+                    try:
+                        os.makedirs(dst_dir)
+                    except FileExistsError:
+                        self.logger.warning("Deploy directory exists\n")
 
-            for item in DEFAULT_PRJ_DIR_VARIANT:
-                folder, dst, src = item
-                dst_name = dst % (project_name, variant,
-                                  param.get("prj_hw_ver", "NONE"))
-                src_name = os.path.join(folder, variant, src)
-                if folder != "Pdf":
-                    if "assembly" in dst:
-                        src_name = os.path.join(
-                            folder, variant, src % project_name)
-                    else:
-                        src_name = os.path.join(
-                            folder, variant, src % (project_name, variant))
+                    for src_file in Path(src_path).glob(src_pattern):
+                        self.logger.info("Copy %s files:\n" % folder)
+                        self.logger.info("From: %s\n" % src_file)
+                        self.logger.info("To: %s\n" % prj_dir)
+                        shutil.copy(src_file, dst_dir)
+            except FileNotFoundError as cp_excp:
+                self.logger.error("Unable to copy file:%s\n" % cp_excp)
 
-                dst_dir = os.path.join(prj_dir, variant)
-                try:
-                    os.makedirs(dst_dir)
-                except FileExistsError:
-                    self.logger.warning("Deploy directory exists\n")
+        # Deploy Gerbers
+        gerber_prj_files = [
+            TEMPLATE_PCB_NAME_PANEL % (param.get("prj_prefix", ""),
+                                       project_name,
+                                       param.get("prj_pcb", "NONE")),
+            TEMPLATE_PCB_NAME_PANNEL % (param.get("prj_prefix", ""),
+                                        project_name,
+                                        param.get("prj_pcb", "NONE")),
+            TEMPLATE_PCB_NAME % (param.get("prj_prefix", ""),
+                                 project_name,
+                                 param.get("prj_pcb", "NONE"))
+        ]
 
-                src_file = os.path.join(search_path, src_name)
-                dst_file = os.path.join(dst_dir, dst_name)
-                try:
-                    self.logger.info("Copy project files:\n")
-                    self.logger.info("From: %s\n" % src_file)
-                    self.logger.info("To: %s\n" % dst_file)
-                    shutil.copy2(src_file, dst_file)
-                except FileNotFoundError as cp_excp:
-                    self.logger.error("Unable to copy file:%s\n" % cp_excp)
+        for src_file in gerber_prj_files:
+            try:
+                src_path = os.path.join(search_path, "Gerber", src_file)
+                self.logger.info("Copy %s files:\n" % "Gerber")
+                self.logger.info("From: %s\n" % src_file)
+                self.logger.info("To: %s\n" % gerber_dir)
+                copyGerberZip(src_file, src_path, gerber_dir)
+            except FileNotFoundError as cp_excp:
+                self.logger.error(
+                    "Unable find gerber file:%s\n" % cp_excp)
+            except PermissionError as cp_excp:
+                self.logger.error(
+                    "Unable to read gerber file:%s\n" % cp_excp)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __autoname_out_file(self):
         if self.merge_autoname.isChecked():
             self.merge_bom_outname.setEnabled(False)
@@ -487,7 +477,7 @@ class MergeBomGUI(QDialog):
             self.merge_bom_outname.setText("merged_bom.xlsx")
             self.merge_bom_outname.setEnabled(True)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __filter_checkbox(self):
         prjs = self.param_prj_list_view.selectedItems()
         if len(prjs) == 1:
@@ -505,7 +495,7 @@ class MergeBomGUI(QDialog):
             else:
                 self.param_bom_list_view.addItems(self.tmp_bom_list)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __filter_prj(self):
         self.param_bom_list_view.clear()
         prjs = self.param_prj_list_view.selectedItems()
@@ -513,7 +503,7 @@ class MergeBomGUI(QDialog):
             # fill variant combobox
             self.__on_click_list(prjs[0])
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __check_same_dir(self):
         if self.merge_same_dir.isChecked():
             self.merge_same_dir_path.setEnabled(False)
@@ -522,7 +512,7 @@ class MergeBomGUI(QDialog):
             self.merge_same_dir_path.setEnabled(True)
             self.merge_same_dir_path_select.setEnabled(True)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __select_bom_search_path(self):
         root = os.path.dirname(self.selected_file.text())
         if self.bom_list_search_path is not None or self.bom_list_search_path.text() != "":
@@ -533,21 +523,21 @@ class MergeBomGUI(QDialog):
             self.bom_list_search_path.setText(d)
             self.__on_click_list(self.param_prj_list_view.selectedItems())
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __select_merge_path(self):
         app = FileDialog(mode="dir", rootpath=self.merge_same_dir_path.text())
         d = app.directory()
         if d is not None and d != "":
             self.merge_same_dir_path.setText(d)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __select_deploy_path(self):
         app = FileDialog(mode="dir", rootpath=self.deploy_path.text())
         d = app.directory()
         if d is not None and d != "":
             self.deploy_path.setText(d)
 
-    @pyqtSlot()
+    @ pyqtSlot()
     def __select_wk_file(self):
         app = FileDialog(mode="multiopen", rootpath=self.selected_file.text())
         line = app.selection()

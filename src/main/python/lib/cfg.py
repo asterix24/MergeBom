@@ -78,31 +78,20 @@ DEFAULT_PRJ_PARAM_DICT = {
     "prj_prefix": "--",
 }
 
+# pcb-{prefix}{subprjname}-Rev-{PCB-ver}
+TEMPLATE_PCB_NAME_PANEL = "pcb-%s%s_panel-Rev-%s"
+# pcb-{prefix}{subprjname}-Rev-{PCB-ver}
+TEMPLATE_PCB_NAME_PANNEL = "pcb-%s%s_pannel-Rev-%s"
 TEMPLATE_PCB_NAME = "pcb-%s%s-Rev-%s"  # pcb-{prefix}{subprjname}-Rev-{PCB-ver}
 TEMPLATE_PRJ_NAME = "%s%s-Rev.%s"        # {prefix}{subprjname}-Rev.{hw-ver}
 TEMPLATE_HW_DIR = "Hw-Rev.%s%s"
 VERSION_FILE = "version.txt"
 
 DEFAULT_PRJ_DIR = [
-    ("Pdf", 'schematic-%s_R%s.pdf', "schematic.PDF"),
-    ("Assembly", 'bom-%s_R%s.xlsx', 'bom-%s.xlsx'),
-    ("Assembly", 'assembly-%s_R%s.pdf', '%s.PDF'),
-    ("Assembly", 'assembly-%s_R%s_panel.pdf', '%s_panel.PDF'),
-    ("Assembly", 'pick-place-%s_R%s.txt', 'Pick Place for %s.txt'),
-    ("Assembly", 'pick-place-%s_R%s_pannel.txt', 'Pick Place for %s_pannel.txt'),
-    ("Assembly", 'pick-place-%s_R%s_panel.txt', 'Pick Place for %s_panel.txt'),
-]
-
-DEFAULT_PRJ_DIR_VARIANT = [
-    ("Pdf", 'schematic-%s_var-%s_R%s.pdf', "schematic.PDF"),
-    ("Assembly", 'bom-%s_var-%s_R%s.xlsx', 'bom-%s_var-%s.xlsx'),
-    ("Assembly", 'assembly-%s_var-%s_R%s.pdf', '%s.PDF'),
-    ("Assembly", 'assembly-%s_var-%s_R%s_panel.pdf', '%s_panel.PDF'),
-    ("Assembly", 'pick-place-%s_var-%s_R%s.txt', 'Pick Place for %s(%s).txt'),
-    ("Assembly", 'pick-place-%s_var-%s_R%s_pannel.txt',
-     'Pick Place for %s_pannel(%s).txt'),
-    ("Assembly", 'pick-place-%s_var-%s_R%s_panel.txt',
-     'Pick Place for %s_panel(%s).txt'),
+    ("Pdf", 'schematic*.pdf'),
+    ("Assembly", 'bom*.xlsx'),
+    ("Assembly", 'assembly*.pdf'),
+    ("Assembly", 'pick-and-place*.txt'),
 ]
 
 FILE_TO_SKIP = [
