@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # BOM default parameter
     parser.add_argument('-pd', '--prj-date', dest='prj_date',
                         help='Project date time release.', default=None)
-    parser.add_argument('-n', '--prj-name',  dest='prj_name',
+    parser.add_argument('-n', '--prj-name', dest='prj_name',
                         help='Short project name', default=None)
     parser.add_argument('-ln', '--prj-name-long', dest='prj_name_long',
                         help='Long project name', default=None)
@@ -70,9 +70,9 @@ if __name__ == "__main__":
                         help='Project hardware version [0, 1, 2, ..]', default=None)
     parser.add_argument('-pv', '--prj-pcb', dest='prj_pcb',
                         help='PCB hardware version [A, B, C, ..]', default=None)
-    parser.add_argument('-lic', '--prj-license',  dest='prj_license',
+    parser.add_argument('-lic', '--prj-license', dest='prj_license',
                         help='prj_license', default=None)
-    parser.add_argument('-pn', '--prj-pn', dest='prj_pn',
+    parser.add_argument('-pn', '--prj-pn', dest='prj_part_number',
                         help='Project Part Numeber', default=None)
     parser.add_argument('-s', '--prj-status', dest='prj_status',
                         help='Project status [Prototype, Production, ..]', default=None)
@@ -276,8 +276,8 @@ if __name__ == "__main__":
         "prj_name": options.prj_name,
         "prj_license": "-",
         "prj_name_long": "-",
-        "prj_pn":  "--",
-        "prj_status":  "-",
+        "prj_part_number": "--",
+        "prj_status": "-",
         "prj_prefix": "--",
     }
 

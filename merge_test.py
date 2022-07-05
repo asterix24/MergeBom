@@ -31,6 +31,7 @@ from src.main.python.mergebom_class import *
 import tempfile
 from datetime import datetime
 
+
 def dump(d):
     for i in d:
         print("Key: %s" % i)
@@ -38,6 +39,7 @@ def dump(d):
         for j in d[i]:
             print(j)
         print("-" * 80)
+
 
 class TestMergeBom(unittest.TestCase):
     """
@@ -50,12 +52,13 @@ class TestMergeBom(unittest.TestCase):
         self.config = None
 
     def setUp(self):
-        self.logger = report.Report(log_on_file=True, terminal=True, report_date=None)
+        self.logger = report.Report(
+            log_on_file=True, terminal=True, report_date=None)
         self.config = cfg.CfgMergeBom()
         self.temp_dir = tempfile.gettempdir()
 
         self.rootpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src", "main",
-                "python")
+                                     "python")
         print(self.rootpath)
 
     def tearDown(self):
@@ -63,31 +66,30 @@ class TestMergeBom(unittest.TestCase):
 
     def test_altiumWorkspace(self):
         file_BOM = [
-            ('progettotest1',[], {
+            ('progettotest1', [], {
                 'prj_status': 'status',
                 'prj_pcb': 'C',
                 'prj_name': 'TEST',
                 'prj_date': '28/05/2018',
-                'prj_pn': 'pn',
+                'prj_part_number': 'pn',
                 'prj_name_long': 'CMOS Sensor adapter iMX8',
                 'prj_license': '-',
                 'prj_hw_ver': '13'
-                }),
-            ('progettotest2',[], {
+            }),
+            ('progettotest2', [], {
                 'prj_status': 'status',
                 'prj_pcb': 'A',
                 'prj_name': 'Adapter-imx8',
                 'prj_date': '28/05/2018',
-                'prj_pn': 'pn',
+                'prj_part_number': 'pn',
                 'prj_name_long': 'CMOS Sensor adapter iMX8',
                 'prj_license': '-',
                 'prj_hw_ver': '0'
-                }
+            }
             ),
         ]
 
-
-        p = os.path.join(self.rootpath, 'test','utils.DsnWrk')
+        p = os.path.join(self.rootpath, 'test', 'utils.DsnWrk')
         param = cfg.cfg_altiumWorkspace(p, False, "Assembly", self.logger,
                                         bom_prefix='bom-', bom_postfix="")
         self.assertEqual(file_BOM, param)
@@ -101,12 +103,12 @@ class TestMergeBom(unittest.TestCase):
               'prj_name_long': 'Camera sensor shield 5Mp AR0521',
               'prj_license': 'Copyright company spa',
               'prj_hw_ver': '0', 'prj_prefix': ''}),
-            ('camera-core', [os.path.join(self.rootpath, 'test','wktest','Assembly', 'camera-core', 'bom-camera-core.xlsx')],
+            ('camera-core', [os.path.join(self.rootpath, 'test', 'wktest', 'Assembly', 'camera-core', 'bom-camera-core.xlsx')],
              {'prj_status': 'Prototype',
               'prj_pcb': 'A',
               'prj_name': 'Camera Core',
               'prj_date': '01/06/2018',
-              'prj_pn': '-',
+              'prj_part_number': '-',
               'prj_name_long': 'Camera core imx8',
               'prj_license': 'Copyright company spa',
               'prj_hw_ver': '0',
@@ -122,7 +124,8 @@ class TestMergeBom(unittest.TestCase):
               'prj_prefix': ''}),
         ]
 
-        wk_path = os.path.abspath(os.path.join(self.rootpath, 'test', "wktest", "camera.DsnWrk"))
+        wk_path = os.path.abspath(os.path.join(
+            self.rootpath, 'test', "wktest", "camera.DsnWrk"))
         #wk_path = os.path.join('test', "wktest", "camera.DsnWrk")
         param = cfg.cfg_altiumWorkspace(wk_path, False, "Assembly", self.logger,
                                         bom_prefix='bom-', bom_postfix="")
@@ -153,13 +156,17 @@ class TestMergeBom(unittest.TestCase):
 
         check = {
             'J': [
-                [1, 1, u'J1', 'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD', u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm']
+                [1, 1, u'J1', 'Connector', u'HEADER_2X8_2.54MM_15MM-Stacked_THD',
+                    u'Socket Header, 8 pin, 4x2, 2.54mm, H=8.5mm']
             ],
             'D': [
-                [1, 1, u'DZ1', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
-                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23', u'Diode Dual Schottky Barrier'],
+                [1, 1, u'DZ1', u'B340A', u'DO214AA_12',
+                    u'Diode Schottky (STPS2L40U)'],
+                [3, 3, u'D2, D3, D4', u'BAS70-05', u'SOT-23',
+                    u'Diode Dual Schottky Barrier'],
                 [2, 2, u'D1, D5', u'BAV99', u'SOT-23', u'Diode Dual'],
-                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14', u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
+                [9, 9, u'D6, D7, D8, D9, D10, D11, D12, D13, D14',
+                    u'LED', u'0603_[1608]_LED', u'Diode LED Green'],
                 [1, 1, u'D15', u'LED', u'0603_[1608]_LED', u'Diode LED Red'],
                 [2, 2, u'D16, D17', u'S2B', u'DO214AA_12', u'Diode Single'],
             ],
@@ -184,41 +191,65 @@ class TestMergeBom(unittest.TestCase):
 
         check = {
             'J': [
-                [1, 1, u'J12', 'Connector', u'HEADER_2x10_2.00MM_BOX_THD', u'Header, 8-Pin, Dual row, 2mm, Boxed'],
-                [2, 2, u'J38, J43', 'Connector', u'TBLOCK_1X8_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 8x1, Vertical + Plug'],
-                [9, 9, u'J5, J9, J11, J15, J17, J19, J25, J30, J42', 'Connector', u'TBLOCK_1X3_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 3x1, Vertical + Plug'],
-                [1, 1, u'J3', 'Connector', u'HEADER_2x10_2.00MM_BOX_LEV_THD', u'Header, 10-Pin, Dual row, 2mm, Boxed with Lever'],
-                [3, 3, u'J48, J49, J50', 'Connector', u'SOCKET_2x26_2.54MM_THD', u'Socket Header, 52 pin, 26x2, 2.54mm, H=8.5mm'],
-                [19, 19, u'J4, J10, J18, J22, J23, J27, J31, J32, J33, J34, J36, J37, J39, J40, J41, J44, J45, J46, J47', 'Connector', u'TBLOCK_1X2_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 2x1, Vertical + Plug'],
-                [1, 1, u'J35', 'Connector', u'DSUB1.385-2H25A_FEMALE', u'Receptacle Assembly, 25 Position, Right Angle'],
-                [28, 28, u'J21, J24, J26, J29, J51, J52, J53, J54, J55, J56, J57, J58, J59, J60, J61, J62, J63, J64, J65, J66, J67, J68, J69, J70, J71, J72, J73, J74', 'Connector', u'HEADER_1X3_2.54MM_THD', u'Pin Header, 3x1, 2.54mm, THD'],
-                [10, 10, u'J8, J16, J20, J28, J75, J76, J77, J78, J79, J80', 'Connector', u'HEADER_1X2_2.54MM_THD', u'Pin Header, 2x1, 2.54mm, THD'],
+                [1, 1, u'J12', 'Connector', u'HEADER_2x10_2.00MM_BOX_THD',
+                    u'Header, 8-Pin, Dual row, 2mm, Boxed'],
+                [2, 2, u'J38, J43', 'Connector', u'TBLOCK_1X8_3.5MM_HOR_THD',
+                    u'Terminal block, Header, 5.08mm, 8x1, Vertical + Plug'],
+                [9, 9, u'J5, J9, J11, J15, J17, J19, J25, J30, J42', 'Connector',
+                    u'TBLOCK_1X3_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 3x1, Vertical + Plug'],
+                [1, 1, u'J3', 'Connector', u'HEADER_2x10_2.00MM_BOX_LEV_THD',
+                    u'Header, 10-Pin, Dual row, 2mm, Boxed with Lever'],
+                [3, 3, u'J48, J49, J50', 'Connector', u'SOCKET_2x26_2.54MM_THD',
+                    u'Socket Header, 52 pin, 26x2, 2.54mm, H=8.5mm'],
+                [19, 19, u'J4, J10, J18, J22, J23, J27, J31, J32, J33, J34, J36, J37, J39, J40, J41, J44, J45, J46, J47',
+                    'Connector', u'TBLOCK_1X2_3.5MM_HOR_THD', u'Terminal block, Header, 5.08mm, 2x1, Vertical + Plug'],
+                [1, 1, u'J35', 'Connector', u'DSUB1.385-2H25A_FEMALE',
+                    u'Receptacle Assembly, 25 Position, Right Angle'],
+                [28, 28, u'J21, J24, J26, J29, J51, J52, J53, J54, J55, J56, J57, J58, J59, J60, J61, J62, J63, J64, J65, J66, J67, J68, J69, J70, J71, J72, J73, J74',
+                    'Connector', u'HEADER_1X3_2.54MM_THD', u'Pin Header, 3x1, 2.54mm, THD'],
+                [10, 10, u'J8, J16, J20, J28, J75, J76, J77, J78, J79, J80', 'Connector',
+                    u'HEADER_1X2_2.54MM_THD', u'Pin Header, 2x1, 2.54mm, THD'],
             ],
             'U': [
                 [1, 1, u'U1', u'24C128', u'SOIC8', u'EEPROM'],
-                [8, 8, u'U19, U21, U22, U23, U25, U27, U28, U29', u'4N25', u'SOIC6_OPTO', u'Optocoupler'],
-                [4, 4, u'U14, U15, U16, U17', u'74HC4051', u'SOIC16', u'Analog Mux 8:1'],
-                [3, 3, u'U11, U20, U26', u'AD5624RBRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
-                [2, 2, u'U31, U33', u'AD799x', u'TSOP65P640X120-20L', u'ADC 10/12bit I2C'],
-                [6, 6, u'U32, U34, U35, U36, U37, U47', u'AD8418BRMZ', u'MSOP50P490X110-10P', u'12bit DAC'],
+                [8, 8, u'U19, U21, U22, U23, U25, U27, U28, U29',
+                    u'4N25', u'SOIC6_OPTO', u'Optocoupler'],
+                [4, 4, u'U14, U15, U16, U17', u'74HC4051',
+                    u'SOIC16', u'Analog Mux 8:1'],
+                [3, 3, u'U11, U20, U26', u'AD5624RBRMZ',
+                    u'MSOP50P490X110-10P', u'12bit DAC'],
+                [2, 2, u'U31, U33', u'AD799x',
+                    u'TSOP65P640X120-20L', u'ADC 10/12bit I2C'],
+                [6, 6, u'U32, U34, U35, U36, U37, U47', u'AD8418BRMZ',
+                    u'MSOP50P490X110-10P', u'12bit DAC'],
                 [1, 1, u'U6', u'ADS7951SBDBT', u'TSSOP50P640-30L', u'ADC'],
-                [2, 2, u'U3, U4', u'LM22670TJ-ADJ', u'TO-263-7', u'Switching regulator.'],
-                [1, 1, u'U2', u'LM22671MR-ADJ', u'SOIC8_PAD', u'DC-DC switch converter'],
+                [2, 2, u'U3, U4', u'LM22670TJ-ADJ',
+                    u'TO-263-7', u'Switching regulator.'],
+                [1, 1, u'U2', u'LM22671MR-ADJ',
+                    u'SOIC8_PAD', u'DC-DC switch converter'],
                 [3, 3, u'U12, U18, U24', u'OPA4188AID', u'SOIC14', u'Quad Op Amp'],
                 [1, 1, u'U13', u'OPA4188AID', u'SOIC14', u'Op Amp'],
-                [1, 1, u'U5', u'REF3325AIDBZR', u'SOT-23', u'Shunt volt reference +2.5V'],
-                [6, 6, u'U38, U39, U42, U43, U44, U46', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 12V'],
-                [1, 1, u'U41', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele Altra marca 16A 12V'],
-                [1, 1, u'U45', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 24V'],
+                [1, 1, u'U5', u'REF3325AIDBZR', u'SOT-23',
+                    u'Shunt volt reference +2.5V'],
+                [6, 6, u'U38, U39, U42, U43, U44, U46', u"Relay, Rele'",
+                    u'relays_spco_thd_28x12mm_5mm', u'Rele NT75CS16DC12V0.415.0 16A 12V'],
+                [1, 1, u'U41', u"Relay, Rele'",
+                    u'relays_spco_thd_28x12mm_5mm', u'Rele Altra marca 16A 12V'],
+                [1, 1, u'U45', u"Relay, Rele'", u'relays_spco_thd_28x12mm_5mm',
+                    u'Rele NT75CS16DC12V0.415.0 16A 24V'],
                 [1, 1, u'U30', u'TLV431 SOT23', u'SOT-23', u'TLV431BQDBZT'],
                 [1, 1, u'U40', u'ULN2803', u'SOIC18', u'BJT Darlinton Array'],
-                [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK', u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
+                [4, 4, u'U7, U8, U9, U10', u'XTR117_DGK',
+                    u'MSOP65P490X110-8P', u'4-20mA loop Trasmitter'],
             ],
             'D': [
-                [1, 1, u'D8', u'B340A', u'DO214AA_12', u'Diode Schottky (STPS2L40U)'],
-                [4, 4, u'D9, D10, D11, D12', u'BAS70-05', u'SOT-23', u'Schottky Barrier Double Diodes'],
+                [1, 1, u'D8', u'B340A', u'DO214AA_12',
+                    u'Diode Schottky (STPS2L40U)'],
+                [4, 4, u'D9, D10, D11, D12', u'BAS70-05',
+                    u'SOT-23', u'Schottky Barrier Double Diodes'],
                 [3, 3, u'D13, D14, D16', u'BAV99', u'SOT-23', u'BAV99 Diode'],
-                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED', u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
+                [6, 6, u'D4, D5, D6, D15, D17, D18', 'LED',
+                    u'0603_[1608]_K2-A1_LED', u'Diode LED Green'],
                 [2, 2, u'D1, D7', 'LED', u'0603_[1608]_K2-A1_LED', u'LED Green'],
                 [1, 1, u'D2', u'S2B', u'DO214AA_12', u'S2B Diode'],
                 [1, 1, u'D3', u'SMBJ28A', u'DO214AA_12', u'TRANSIL (SM6T12A)'],
@@ -295,11 +326,11 @@ class TestMergeBom(unittest.TestCase):
 
     def test_groupFmt(self):
         file_list = [
-			os.path.join(self.rootpath, 'test', 'bom-fmt.xls'),
+            os.path.join(self.rootpath, 'test', 'bom-fmt.xls'),
         ]
 
         check = {
-            "10k" : (2, 9),
+            "10k": (2, 9),
             "fpf2124": (1, 1),
             "txs0108e": (1, 1),
             "1uf": (1, 3),
@@ -362,12 +393,14 @@ class TestMergeBom(unittest.TestCase):
 
         for k in test_dict.keys():
             print("\"%s\": (%s, %s)," % (k, test_dict[k][0], test_dict[k][1]))
-            print("T > %20.20s | row count %5.5s | count %5.5s |" % (k, test_dict[k][0], test_dict[k][1]))
-            print("C < %20.20s | row count %5.5s | count %5.5s |" % (k, check[k][0], check[k][1]))
+            print("T > %20.20s | row count %5.5s | count %5.5s |" %
+                  (k, test_dict[k][0], test_dict[k][1]))
+            print("C < %20.20s | row count %5.5s | count %5.5s |" %
+                  (k, check[k][0], check[k][1]))
 
-            self.assertEqual(check[k][0], test_dict[k][0], \
+            self.assertEqual(check[k][0], test_dict[k][0],
                              "Unable to merge row whit differt componet value. [%s]" % k)
-            self.assertEqual(check[k][1], test_dict[k][1], \
+            self.assertEqual(check[k][1], test_dict[k][1],
                              "Unable to merge row whit differt componet value. [%s]" % k)
 
     def test_diff(self):
@@ -379,27 +412,34 @@ class TestMergeBom(unittest.TestCase):
         check = {
             'C45': (
                 ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-                ['bomdiff2.xlsx', 1, u'C45', u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', 1, u'C45',
+                    u'Ceramic 50V NP0/C0G', u'1nF', u'0603_[1608]'],
             ),
             'C1045': (
-                ['bomdiff1.xlsx', 1, u'C1045', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', 1, u'C1045',
+                    u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
                 ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C204': (
-                ['bomdiff1.xlsx', 1, u'C204', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', 1, u'C204',
+                    u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
                 ['bomdiff2.xlsx', '-', '-', '-', '-', '-'],
             ),
             'C2046': (
                 ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-                ['bomdiff2.xlsx', 1, u'C2046', u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', 1, u'C2046',
+                    u'Ceramic 50V NP0/C0G', u'18pF', u'0603_[1608]'],
             ),
             'C104': (
-                ['bomdiff1.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'100nF', u'0603_[1608]'],
-                ['bomdiff2.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
+                ['bomdiff1.xlsx', 1, u'C104', u'Ceramic 50V NP0/C0G',
+                    u'100nF', u'0603_[1608]'],
+                ['bomdiff2.xlsx', 1, u'C104',
+                    u'Ceramic 50V NP0/C0G', u'10nF', u'0603_[1608]'],
             ),
             'C1': (
                 ['bomdiff1.xlsx', '-', '-', '-', '-', '-'],
-                ['bomdiff2.xlsx', 1, u'C1', u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
+                ['bomdiff2.xlsx', 1, u'C1',
+                    u'Tantalum 10V Low ESR (TPSP106M010R2000)', u'10uF Tantalum', u'0805_[2012]_POL'],
             )
         }
 
@@ -452,14 +492,18 @@ class TestMergeBom(unittest.TestCase):
             ((1e-10, "F"),),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
             ((0.3, "ohm"), (1.1, "ohm"), (1.2, "ohm"), (1.8, "ohm")),
-            ((0.3, "ohm"), (1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"), (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
-            ((10e-12, "F"), (100e-9, "F"), (0.1e-6, "F"), (1e-6, "F"), (2.2e-6, "F"), (47e-6, "F"), (1.0, "F")),
+            ((0.3, "ohm"), (1.0, "ohm"), (1.2, "ohm"), (10.0, "ohm"),
+             (1000.0, "ohm"), (1500.0, "ohm"), (2200.0, "ohm")),
+            ((10e-12, "F"), (100e-9, "F"), (0.1e-6, "F"),
+             (1e-6, "F"), (2.2e-6, "F"), (47e-6, "F"), (1.0, "F")),
             ((10e-12, "H"), (1e-9, "H"), (2.2e-6, "H"), (47e-6, "H"), (1.0, "H")),
-            ((3.3e-8, "ohm"), (0.12, "ohm"), (0.33, "ohm"), (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm"), (68, "ohm")),
+            ((3.3e-8, "ohm"), (0.12, "ohm"), (0.33, "ohm"),
+             (1.2, "ohm"), (1.234, "ohm"), (3.33, "ohm"), (68, "ohm")),
             ((12134.0, "Hz"), (32768.0, "Hz"), (1e6, "Hz")),
             ((100e-6, "H"), (4e-3, "H"), (0.0047, "H")),
             ((33e-9, "ohm"),),
-            ((4.123, "ohm"), (2310.0, "ohm"), (5421.0, "ohm"), (10120.0, "ohm"), (1120000.0, "ohm")),
+            ((4.123, "ohm"), (2310.0, "ohm"), (5421.0, "ohm"),
+             (10120.0, "ohm"), (1120000.0, "ohm")),
         ]
 
         print()
@@ -478,14 +522,18 @@ class TestMergeBom(unittest.TestCase):
 
     def test_floatToValue(self):
         test = [
-            ((1000, "ohm", ""), (1500, "ohm", ""), (2200, "ohm", ""), (2210, "ohm", ""), (4700, "ohm", ""), (47000, "ohm", "")),
-            ((1000000, "ohm", ""), (1500000, "ohm", ""), (860000, "ohm", ""), (8600000, "ohm", "")),
-            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""), (1.234, "ohm", ""), (0.33, "ohm", ""), (33e-8, "ohm", "")),
+            ((1000, "ohm", ""), (1500, "ohm", ""), (2200, "ohm", ""),
+             (2210, "ohm", ""), (4700, "ohm", ""), (47000, "ohm", "")),
+            ((1000000, "ohm", ""), (1500000, "ohm", ""),
+             (860000, "ohm", ""), (8600000, "ohm", "")),
+            ((1.2, "ohm", ""), (3.33, "ohm", ""), (0.12, "ohm", ""),
+             (1.234, "ohm", ""), (0.33, "ohm", ""), (33e-8, "ohm", "")),
             ((0.000010, "F", ""), (1e-3, "F", ""), (10e-3, "H", "")),
             ((1.5e-6, "F", ""), (33e-12, "F", ""), (100e-9, "F", "")),
-            ((1, "ohm", ""), (0.1, "ohm", ""), (10, "ohm", ""), (100, "ohm", ""), (12.5, "ohm", "")),
+            ((1, "ohm", ""), (0.1, "ohm", ""), (10, "ohm", ""),
+             (100, "ohm", ""), (12.5, "ohm", "")),
             ((11, "R", ""), (120, "R", ""), (50, "R", "")),
-            ((32768.0, "Hz", ""), (1e6,"Hz", ""), (12134,"Hz", "")),
+            ((32768.0, "Hz", ""), (1e6, "Hz", ""), (12134, "Hz", "")),
         ]
         check = [
             ("1k", "1k5", "2k2", "2k21", "4k7", "47k"),
@@ -509,10 +557,10 @@ class TestMergeBom(unittest.TestCase):
 
     def test_mergeFileCommandLine(self):
         outfilename = os.path.join(self.temp_dir, 'cli_merged.xlsx')
-        cmd  = ["python3", "mergebom.py",
-                '-o', 'cli_merged.xlsx',
-                '-p', self.temp_dir,
-                os.path.join(self.rootpath, "test","Assembly","progettotest1","progettotest1.xlsx")]
+        cmd = ["python3", "mergebom.py",
+               '-o', 'cli_merged.xlsx',
+               '-p', self.temp_dir,
+               os.path.join(self.rootpath, "test", "Assembly", "progettotest1", "progettotest1.xlsx")]
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
         self.assertTrue(os.path.exists(outfilename), " ".join(cmd))
         os.remove(outfilename)
@@ -528,12 +576,12 @@ class TestMergeBom(unittest.TestCase):
         param = {
             "prj_date": "--/--/----",
             "prj_hw_ver": "13",
-            "prj_pcb":  "C",
+            "prj_pcb": "C",
             "prj_name": "TEST",
             "prj_license": "Copyright to me",
             "prj_name_long": "My usefull project",
-            "prj_pn":  "--",
-            "prj_status":  "Prototype",
+            "prj_part_number": "--",
+            "prj_status": "Prototype",
             "prj_prefix": "--",
         }
 
@@ -551,10 +599,12 @@ class TestMergeBom(unittest.TestCase):
     def test_parametri(self):
         import xlrd
         file_list = [
-            os.path.join(self.rootpath, "test","Assembly","progettotest1","progettotest1.xlsx")
+            os.path.join(self.rootpath, "test", "Assembly",
+                         "progettotest1", "progettotest1.xlsx")
         ]
 
-        r=report.Report(log_on_file=True, terminal=True, report_date=datetime.strptime('11/03/2018', '%d/%m/%Y'))
+        r = report.Report(log_on_file=True, terminal=True,
+                          report_date=datetime.strptime('11/03/2018', '%d/%m/%Y'))
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
         file_list = list(map(os.path.basename, file_list))
@@ -563,12 +613,12 @@ class TestMergeBom(unittest.TestCase):
         param = {
             "prj_date": "--/--/----",
             "prj_hw_ver": "13",
-            "prj_pcb":  "C",
+            "prj_pcb": "C",
             "prj_name": "TEST",
             "prj_license": "Copyright to me",
             "prj_name_long": "My usefull project",
-            "prj_pn":  "--",
-            "prj_status":  "Prototype",
+            "prj_part_number": "--",
+            "prj_status": "Prototype",
             "prj_prefix": "--",
         }
 
@@ -579,18 +629,17 @@ class TestMergeBom(unittest.TestCase):
             ft,
             param)
         cmd = ["python3", "mergebom.py",
-                                      "-p", self.temp_dir,
-                                      "-o", "due.xlsx",
-                                      "-t", '11/03/2018',
-                                      "--prj-hw-ver", "13",
-                                      "--prj-name", "TEST",
-                                      "--prj-pcb", "C"
-                                      ,os.path.join(self.rootpath, "test","Assembly","progettotest1","progettotest1.xlsx")]
+               "-p", self.temp_dir,
+               "-o", "due.xlsx",
+               "-t", '11/03/2018',
+               "--prj-hw-ver", "13",
+               "--prj-name", "TEST",
+               "--prj-pcb", "C", os.path.join(self.rootpath, "test", "Assembly", "progettotest1", "progettotest1.xlsx")]
 
         print(" ".join(cmd))
         out = subprocess.check_output(cmd,
                                       stderr=subprocess.STDOUT)
-        ft1=os.path.join(self.temp_dir, "due.xlsx")
+        ft1 = os.path.join(self.temp_dir, "due.xlsx")
 
         wb = xlrd.open_workbook(ft)
         data = []
@@ -606,7 +655,7 @@ class TestMergeBom(unittest.TestCase):
                     value = ""
                     values.append(str(curr.value))
                 data.append(values)
-        uno=data
+        uno = data
 
         wb = xlrd.open_workbook(ft1)
         data = []
@@ -629,7 +678,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_mergedFile(self):
         file_list = [
-            os.path.join(self.rootpath, "test","bom-merged.xls"),
+            os.path.join(self.rootpath, "test", "bom-merged.xls"),
         ]
 
         m = MergeBom(file_list, self.config, logger=self.logger)
@@ -641,7 +690,7 @@ class TestMergeBom(unittest.TestCase):
 
     def test_stats(self):
         file_list = [
-            os.path.join(self.rootpath, "test","bom-merged.xls"),
+            os.path.join(self.rootpath, "test", "bom-merged.xls"),
         ]
 
         self.logger.info(cfg.LOGO)
@@ -662,7 +711,7 @@ class TestMergeBom(unittest.TestCase):
         Cerca i componenti da non montare
         """
         file_list = [
-            os.path.join(self.rootpath, "test","bom-np.xls"),
+            os.path.join(self.rootpath, "test", "bom-np.xls"),
         ]
 
         m = MergeBom(file_list, self.config, logger=self.logger)
@@ -674,27 +723,28 @@ class TestMergeBom(unittest.TestCase):
         param = {
             "prj_date": "--/--/----",
             "prj_hw_ver": "13",
-            "prj_pcb":  "C",
+            "prj_pcb": "C",
             "prj_name": "TEST",
             "prj_license": "Copyright to me",
             "prj_name_long": "My usefull project",
-            "prj_pn":  "--",
-            "prj_status":  "Prototype",
+            "prj_part_number": "--",
+            "prj_status": "Prototype",
             "prj_prefix": "--",
         }
-        report.write_xls(d, file_list, self.config, ft, param, statistics=stats)
+        report.write_xls(d, file_list, self.config,
+                         ft, param, statistics=stats)
 
     def test_cliMerge(self):
         outfilename = os.path.join(self.temp_dir, "climerge_merged-R0.xlsx")
         cmd = ["python3", "mergebom.py",
-                   "-prx", "climerge",
-                   "-hw", "0",
-                   "-pv", "S",
-                   "-n", "Test project",
-                   "-p", self.temp_dir,
-                   "-e",
-                   os.path.join(self.rootpath, "test","cli-merge0.xlsx"),
-                   os.path.join(self.rootpath, "test","cli-merge1.xlsx")]
+               "-prx", "climerge",
+               "-hw", "0",
+               "-pv", "S",
+               "-n", "Test project",
+               "-p", self.temp_dir,
+               "-e",
+               os.path.join(self.rootpath, "test", "cli-merge0.xlsx"),
+               os.path.join(self.rootpath, "test", "cli-merge1.xlsx")]
         print()
         print("%s" % " ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
@@ -706,45 +756,50 @@ class TestMergeBom(unittest.TestCase):
     def test_cliMergeDiff(self):
         outfilename = os.path.join(self.temp_dir, "cli-diff-R23.xlsx")
         cmd = ["python3", "mergebom.py", "-o", "cli-diff-R23.xlsx",
-                       "-hw", "23",
-                       "-pv", "T",
-                       "-p", self.temp_dir,
-                       "-d",
-                       os.path.join(self.rootpath, "test","cli-merge-diff0.xlsx"),
-                       os.path.join(self.rootpath, "test","cli-merge-diff1.xlsx")]
+               "-hw", "23",
+               "-pv", "T",
+               "-p", self.temp_dir,
+               "-d",
+               os.path.join(self.rootpath, "test",
+                            "cli-merge-diff0.xlsx"),
+               os.path.join(self.rootpath, "test", "cli-merge-diff1.xlsx")]
         print()
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
         print(outfilename)
-        self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated" )
+        self.assertTrue(os.path.isfile(outfilename),
+                        "Merged diff File not generated")
         os.remove(outfilename)
 
         outfilename = os.path.join(self.temp_dir, "cli-diff_merged.xlsx")
         cmd = ["python3", "mergebom.py",
-                           "-o", "cli-diff_merged.xlsx",
-                           "-d",
-                           "-p", self.temp_dir,
-                           os.path.join(self.rootpath, "test","diff_test_old.xlsx"),
-                           os.path.join(self.rootpath, "test","diff_test_new.xlsx")]
+               "-o", "cli-diff_merged.xlsx",
+               "-d",
+               "-p", self.temp_dir,
+               os.path.join(self.rootpath, "test",
+                            "diff_test_old.xlsx"),
+               os.path.join(self.rootpath, "test", "diff_test_new.xlsx")]
         print()
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
-        self.assertTrue(os.path.isfile(outfilename), "Merged diff File not generated")
+        self.assertTrue(os.path.isfile(outfilename),
+                        "Merged diff File not generated")
 
     def test_cliMergeGlob(self):
         outfilename = os.path.join(self.temp_dir, "cli-mergedGlob-R53.xlsx")
         cmd = ["python3", "mergebom.py", "-hw", "53", "-pv", "O",
-                       "-n", "Test project glob",
-                       "-o", "cli-mergedGlob-R53.xlsx",
-                       "-p", self.temp_dir,
-                       os.path.join(self.rootpath, "test", "diff_test_old.xlsx")]
+               "-n", "Test project glob",
+               "-o", "cli-mergedGlob-R53.xlsx",
+               "-p", self.temp_dir,
+               os.path.join(self.rootpath, "test", "diff_test_old.xlsx")]
         print()
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
-        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        self.assertTrue(os.path.isfile(outfilename),
+                        "Merged File not generated")
         os.remove(outfilename)
 
     def test_categoryGroup(self):
@@ -762,11 +817,11 @@ class TestMergeBom(unittest.TestCase):
             d = m.merge()
         except Exception as e:
             s = "%s" % e
-            print("+"*80)
+            print("+" * 80)
             print(s)
-            print("+"*80)
+            print("+" * 80)
             print(check)
-            print("+"*80)
+            print("+" * 80)
 
             self.assertEqual(s.strip(), check.strip())
 
@@ -785,17 +840,22 @@ class TestMergeBom(unittest.TestCase):
         ]
 
         check = {'C': [
-                    [1, 1, u'C1', '10nF', '805', u'x5r', u'123', u'cose varie note', '',''],
-                    [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
-                    [8, 8, 'C3, C5, C6, C7, C8, C9, C10, C11', u'100nF', u'805', u'x7r', u'123', '', '', ''],
-                    [1, 1, u'C4', u'100nF', u'805', u'x7r', u'123', u'altro', u'abc', u'code abc'],
-                    [1, 1, u'C12', u'100nF', u'805', u'x7r', u'456', '', '', '']
-                ],
-                'U': [
-                    [1, 1, 'u2', 'lm2902', 'soic', 'Op-amp', 'aa', 'bb', 'cc', 'dd'],
-                    [1, 1, 'u3', 'lm2902', 'soic', 'Op-amp', 'aa', 'Aa-bb', 'cc', 'dd'],
-                    [1, 1, 'u1', 'lm75', 'soic', 'temp', 'uno', 'due', 'tre', 'quattro']
-                 ]
+            [1, 1, u'C1', '10nF', '805', u'x5r',
+                u'123', u'cose varie note', '', ''],
+            [1, 1, u'C2', '100nF', '805', u'x5r', u'789', '', 'cde', 'cde'],
+            [8, 8, 'C3, C5, C6, C7, C8, C9, C10, C11',
+                u'100nF', u'805', u'x7r', u'123', '', '', ''],
+            [1, 1, u'C4', u'100nF', u'805', u'x7r',
+                u'123', u'altro', u'abc', u'code abc'],
+            [1, 1, u'C12', u'100nF', u'805', u'x7r', u'456', '', '', '']
+        ],
+            'U': [
+            [1, 1, 'u2', 'lm2902', 'soic', 'Op-amp', 'aa', 'bb', 'cc', 'dd'],
+            [1, 1, 'u3', 'lm2902', 'soic', 'Op-amp',
+             'aa', 'Aa-bb', 'cc', 'dd'],
+            [1, 1, 'u1', 'lm75', 'soic', 'temp',
+             'uno', 'due', 'tre', 'quattro']
+        ]
         }
         m = MergeBom(file_list, self.config, logger=self.logger)
         d = m.merge()
@@ -817,16 +877,18 @@ class TestMergeBom(unittest.TestCase):
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
         print(outfilename)
-        self.assertTrue(os.path.isfile(outfilename), "Merged File not generated")
+        self.assertTrue(os.path.isfile(outfilename),
+                        "Merged File not generated")
 
     def test_cliCSV(self):
-        inputfilename = os.path.join(self.rootpath, "test", "Assembly", "progettotest1", "progettotest1.csv")
+        inputfilename = os.path.join(
+            self.rootpath, "test", "Assembly", "progettotest1", "progettotest1.csv")
         outfilename = os.path.join(self.rootpath, ".", "bom-merged.xlsx")
-        cmd =["python3", "mergebom.py", "--csv",
-              "-hw", "77",
-              "-pv", "X",
-              "-n", "Test project CVS",
-              inputfilename]
+        cmd = ["python3", "mergebom.py", "--csv",
+               "-hw", "77",
+               "-pv", "X",
+               "-n", "Test project CVS",
+               inputfilename]
         print(" ".join(cmd))
         print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
 
@@ -834,7 +896,8 @@ class TestMergeBom(unittest.TestCase):
         os.remove(outfilename)
 
     def test_extracPrj(self):
-        wk_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test", "wktest", "camera.DsnWrk")
+        wk_file = os.path.join(os.path.abspath(os.path.dirname(
+            __file__)), "test", "wktest", "camera.DsnWrk")
         a = cfg.extrac_projects(wk_file)
         ck = [
             ('5mp-sensor', os.path.join('5mp-sensor', '5mp-sensor.PrjPCB')),
@@ -866,14 +929,14 @@ class TestMergeBom(unittest.TestCase):
                     'prj_name_long': 'Camera sensor shield 5Mp AR0521',
                     'prj_pcb': 'A', 'prj_prefix': '',
                     'prj_status': 'Prototype'
-                    }
+                }
              ),
             ('camera-core', {'prj_date': '01/06/2018',
                              'prj_hw_ver': '0',
                              'prj_license': 'Copyright company spa',
                              'prj_name': 'Camera Core',
                              'prj_name_long': 'Camera core imx8',
-                             'prj_pcb': 'A', 'prj_pn': '-',
+                             'prj_pcb': 'A', 'prj_part_number': '-',
                              'prj_prefix': '',
                              'prj_status': 'Prototype'}
              ),
@@ -916,6 +979,7 @@ class TestMergeBom(unittest.TestCase):
             print(a, ck[n])
             self.assertEqual(ck[n], a)
 
+
 if __name__ == "__main__":
 
     from optparse import OptionParser
@@ -930,10 +994,10 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     merge_test_list = [
-        #"test_extracPrj",
-        #"test_prjParam",
-        #"test_fileList",
-        #"test_altiumWorkspace",
+        # "test_extracPrj",
+        # "test_prjParam",
+        # "test_fileList",
+        # "test_altiumWorkspace",
         "test_import",
         "test_group",
         "test_led",
@@ -942,18 +1006,18 @@ if __name__ == "__main__":
         "test_diff",
         "test_orderRef",
         "test_valueToFloat",
-        #"test_floatToValue",
+        # "test_floatToValue",
         "test_outFile",
-        #"test_parametri",
+        # "test_parametri",
         "test_mergedFile",
         # "test_stats",
         "test_notPopulate",
         "test_otherColumn",
-        #"test_categoryGroup",
+        # "test_categoryGroup",
         "test_cliMerge",
         "test_cliMergeDiff",
         "test_cliMergeGlob",
-        #"test_cliCSV",
+        # "test_cliCSV",
         "test_mergeFileCommandLine"
     ]
 
@@ -963,8 +1027,3 @@ if __name__ == "__main__":
     unittest.TextTestRunner(
         stream=sys.stdout,
         verbosity=2).run(suite)
-
-
-
-
-

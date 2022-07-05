@@ -24,7 +24,7 @@ Name=prj_pcb
 Value=C
 
 [Parameter7]
-Name=prj_pn
+Name=prj_part_number
 Value=pn
 
 [Parameter8]

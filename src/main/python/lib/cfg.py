@@ -61,7 +61,7 @@ DEFAULT_PRJ_PARAM_FIELDS = [
     ("prj_name", "Project Name"),
     ("prj_license", "License"),
     ("prj_name_long", "Descriptions"),
-    ("prj_pn", "Part Number"),
+    ("prj_part_number", "Part Number"),
     ("prj_status", "Project status"),
     ("prj_prefix", "Project group")
 ]
@@ -73,7 +73,7 @@ DEFAULT_PRJ_PARAM_DICT = {
     "prj_name": "MyProject",
     "prj_license": "Copyright to me",
     "prj_name_long": "My usefull project",
-    "prj_pn": "--",
+    "prj_part_number": "--",
     "prj_status": "Prototype",
     "prj_prefix": "--",
 }
@@ -256,7 +256,7 @@ PRJ_LICENSE = 'prj_license'
 PRJ_NAME = 'prj_name'
 PRJ_NAME_LONG = 'prj_name_long'
 PRJ_PCB = 'prj_pcb'
-PRJ_PN = 'prj_pn'
+prj_part_number = 'prj_part_number'
 PRJ_STATUS = 'prj_status'
 
 
