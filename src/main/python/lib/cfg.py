@@ -149,7 +149,7 @@ CATEGORY_NAMES_DEFAULT = [
     {
         'name': 'Connectors',
         'desc': 'Connectors and holders',
-        'group': ['X', 'P', 'SIM', 'CN', 'JP'],
+        'group': ['X', 'P', 'SIM', 'CN', 'JP', 'XJ'],
         'ref': 'J',
     },
     {
