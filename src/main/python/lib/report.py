@@ -92,7 +92,7 @@ class ReportBase(object):
 
 class Report(ReportBase):
     def __init__(self, logfile="./mergebom_report.txt", log_on_file=False,
-                 terminal=True, report_date=None):
+                 terminal=True, add_title=True, report_date=None):
 
         super(Report, self).__init__(report_date=report_date)
 
@@ -136,6 +136,7 @@ def write_xls(
         diff=False,
         extra_data=None,
         statistics=None,
+        add_title=True,
         headers=VALID_KEYS):
     """
     Write merged BOM in excel file.
@@ -301,7 +302,7 @@ def write_xls(
             info.append("- %s" % i)
 
     # Compute colum len to merge for header
-    #stop_col = 'F'
+    # stop_col = 'F'
     stop_col = chr(ord('A') + len(file_list) + len(headers))
 
     row = STR_ROW
@@ -387,10 +388,11 @@ def write_xls(
         categories = config.categories()
         for key in categories:
             if key in items:
-                row += 1
-                title = "%s * %s *" % (key, config.get(key, 'desc'))
-                worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
-                                      title, merge_fmt)
+                if add_title:
+                    row += 1
+                    title = "%s * %s *" % (key, config.get(key, 'desc'))
+                    worksheet.merge_range('A%s:%s%s' % (row, stop_col, row),
+                                          title, merge_fmt)
                 for i in items[key]:
                     for c, col in enumerate(i):
                         if c == 0:

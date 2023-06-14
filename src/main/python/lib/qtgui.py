@@ -64,7 +64,6 @@ class MergeBomGUI(QDialog):
 
     def __init__(self, parent=None):
         super(MergeBomGUI, self).__init__(parent)
-
         self.tmp_bom_list = []
         self.prj_and_data = {}
         self.param_prj_list_view = None
@@ -106,6 +105,8 @@ class MergeBomGUI(QDialog):
         self.merge_autoname = QCheckBox("Autoname", self)
         self.merge_autoname.setChecked(True)
         self.merge_autoname.stateChanged.connect(self.__autoname_out_file)
+        self.add_title_in_report = QCheckBox("Add Title", self)
+        self.add_title_in_report.setChecked(True)
 
         self.merge_cmd_box = QGroupBox("MergeBOM Commands")
         self.merge_cmd_box.setEnabled(False)
@@ -122,38 +123,8 @@ class MergeBomGUI(QDialog):
         vbox.addWidget(self.merge_bom_outname_label)
         vbox.addWidget(self.merge_bom_outname)
         vbox.addWidget(self.merge_autoname)
+        vbox.addWidget(self.add_title_in_report)
 
-        self.deploy_sel = QPushButton("Deploy Selected Prj")
-        self.deploy_sel.setDefault(True)
-        self.deploy_sel.clicked.connect(self.__deploy_prj_select)
-        self.deploy_all = QPushButton("Deploy All Prj")
-        self.deploy_all.setDefault(True)
-        self.deploy_all.clicked.connect(self.__deploy_all_prj)
-        self.deploy_path_label = QLabel("Deploy Path:")
-        self.deploy_path = QLineEdit(os.path.join(
-            os.path.expanduser('~/'), "Dropbox", "Produzione", "FileProgetto"))
-        self.deploy_path_select = QPushButton("Select")
-        self.deploy_path_select.clicked.connect(self.__select_deploy_path)
-        self.deploy_customer_name_label = QLabel("Customer Name:")
-        self.deploy_customer_name = QLineEdit("Customer")
-        self.deploy_rev_name_label = QLabel("Revision:")
-        self.deploy_rev_name = QLineEdit("0")
-
-        self.deploy_cmd_box = QGroupBox("Deploy Commands")
-        self.deploy_cmd_box.setEnabled(False)
-        vbox = QVBoxLayout()
-        self.deploy_cmd_box.setLayout(vbox)
-        vbox.addWidget(self.deploy_sel)
-        vbox.addWidget(self.deploy_all)
-        vbox.addWidget(self.deploy_path_label)
-        vbox.addWidget(self.deploy_path)
-        vbox.addWidget(self.deploy_path_select)
-        vbox.addWidget(self.deploy_customer_name_label)
-        vbox.addWidget(self.deploy_customer_name)
-        vbox.addWidget(self.deploy_rev_name_label)
-        vbox.addWidget(self.deploy_rev_name)
-
-        self.q1_layout.addWidget(self.deploy_cmd_box)
         self.q1_layout.addWidget(self.merge_cmd_box)
         self.q1_layout.addStretch(1)
 
@@ -305,6 +276,7 @@ class MergeBomGUI(QDialog):
                           param,
                           diff=False,
                           statistics=m.statistics(),
+                          add_title=self.add_title_in_report.isChecked(),
                           headers=m.header_data())
             except Exception as merge_excp:
                 self.logger.error("Error while merging..\n")
@@ -555,7 +527,6 @@ class MergeBomGUI(QDialog):
                 self.selected_file.setText(line)
                 self.__update_src_panel(line)
                 self.merge_cmd_box.setEnabled(True)
-                self.deploy_cmd_box.setEnabled(True)
 
             elif file_type == SUPPORTED_FILE_TYPE[1]:  # altium prj
                 root_path = os.path.dirname(line[0])
@@ -576,7 +547,6 @@ class MergeBomGUI(QDialog):
                             self.param_prj_list_view.addItem(n)
 
                 self.merge_cmd_box.setEnabled(True)
-                self.deploy_cmd_box.setEnabled(True)
                 self.label_param.setText(
                     "Altium Project: %s" % os.path.basename(line[0].upper()))
 
