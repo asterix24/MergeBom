@@ -307,7 +307,7 @@ def write_xls(
 
     row = STR_ROW
     for i in info:
-        worksheet.merge_range('A%s:%s%s' % (row, stop_col, row), i, info_fmt)
+        worksheet.write(row, 0, i, info_fmt)
         row += 1
     row += 1
 

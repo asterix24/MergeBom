@@ -147,6 +147,12 @@ CATEGORY_NAMES_DEFAULT = [
         'ref': 'LABEL',
     },
     {
+        'name': 'Assembly',
+        'desc': 'Assembly part, pcb and others',
+        'group': [],
+        'ref': 'PCB',
+    },
+    {
         'name': 'Connectors',
         'desc': 'Connectors and holders',
         'group': ['X', 'P', 'SIM', 'CN', 'JP', 'XJ'],
@@ -449,7 +455,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
     for i in wk_config.sections():
         try:
             if re.match("project[0-9]+", i.lower()) is None:
-                #logger.error("Skip key %s\n" % i)
+                # logger.error("Skip key %s\n" % i)
                 continue
 
             temp = wk_config.get(i, 'ProjectPath')
@@ -463,7 +469,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
                 complete_path = temp
 
         except configparser.NoOptionError:
-            #logger.info("Missing key %s\n" % i)
+            # logger.info("Missing key %s\n" % i)
             continue
 
         parametri_dict = {}
@@ -482,7 +488,7 @@ def cfg_altiumWorkspace(workspace_file_path, csv_file, bom_search_dir,
         logger.info("proj %s\n" % prj)
         for i in prj_config.sections():
             if re.match(r'Parameter[0-9]+', i) is None:
-                #logger.info("Wrong key found [%s]\n" % i)
+                # logger.info("Wrong key found [%s]\n" % i)
                 continue
 
             parametro = prj_config.get(i, 'Name')
