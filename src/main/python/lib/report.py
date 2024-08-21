@@ -172,7 +172,8 @@ def write_xls(
     try:
         workbook = xlsxwriter.Workbook(merged_bom_outfilename)
     except PermissionError:
-        raise Exception("Unable to open excel file, check if is already open.")
+        raise ValueError(
+            "Unable to open excel file, check if is already open.")
 
     worksheet = workbook.add_worksheet()
 

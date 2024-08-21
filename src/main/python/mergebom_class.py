@@ -146,7 +146,7 @@ class MergeBom(object):
                     # Fix designator field, we want all designator separated
                     # by comma followed by space.
                     # In this way excel could resize row cell correctly
-                    if re.findall("\S,[\S]+", row[designator]):
+                    if re.findall(r"\S,[\S]+", row[designator]):
                         row[designator] = row[designator].replace(",", ", ")
                     # but if all designator are separted by space without comma
                     elif re.findall(r"\s+", row[designator]):
@@ -212,7 +212,7 @@ class MergeBom(object):
                         s += "%s, %s, %s\n" % (c.group(), designator,
                                                table_dict[designator])
                         self.logger.error(s)
-                        raise Exception(
+                        raise ValueError(
                             "Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
                     if group_key == '':
@@ -230,7 +230,7 @@ class MergeBom(object):
                     s = "GROUP key not FOUND!\n"
                     s += "%s\n" % designator
                     self.logger.error(s)
-                    raise Exception(
+                    raise ValueError(
                         "Error: MISSING GROUP key! you MUST add it to config\n%s" % s)
 
     def table_grouped(self):
@@ -370,7 +370,7 @@ class MergeBom(object):
                                             raw_value
 
                             except IndexError:
-                                raise Exception(
+                                raise ValueError(
                                     "Error: Unable to update extra column. This as bug!")
                     else:
                         row = [item[QUANTITY]] + \
@@ -437,7 +437,7 @@ class MergeBom(object):
     def diff(self):
         if len(self.table_list) > 2:
             self.logger.error("To much file ti compare!\n")
-            raise Exception(
+            raise ValueError(
                 "Error: Diff Mode is supported between two file, and no more.")
 
         diff = {}

@@ -34,7 +34,7 @@ def order_designator(ref_str, logger):
         d = sorted(l, key=lambda x: int(re.search('[0-9]+', x).group()))
     except TypeError:
         logger.error(s)
-        raise Exception(s)
+        raise ValueError(s)
     except AttributeError:
         logger.error(s)
         d = l
@@ -51,7 +51,7 @@ def value_toFloat(l, unit, logger):
         s = "Unknow category [%s] allowed are[%s]\n" % (
             unit, CATEGORY_TO_UNIT.keys())
         logger.error(s)
-        raise Exception(s)
+        raise ValueError(s)
 
     # K is always chilo .. so fix case
     l = l.replace("K", "k")
@@ -92,7 +92,7 @@ def value_toFloat(l, unit, logger):
                 s = "l[%s] Acc[%s], mult[%s], value[%s], div[%s], {%s}\n" % (
                     l, acc, mult, value, div, e)
                 logger.error(s)
-                raise Exception(s)
+                raise ValueError(s)
 
         # skip measure unit, we use only numbers
         if re.search("[a-zA-z]", c) is not None:
@@ -148,7 +148,7 @@ def value_toStr(l, logger):
     except ValueError as e:
         s = "Unpack error %s {%s}\n" % (l, e)
         logger.error(s)
-        raise Exception(s)
+        raise ValueError(s)
 
     if value in [-1, -2]:
         return "%s %s" % (unit, " ".join(note))

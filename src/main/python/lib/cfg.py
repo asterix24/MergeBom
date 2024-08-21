@@ -23,6 +23,7 @@ MergeBOM Default configuration
 """
 
 
+import io
 import os
 import re
 import sys
@@ -363,9 +364,6 @@ def extrac_projects(wk_file):
     return l
 
 
-import io
-
-
 def get_parameterFromPrj(prj_name, prj_file):
     """
     Get paramet from Altium project.
@@ -376,7 +374,7 @@ def get_parameterFromPrj(prj_name, prj_file):
 
     prj_config = configparser.RawConfigParser()
     with io.open(prj_file, 'r', encoding='utf_8_sig') as fp:
-        prj_config.readfp(fp)
+        prj_config.read(fp)
 
     for i in prj_config.sections():
         if re.match(r'Parameter[0-9]+', i) is None:
@@ -398,7 +396,7 @@ def get_variantFromPrj(prj_name, prj_file):
 
     prj_config = configparser.RawConfigParser()
     with io.open(prj_file, 'r', encoding='utf_8_sig') as fp:
-        prj_config.readfp(fp)
+        prj_config.read(fp)
 
     for i in prj_config.sections():
         if re.match(r'ProjectVariant[0-9]+', i) is None:
